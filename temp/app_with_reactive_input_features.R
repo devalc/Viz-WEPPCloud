@@ -110,7 +110,7 @@ server <- (
         
         # output head of the dataframe to check if this step works
         output$table <- renderTable(
-            data_subset() %>% 
+            data_subset() %>% dplyr::arrange(!!!(input$variable)) %>%
             head(50))
         
         
