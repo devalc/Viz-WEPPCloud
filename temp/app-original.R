@@ -13,7 +13,7 @@ library(tidyverse)
 
 # Data Preparation Steps
 
-data <- read.csv("C:/Chinmay/Github/Process-WEPPCloud-Outputs/data/lt2020_2_hill_summary.csv")
+data <- read.csv("D:/Github/Viz-WEPPCloud/data/lt2020_2_hill_summary.csv")
 unique_watsheds <- as.character(unique(data$Watershed))
 unique_scenario <- as.character(unique(data$Scenario))
 
