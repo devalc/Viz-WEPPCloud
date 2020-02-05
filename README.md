@@ -6,7 +6,7 @@ At present it has the capability to get WEPPCloud generated hillslope, channel a
 
 ## Shiny location
 
-[] https://cdeval.shinyapps.io/Viz-WEPPCloud/
+https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
 
 ### Caution: 
