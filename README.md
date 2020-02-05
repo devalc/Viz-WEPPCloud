@@ -2,24 +2,9 @@
 
 This repo contains an experimental R shiny app that can visualize WEPPCloud outputs. 
 
-At present it preprocesses the Hillslope file and is able to plot cumulative selected "variable" 
-for a selected "watershed" and selected "simulation scenario" 
+At present it has the capability to get WEPPCloud generated hillslope, channel and watershed output files and preprocesses them in the back end and perform some visualizations based on the selected tabs 
 
-## Getting Started
+## Shiny locations
 
-These instructions will get you a copy of the "Viz-WEPPCloud" up and running on your local machine.
-
-## How to Install
-
-Currently this app is only hosted via Github. Make sure you have Rstudio installed and then install 
-libraries needed to use this tool by running following command in your Rstudio console: 
-
-```{r}
-install.packages("shiny", "tidyverse)
-```
-
-Now you start visualizing the data using Viz-WEPPCloud package by running following command:
-
-```{r}
-shiny::runGitHub("Viz-WEPPCloud", "devalc")
-```
+### Caution: 
+This is still in the developmental phase and is being constantly updated. Only basic UI and basic backend file handling has been deployed for now just to test that it works on shinyapp.io 
