@@ -4,7 +4,7 @@ This repo contains an experimental R shiny app that can visualize WEPPCloud outp
 
 At present it has the capability to get WEPPCloud generated hillslope, channel and watershed output files and preprocesses them in the back end and perform some visualizations based on the selected tabs 
 
-## Shiny location
+## URL
 
 https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
