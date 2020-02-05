@@ -38,9 +38,13 @@ ui <- fluidPage(
             
         ),
         
-        mainPanel( 
-            tableOutput('table'),
-            plotOutput(outputId = "Plot1")
+        mainPanel(
+            tabsetPanel(
+                tabPanel("Table", tableOutput("table")),
+                tabPanel("Plot", plotOutput("plot1"))
+            )
+            # tableOutput('table'),
+            # plotOutput(outputId = "Plot1")
             # plotOutput(outputId = "Plot_vs_CumLen")
             )
         

@@ -1,0 +1,13 @@
+name: Viz-WEPPCloud
+title: Viz-WEPPCloud
+username:
+account: cdeval
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1766872
+bundleId: 2777820
+url: https://cdeval.shinyapps.io/Viz-WEPPCloud/
+when: 1580934869.47822
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: README.md
