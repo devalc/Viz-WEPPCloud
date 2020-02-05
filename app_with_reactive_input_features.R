@@ -39,8 +39,8 @@ ui <- fluidPage(
         ),
         
         mainPanel( 
-            tableOutput('table')
-            # plotOutput(outputId = "Plot_vs_CumArea")
+            tableOutput('table'),
+            plotOutput(outputId = "Plot1")
             # plotOutput(outputId = "Plot_vs_CumLen")
             )
         
@@ -56,61 +56,50 @@ server <- (
     function(input, output, session){ 
         
         output$selectfile <- renderUI({
+            req(input$file)
             if(is.null(input$file)) {return()}
             list(hr(), 
                  helpText("Select the file you need from the dropdown"),
-                 selectInput("scale", "Select", choices=input$file$name)
+                 selectInput("scale", "Select scale (channel/hillslope/watershed)", choices=input$file$name)
             )
         
         })
         
         data <- reactive({
+            req(input$file)
             if(is.null(input$file)){return()}
             
-            ### not sure how to give a default selection here
-
             file <- read.csv(file=input$file$datapath[input$file$name==input$scale],header = TRUE,
                                                stringsAsFactors = FALSE)
-            # ext <- tools::file_ext(input$file$name)
-            # switch(ext,
-            #        csv = vroom::vroom(input$file$datapath, delim = ","),
-            #        validate("Invalid file; Please upload a .csv file")
-            # )
-
-            # if(input$scale == "Hillslope"){
-            # 
-            # file1 <- read.csv(file=input$file[[1,"datapath"]],header = TRUE,
-            #                   stringsAsFactors = FALSE)}else
-            #                       if(input$scale == "Channel"){
-            #                           file2 <- read.csv(file=input$file[[2,"datapath"]],header = TRUE)}else
-            #                               if(input$scale == "Catchment"){
-            #                                   file3 <- read.csv(file=input$file[[3,"datapath"]],header = TRUE)}
+            
         })
         
         
-        
         output$var <- renderUI({
+            req(input$file)
             if(is.null(input$file)) {return()}
             if(grepl("hill", input$scale) == TRUE){
-            selectInput("variable", "Select the variable of interest",  colnames(data()[1:25]),
+            selectInput("variable", "Select the variable of interest",  colnames(data()[6:25]),
                         selected = colnames(data()[10]) )}else
                             if(grepl("chn", input$scale) == TRUE){
-            selectInput("variable", "Select the variable of interest",  colnames(data()[1:17]),
-                        selected = colnames(data()[1]) )}else
+            selectInput("variable", "Select the variable of interest",  colnames(data()[7:17]),
+                        selected = colnames(data()[10]) )}else
                             if(grepl("out", input$scale) == TRUE){
             selectInput("variable", "Select the variable of interest",  colnames(data()[1:20])                        ,
-                        selected = colnames(data()[1]) )}
+                        selected = colnames(data()[7]) )}
             
         })
         
         output$wshed <- renderUI({
-            if(is.null(input$file)) {return()}
+            req(input$file)
+            # if(is.null(input$file)) {return()}
 
             selectInput("wshed", "Select the watershed",  unique(data()$Watershed))
         })
 
         output$scen <- renderUI({
-            if(is.null(input$file)) {return()}
+            req(input$file)
+            # if(is.null(input$file)) {return()}
 
             selectInput("scenario", "Select the scenario",  unique(data()$Scenario), 
                         multiple = TRUE, selected = unique(data()$Scenario)[1])
@@ -119,12 +108,15 @@ server <- (
         
         data_subset <- reactive({
             df <- as.data.frame(data())
-            df %>% filter(Watershed == input$wshed) 
+            df %>% dplyr::filter(Watershed == input$wshed) 
         })
         
-        
-        
-        data_arr_by_var <- reactive({ data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+        data_arr_by_var <- reactive({ 
+            # req(input$file)
+            # req(input$scale)
+            if(is.null(input$file)) {return()}
+            if(grepl("hill", input$scale) == TRUE){
+            data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
                 mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                        cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
                        cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
@@ -144,15 +136,42 @@ server <- (
                        cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm)/sum(Particle.Fraction.Under.0.016.mm)*100,
                        cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)/sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)*100
                 ) %>%
-                ungroup()
+                ungroup()}else
+                    # req(input$scale)
+                    if(grepl("chn", input$scale) == TRUE){
+                        data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+                            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                                   cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
+                                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100,
+                                   cumDischarge = cumsum(Discharge..mm.)/sum(Discharge..mm.)*100,
+                                   cumDischarge = cumsum(Sediment.Yield..tonne.)/sum(Sediment.Yield..tonne.)*100,
+                                   cumDischarge = cumsum(Channel.Erosion..tonne.)/sum(Channel.Erosion..tonne.)*100,
+                                   cumDischarge = cumsum(Upland.Charge..mm.)/sum(Upland.Charge..mm.)*100,
+                                   cumDischarge = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
+                                   cumDischarge = cumsum(Solub..React..P..kg.ha.)/sum(Solub..React..P..kg.ha.)*100,
+                                   cumDischarge = cumsum(Particulate.P..kg.ha.)/sum(Particulate.P..kg.ha.)*100,
+                                   cumDischarge = cumsum(Total.P..kg.ha.)/sum(Total.P..kg.ha.)*100
+                            ) %>%
+                            ungroup()}else
+                                # req(input$scale)
+                                if(grepl("out", input$scale) == TRUE){
+                                    data_subset()}
+                        
         })
         
         
         # output head of the dataframe to check if these cals works #delete later
         
         output$table <- renderTable(
-            data_arr_by_var() %>% tail(20))
+            data_arr_by_var() %>% head(20))
         
+
+        # output$Plot1 <- renderPlot(
+        #     if(grepl("out", input$scale) == TRUE){
+        #     ggplot(data_arr_by_var(), aes(x=data_arr_by_var()$Scenario, Y = data_arr_by_var()$Water.discharge.per.area..mm.yr.)) +
+        #         geom_bar(width=.8, stat="identity")+
+        #         facet_wrap( ~ data_arr_by_var()$Watershed)}
+        # )
           
         
     })
