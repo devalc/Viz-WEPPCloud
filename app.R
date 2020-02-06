@@ -71,17 +71,14 @@ server <- (
         
         data <- reactive({
             req(input$file)
-            if(is.null(input$file)){return()}
-            
-            file <- read.csv(file=input$file$datapath[input$file$name==input$scale],header = TRUE,
-                                               stringsAsFactors = FALSE)
+            file <- read.csv(file=input$file$datapath[input$file$name==input$scale],header = TRUE)
             
         })
         
         
         output$var <- renderUI({
             req(input$file)
-            if(is.null(input$file)) {return()}
+            req(input$scale)
             if(grepl("hill", input$scale) == TRUE){
             selectInput("variable", "Select the variable of interest",  colnames(data()[6:25]),
                         selected = colnames(data()[10]) )}else
@@ -91,36 +88,52 @@ server <- (
                             if(grepl("out", input$scale) == TRUE){
             selectInput("variable", "Select the variable of interest",  colnames(data()[1:20])                        ,
                         selected = colnames(data()[7]) )}
-            
+
         })
         
         output$wshed <- renderUI({
             req(input$file)
-            # if(is.null(input$file)) {return()}
-
             selectInput("wshed", "Select the watershed",  unique(data()$Watershed))
         })
 
         output$scen <- renderUI({
-            req(input$file)
-            # if(is.null(input$file)) {return()}
-
-            selectInput("scenario", "Select the scenario",  unique(data()$Scenario), 
+            selectInput("scenario", "Select the scenario",  unique(data()$Scenario),
                         multiple = TRUE, selected = unique(data()$Scenario)[1])
         })
         
         
         data_subset <- reactive({
             df <- as.data.frame(data())
-            df %>% dplyr::filter(Watershed == input$wshed) 
+            df %>% dplyr::filter(Watershed == input$wshed)
         })
         
-        data_arr_by_var <- reactive({ 
+        
+        # data_arr_by_var <- reactive({
+        #     if(is.null(input$file)) {
+        #         return()}else
+        #             if(grepl("hill", input$scale) == TRUE){
+        #                 data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+        #                     mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+        #                            cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
+        #                            cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
+        #                            cumLateralflow.mm = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
+        #                            cumBaseflow.mm = cumsum(Baseflow..mm.)/sum(Baseflow..mm.)*100
+        #                     ) }else
+        #                         # req(input$scale)
+        #                         if(grepl("chn", input$scale) == TRUE){
+        #                             return}else
+        #                                 # req(input$scale)
+        #                                 if(grepl("out", input$scale) == TRUE){
+        #                                     return()}
+        # 
+        # })
+        
+        data_arr_by_var <- reactive({
             # req(input$file)
             # req(input$scale)
             if(is.null(input$file)) {return()}
             if(grepl("hill", input$scale) == TRUE){
-            data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+            data_subset() %>% group_by(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
                 mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                        cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
                        cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
@@ -160,27 +173,34 @@ server <- (
                                 # req(input$scale)
                                 if(grepl("out", input$scale) == TRUE){
                                     data_subset()}
-                        
+
         })
-        
+
         
         # output head of the dataframe to check if these cals works #delete later
         
         output$table <- renderTable(
-            data_arr_by_var() %>% head(20))
-        
+            data_arr_by_var() )
 
         # output$Plot1 <- renderPlot(
-        #     if(grepl("out", input$scale) == TRUE){
-        #     ggplot(data_arr_by_var(), aes(x=data_arr_by_var()$Scenario, Y = data_arr_by_var()$Water.discharge.per.area..mm.yr.)) +
-        #         geom_bar(width=.8, stat="identity")+
-        #         facet_wrap( ~ data_arr_by_var()$Watershed)}
-        # )
-          
+        #     
+        #     if(grepl("hill", input$scale) == TRUE){
+        #         df <- as.data.frame(data_arr_by_var)
+        #         p1 <- df %>% ggplot(aes(x= df$cumPercLen ))+
+        #             geom_line(aes(y=df$input$variable),size=1) +  
+        #         theme_bw()+
+        #         theme(axis.title = element_text(size=14,color="BLACK",face="bold"),
+        #               axis.text = element_text(size=14,color="BLACK",face="bold"),
+        #               legend.title = element_text(size=14,color="BLACK",face="bold"),
+        #               legend.text = element_text(size=14,color="BLACK"))+
+        #         labs(x="Percent Channel Length",y=df$input$variable,title="",colour="Scenario")
+        # 
+        #     p1
+        #         }
+        #     )
+
+})
         
-    })
-
-
 # Run the application 
 shinyApp(ui = ui, server = server)
 
