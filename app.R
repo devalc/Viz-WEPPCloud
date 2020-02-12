@@ -133,7 +133,7 @@ server <- (
             # req(input$scale)
             if(is.null(input$file)) {return()}
             if(grepl("hill", input$scale) == TRUE){
-            data_subset() %>% group_by(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+            data_subset() %>% group_by_(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
                 mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                        cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
                        cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
@@ -156,7 +156,7 @@ server <- (
                 ungroup()}else
                     # req(input$scale)
                     if(grepl("chn", input$scale) == TRUE){
-                        data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
+                        data_subset() %>% group_by_(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
                             mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                                    cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
                                    cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100,
@@ -180,24 +180,24 @@ server <- (
         # output head of the dataframe to check if these cals works #delete later
         
         output$table <- renderTable(
-            data_arr_by_var() )
+            data_arr_by_var() %>% head(50) )
 
         # output$Plot1 <- renderPlot(
-        #     
+        # 
         #     if(grepl("hill", input$scale) == TRUE){
-        #         df <- as.data.frame(data_arr_by_var)
+        #         df <- as.data.frame(data_arr_by_var())
         #         p1 <- df %>% ggplot(aes(x= df$cumPercLen ))+
-        #             geom_line(aes(y=df$input$variable),size=1) +  
+        #             geom_line(aes(y=df$input$variable),size=1) +
         #         theme_bw()+
         #         theme(axis.title = element_text(size=14,color="BLACK",face="bold"),
         #               axis.text = element_text(size=14,color="BLACK",face="bold"),
         #               legend.title = element_text(size=14,color="BLACK",face="bold"),
         #               legend.text = element_text(size=14,color="BLACK"))+
-        #         labs(x="Percent Channel Length",y=df$input$variable,title="",colour="Scenario")
+        #         labs(x="Percent Channel Length",y=df[input$variable],title="",colour="Scenario")
         # 
         #     p1
         #         }
-        #     )
+        # )
 
 })
         
