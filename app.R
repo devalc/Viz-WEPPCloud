@@ -182,22 +182,22 @@ server <- (
         output$table <- renderTable(
             data_arr_by_var() %>% head(50) )
 
-        # output$Plot1 <- renderPlot(
-        # 
-        #     if(grepl("hill", input$scale) == TRUE){
-        #         df <- as.data.frame(data_arr_by_var())
-        #         p1 <- df %>% ggplot(aes(x= df$cumPercLen ))+
-        #             geom_line(aes(y=df$input$variable),size=1) +
-        #         theme_bw()+
-        #         theme(axis.title = element_text(size=14,color="BLACK",face="bold"),
-        #               axis.text = element_text(size=14,color="BLACK",face="bold"),
-        #               legend.title = element_text(size=14,color="BLACK",face="bold"),
-        #               legend.text = element_text(size=14,color="BLACK"))+
-        #         labs(x="Percent Channel Length",y=df[input$variable],title="",colour="Scenario")
-        # 
-        #     p1
-        #         }
-        # )
+        output$Plot1 <- renderPlot({
+
+            # if(grepl("hill", input$scale) == TRUE){
+                df <- as.data.frame(data_arr_by_var())
+                p1 <- df %>% ggplot(aes(x= cumPercLen ))+
+                    geom_line(aes(y=cumRunoff.mm),size=1) +
+                theme_bw()+
+                theme(axis.title = element_text(size=14,color="BLACK",face="bold"),
+                      axis.text = element_text(size=14,color="BLACK",face="bold"),
+                      legend.title = element_text(size=14,color="BLACK",face="bold"),
+                      legend.text = element_text(size=14,color="BLACK"))+
+                labs(x="Percent Channel Length",y=df[input$variable],title="",colour="Scenario")
+
+            p1
+                }
+        )
 
 })
         
