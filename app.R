@@ -1,206 +1,436 @@
-library(shinythemes)
+# -*- coding: utf-8 -*-
+#"""
+#Created on Fri Jan 17 19:35:48 2020
+
+#@author: Chinmay Deval
+
+### 
+
 library(shiny)
 library(tidyverse)
+library(shinythemes)
+library(plotly)
 
 options(shiny.maxRequestSize = 32*1024^2)
 
 
-ui <- fluidPage(
-    
-    ## set the theme
-    
-    theme = shinytheme(theme = "sandstone"),
-    
-    titlePanel("viz-WEPP"),
-    sidebarLayout(
-        sidebarPanel(
-            
-            # uploading the file 
-            # fileinput() function is used to get the file upload contorl option
-            fileInput("file",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
-                      multiple = TRUE, placeholder = "No file selected", accept = ".csv" ),
-            helpText("max. file size is 32MB"),
-            
-            # # Input: Select separator ----
-            # radioButtons("scale", "Spatial scale",
-            #              choices = c(Hillslope = "Hillslope",
-            #                          Channel = "Channel",
-            #                          Catchment = "Catchment"),
-            #              selected = "Hillslope"),
-            
-            
-            
-            uiOutput("selectfile"),
-            uiOutput("wshed"),
-            uiOutput("var"),
-            uiOutput("scen")
-            
-            
-        ),
-        
-        mainPanel(
-            tabsetPanel(
-                tabPanel("Table", tableOutput("table")),
-                tabPanel("Plot", plotOutput("plot1"))
-            )
-            # tableOutput('table'),
-            # plotOutput(outputId = "Plot1")
-            # plotOutput(outputId = "Plot_vs_CumLen")
-            )
-        
-    )
-    
+ui <- navbarPage("viz-WEPP",
+                 
+                 
+                 ## set the theme
+                 
+                 theme = shinytheme(theme = "sandstone"),
+                 
+                 tabPanel("Hillslope",
+                          sidebarPanel(
+                              #uploading the file 
+                              # fileinput() function is used to get the file upload contorl option
+                              fileInput("Hill_file",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
+                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
+                              helpText("max. file size is 32MB"),
+                              
+                              
+                              uiOutput("Hill_selectfile"),
+                              uiOutput("Hill_wshed"),
+                              uiOutput("Hill_var"),
+                              uiOutput("Hill_scen")
+                          ),
+                          
+                          # Main panel for displaying outputs ----
+                          mainPanel(
+                              
+                              fluidRow(
+                                  # column(6, tableOutput("tab1")),
+                                  column(6, plotlyOutput("Plot_vs_cumPercArea")),
+                                  column(6, plotlyOutput("Plot_vs_cumPercArea_abs"))
+                              ),
+                              fluidRow(
+                                  column(6, plotlyOutput("Plot_vs_cumPercLen")),
+                                  column(6, plotlyOutput("Plot_vs_cumPercLen_abs"))
+                              )
+                          )),
+                 
+                 tabPanel("Channel",
+                          sidebarPanel(
+                              #uploading the file 
+                              # fileinput() function is used to get the file upload contorl option
+                              fileInput("Chan_file",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
+                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
+                              helpText("max. file size is 32MB"),
+                              
+                              
+                              uiOutput("Chan_selectfile"),
+                              uiOutput("Chan_wshed"),
+                              uiOutput("Chan_var"),
+                              uiOutput("Chan_scen")
+                          ),
+                          
+                          # Main panel for displaying outputs ----
+                          mainPanel(
+                              
+                              fluidRow(
+                                  column(6,  plotlyOutput("Plot1")),
+                                  column(6, plotlyOutput("Plot2"))
+                              ),
+                              fluidRow(
+                                  column(6, plotlyOutput("Plot3")),
+                                  column(6, plotlyOutput("Plot4"))
+                              )
+                          )),
+                 
+                 tabPanel("Watershed",
+                          sidebarPanel(
+                              #uploading the file 
+                              # fileinput() function is used to get the file upload contorl option
+                              fileInput("Wshed_file",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
+                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
+                              helpText("max. file size is 32MB"),
+                              
+                              
+                              uiOutput("Wshed_selectfile"),
+                              uiOutput("Wshed_wshed"),
+                              uiOutput("Wshed_var"),
+                              uiOutput("Wshed_scen")
+                          ),
+                          
+                          # Main panel for displaying outputs ----
+                          mainPanel(
+                              
+                              fluidPage(
+                                  # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
+                                  plotOutput("Plot5",height = "800px", width ="800px" )
+                                  
+                              ))
+                 ),
+                 
+                 tabPanel("Spatial-Viz",
+                          sidebarPanel(
+                              #uploading the file 
+                              # fileinput() function is used to get the file upload contorl option
+                              fileInput("spfile",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
+                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
+                              helpText("max. file size is 32MB"),
+                              
+                              
+                              uiOutput("sp_selectfile"),
+                              uiOutput("sp_wshed"),
+                              uiOutput("sp_var"),
+                              uiOutput("sp_scen")
+                          ),
+                          
+                          # Main panel for displaying outputs ----
+                          mainPanel(
+                              
+                              fluidRow(
+                                  column(6, plotOutput("Plot9")),
+                                  column(6, plotOutput("Plot10"))
+                              ),
+                              fluidRow(
+                                  column(6, plotOutput("Plot11")),
+                                  column(6, plotOutput("Plot12"))
+                              )
+                          ))
+                 
+                 
 )
 
 
 
-server <- (
+# Define server logic required to draw a histogram
+
+server <- function(input, output, session) {
     
+    ######## Server logic for UI generation for hillslope tab ##########
     
-    function(input, output, session){ 
-        
-        output$selectfile <- renderUI({
-            req(input$file)
-            if(is.null(input$file)) {return()}
-            list(hr(), 
-                 helpText("Select the file you need from the dropdown"),
-                 selectInput("scale", "Select scale (channel/hillslope/watershed)", choices=input$file$name)
-            )
-        
-        })
-        
-        data <- reactive({
-            req(input$file)
-            file <- read.csv(file=input$file$datapath[input$file$name==input$scale],header = TRUE)
-            
-        })
-        
-        
-        output$var <- renderUI({
-            req(input$file)
-            req(input$scale)
-            if(grepl("hill", input$scale) == TRUE){
-            selectInput("variable", "Select the variable of interest",  colnames(data()[6:25]),
-                        selected = colnames(data()[10]) )}else
-                            if(grepl("chn", input$scale) == TRUE){
-            selectInput("variable", "Select the variable of interest",  colnames(data()[7:17]),
-                        selected = colnames(data()[10]) )}else
-                            if(grepl("out", input$scale) == TRUE){
-            selectInput("variable", "Select the variable of interest",  colnames(data()[1:20])                        ,
-                        selected = colnames(data()[7]) )}
-
-        })
-        
-        output$wshed <- renderUI({
-            req(input$file)
-            selectInput("wshed", "Select the watershed",  unique(data()$Watershed))
-        })
-
-        output$scen <- renderUI({
-            selectInput("scenario", "Select the scenario",  unique(data()$Scenario),
-                        multiple = TRUE, selected = unique(data()$Scenario)[1])
-        })
-        
-        
-        data_subset <- reactive({
-            df <- as.data.frame(data())
-            df %>% dplyr::filter(Watershed == input$wshed)
-        })
-        
-        
-        # data_arr_by_var <- reactive({
-        #     if(is.null(input$file)) {
-        #         return()}else
-        #             if(grepl("hill", input$scale) == TRUE){
-        #                 data_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
-        #                     mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
-        #                            cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
-        #                            cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
-        #                            cumLateralflow.mm = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
-        #                            cumBaseflow.mm = cumsum(Baseflow..mm.)/sum(Baseflow..mm.)*100
-        #                     ) }else
-        #                         # req(input$scale)
-        #                         if(grepl("chn", input$scale) == TRUE){
-        #                             return}else
-        #                                 # req(input$scale)
-        #                                 if(grepl("out", input$scale) == TRUE){
-        #                                     return()}
-        # 
-        # })
-        
-        data_arr_by_var <- reactive({
-            # req(input$file)
-            # req(input$scale)
-            if(is.null(input$file)) {return()}
-            if(grepl("hill", input$scale) == TRUE){
-            data_subset() %>% group_by_(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
-                mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
-                       cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
-                       cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
-                       cumLateralflow.mm = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
-                       cumBaseflow.mm = cumsum(Baseflow..mm.)/sum(Baseflow..mm.)*100,
-                       cumSoilLoss.kg.ha = cumsum(Soil.Loss..kg.ha.)/sum(Soil.Loss..kg.ha.)*100,
-                       cumSedDep.kg.ha = cumsum(Sediment.Deposition..kg.ha.)/sum(Sediment.Deposition..kg.ha.)*100,
-                       cumSedYield.kg.ha = cumsum(Sediment.Yield..kg.ha.)/sum(Sediment.Yield..kg.ha.)*100,
-                       cumSRP.kg.ha.3 = cumsum(Solub..React..P..kg.ha.3.)/sum(Solub..React..P..kg.ha.3.)*100,
-                       cumParticulateP.kg.ha.3 = cumsum(Particulate.P..kg.ha.3.)/sum(Particulate.P..kg.ha.3.)*100,
-                       cumTotalP.kg.ha.3 = cumsum(Total.P..kg.ha.3.)/sum(Total.P..kg.ha.3.)*100,
-                       cumParticle.Class.1.Fraction = cumsum(Particle.Class.1.Fraction)/sum(Particle.Class.1.Fraction)*100,
-                       cumParticle.Class.2.Fraction = cumsum(Particle.Class.2.Fraction)/sum(Particle.Class.2.Fraction)*100,
-                       cumParticle.Class.3.Fraction = cumsum(Particle.Class.3.Fraction)/sum(Particle.Class.3.Fraction)*100,
-                       cumParticle.Class.4.Fraction = cumsum(Particle.Class.4.Fraction)/sum(Particle.Class.4.Fraction)*100,
-                       cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction)/sum(Particle.Class.5.Fraction)*100,
-                       cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm)/sum(Particle.Fraction.Under.0.016.mm)*100,
-                       cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)/sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)*100
-                ) %>%
-                ungroup()}else
-                    # req(input$scale)
-                    if(grepl("chn", input$scale) == TRUE){
-                        data_subset() %>% group_by_(data_subset()$Scenario) %>% arrange_at(.vars = input$variable, desc)%>%
-                            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
-                                   cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
-                                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100,
-                                   cumDischarge = cumsum(Discharge..mm.)/sum(Discharge..mm.)*100,
-                                   cumDischarge = cumsum(Sediment.Yield..tonne.)/sum(Sediment.Yield..tonne.)*100,
-                                   cumDischarge = cumsum(Channel.Erosion..tonne.)/sum(Channel.Erosion..tonne.)*100,
-                                   cumDischarge = cumsum(Upland.Charge..mm.)/sum(Upland.Charge..mm.)*100,
-                                   cumDischarge = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
-                                   cumDischarge = cumsum(Solub..React..P..kg.ha.)/sum(Solub..React..P..kg.ha.)*100,
-                                   cumDischarge = cumsum(Particulate.P..kg.ha.)/sum(Particulate.P..kg.ha.)*100,
-                                   cumDischarge = cumsum(Total.P..kg.ha.)/sum(Total.P..kg.ha.)*100
-                            ) %>%
-                            ungroup()}else
-                                # req(input$scale)
-                                if(grepl("out", input$scale) == TRUE){
-                                    data_subset()}
-
-        })
-
-        
-        # output head of the dataframe to check if these cals works #delete later
-        
-        output$table <- renderTable(
-            data_arr_by_var() %>% head(50) )
-
-        output$Plot1 <- renderPlot({
-
-            # if(grepl("hill", input$scale) == TRUE){
-                df <- as.data.frame(data_arr_by_var())
-                p1 <- df %>% ggplot(aes(x= cumPercLen ))+
-                    geom_line(aes(y=cumRunoff.mm),size=1) +
-                theme_bw()+
-                theme(axis.title = element_text(size=14,color="BLACK",face="bold"),
-                      axis.text = element_text(size=14,color="BLACK",face="bold"),
-                      legend.title = element_text(size=14,color="BLACK",face="bold"),
-                      legend.text = element_text(size=14,color="BLACK"))+
-                labs(x="Percent Channel Length",y=df[input$variable],title="",colour="Scenario")
-
-            p1
-                }
+    Hill_data <- reactive({
+        file1 <- input$Hill_file
+        if(is.null(file1)){return()}
+        validate(
+            need(grepl("hill", input$Hill_file) == TRUE, "Wrong file provided. Hillslope filename should have '_hill_' in filename")
         )
-
-})
+        read.table(file=file1$datapath,head=TRUE,sep=",")
         
+    })
+    
+    output$Hill_var <- renderUI({
+        req(input$Hill_file)
+        selectInput("Hill_variable", "Select the variable of interest",  colnames(Hill_data()[1:25]),
+                    selected = colnames(Hill_data()[10]) )
+    })
+    
+    output$Hill_wshed <- renderUI({
+        req(input$Hill_file)
+        selectInput("Hill_wshed", "Select the watershed",  unique(Hill_data()$Watershed))
+    })
+    
+    
+    
+    ######## Server logic for UI generation for  Channel tab ##########
+    
+    Chan_data <- reactive({
+        file2 <- input$Chan_file
+        if(is.null(file2)){return()}
+        validate(
+            need(grepl("chn", input$Chan_file) == TRUE, "Wrong file provided. Channel filename should have '_chn_' in filename")
+        )
+        read.table(file=file2$datapath,head=TRUE,sep=",")
+        
+    })
+    
+    output$Chan_var <- renderUI({
+        req(input$Chan_file)
+        selectInput("Chan_variable", "Select the variable of interest",  colnames(Chan_data()[7:17]),
+                    selected = colnames(Chan_data()[10]) )
+    })
+    
+    output$Chan_wshed <- renderUI({
+        req(input$Chan_file)
+        selectInput("Chan_wshed", "Select the watershed",  unique(Chan_data()$Watershed))
+    })
+    
+    
+    ######## Server logic for UI generation for  Watersheds tab ##########
+    
+    Wshed_data <- reactive({
+        file3 <- input$Wshed_file
+        if(is.null(file3)){return()}
+        validate(
+            need(grepl("out", input$Wshed_file) == TRUE, "Wrong file provided. Watershed filename should have '_out_' in filename")
+        )
+        read.table(file=file3$datapath,head=TRUE,sep=",")
+        
+    })
+    
+    output$Wshed_var <- renderUI({
+        req(input$Wshed_file)
+        selectInput("Wshed_variable", "Select the variable of interest",  colnames(Wshed_data()[7:17]),
+                    selected = colnames(Wshed_data()[10]) )
+    })
+    
+    output$Wshed_wshed <- renderUI({
+        req(input$Wshed_file)
+        selectInput("wshed", "Select the watershed",  unique(Wshed_data()$Watershed))
+    })
+    
+    ################# Plotting logic for HILLSLOPE DF #################
+    
+    hill_subset <- reactive({
+        req(input$Hill_file)
+        Hill_data() %>% 
+            dplyr::filter(Watershed %in% input$Hill_wshed) 
+    })
+    
+    ############## Dataframe calculating cumulative percent of total variable   ############## 
+    
+    hill_arr_by_var <- reactive({
+        hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
+            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
+                   cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
+                   cumLateralflow.mm = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
+                   cumBaseflow.mm = cumsum(Baseflow..mm.)/sum(Baseflow..mm.)*100,
+                   cumSoilLoss.kg.ha = cumsum(Soil.Loss..kg.ha.)/sum(Soil.Loss..kg.ha.)*100,
+                   cumSedDep.kg.ha = cumsum(Sediment.Deposition..kg.ha.)/sum(Sediment.Deposition..kg.ha.)*100,
+                   cumSedYield.kg.ha = cumsum(Sediment.Yield..kg.ha.)/sum(Sediment.Yield..kg.ha.)*100,
+                   cumSRP.kg.ha.3 = cumsum(Solub..React..P..kg.ha.3.)/sum(Solub..React..P..kg.ha.3.)*100,
+                   cumParticulateP.kg.ha.3 = cumsum(Particulate.P..kg.ha.3.)/sum(Particulate.P..kg.ha.3.)*100,
+                   cumTotalP.kg.ha.3 = cumsum(Total.P..kg.ha.3.)/sum(Total.P..kg.ha.3.)*100,
+                   cumParticle.Class.1.Fraction = cumsum(Particle.Class.1.Fraction)/sum(Particle.Class.1.Fraction)*100,
+                   cumParticle.Class.2.Fraction = cumsum(Particle.Class.2.Fraction)/sum(Particle.Class.2.Fraction)*100,
+                   cumParticle.Class.3.Fraction = cumsum(Particle.Class.3.Fraction)/sum(Particle.Class.3.Fraction)*100,
+                   cumParticle.Class.4.Fraction = cumsum(Particle.Class.4.Fraction)/sum(Particle.Class.4.Fraction)*100,
+                   cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction)/sum(Particle.Class.5.Fraction)*100,
+                   cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm)/sum(Particle.Fraction.Under.0.016.mm)*100,
+                   cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)/sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)*100
+            ) %>%
+            ungroup()
+    })
+    
+    
+    ############## Dataframe calculating cumulative absolute value of variable   ############## 
+    
+    hill_arr_by_var_abs <- reactive({
+        hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
+            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
+                   cumRunoff.mm = cumsum(Runoff..mm.),
+                   cumLateralflow.mm = cumsum(Lateral.Flow..mm.),
+                   cumBaseflow.mm = cumsum(Baseflow..mm.),
+                   cumSoilLoss.kg.ha = cumsum(Soil.Loss..kg.ha.),
+                   cumSedDep.kg.ha = cumsum(Sediment.Deposition..kg.ha.),
+                   cumSedYield.kg.ha = cumsum(Sediment.Yield..kg.ha.),
+                   cumSRP.kg.ha.3 = cumsum(Solub..React..P..kg.ha.3.),
+                   cumParticulateP.kg.ha.3 = cumsum(Particulate.P..kg.ha.3.),
+                   cumTotalP.kg.ha.3 = cumsum(Total.P..kg.ha.3.),
+                   cumParticle.Class.1.Fraction = cumsum(Particle.Class.1.Fraction),
+                   cumParticle.Class.2.Fraction = cumsum(Particle.Class.2.Fraction),
+                   cumParticle.Class.3.Fraction = cumsum(Particle.Class.3.Fraction),
+                   cumParticle.Class.4.Fraction = cumsum(Particle.Class.4.Fraction),
+                   cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction),
+                   cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm),
+                   cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
+            ) %>%
+            ungroup()
+    })  
+    
+    
+    # TEST To SEE if the dataframe from the reactive func is accessible
+    # output$tab1 <- renderTable(
+    #   hill_arr_by_var() %>% head(100) )
+    
+    
+    ############## plots of cumulative percent of total variable   ############## 
+    ############## vs cumulative percent of total hillslope area   ############## 
+    
+    output$Plot_vs_cumPercArea <- renderPlotly({
+        
+        req(input$Hill_variable)
+        
+        p1 <- hill_arr_by_var()  %>% ggplot(aes(x=cumPercArea))
+        if(input$Hill_variable == "Runoff..mm."){
+            p1 <- p1 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
+        }else
+            if(input$Hill_variable == "Lateral.Flow..mm."){
+                p1 <- p1 + geom_line(aes(y=cumLateralflow.mm, color= Scenario),size=0.5)
+            }else
+                if(input$Hill_variable == "Baseflow..mm."){
+                    p1 <- p1 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
+                }else
+                    if(input$Hill_variable == "Soil.Loss..kg.ha."){
+                        p0.5 <- p1 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                    }else
+                        if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
+                            p1 <- p1 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
+                        }else
+                            if(input$Hill_variable == "Sediment.Yield..kg.ha."){
+                                p1 <- p1 + geom_line(aes(y=cumSedYield.kg.ha, color= Scenario),size=0.5)
+                            }else
+                                if(input$Hill_variable == "Solub..React..P..kg.ha.3."){
+                                    p1 <- p1 + geom_line(aes(y=cumSRP.kg.ha.3, color= Scenario),size=0.5)
+                                }else
+                                    if(input$Hill_variable == "Particulate.P..kg.ha.3."){
+                                        p1 <- p1 + geom_line(aes(y=cumParticulateP.kg.ha.3, color= Scenario),size=0.5)
+                                    }else
+                                        if(input$Hill_variable == "Total.P..kg.ha.3."){
+                                            p1 <- p1 + geom_line(aes(y=cumTotalP.kg.ha.3, color= Scenario),size=0.5)
+                                        }else
+                                            if(input$Hill_variable == "Particle.Class.1.Fraction"){
+                                                p1 <- p1 + geom_line(aes(y=cumParticle.Class.1.Fraction, color= Scenario),size=0.5)
+                                            }else
+                                                if(input$Hill_variable == "Particle.Class.2.Fraction"){
+                                                    p1 <- p1 + geom_line(aes(y=cumParticle.Class.2.Fraction, color= Scenario),size=0.5)
+                                                }else
+                                                    if(input$Hill_variable == "Particle.Class.3.Fraction"){
+                                                        p1 <- p1 + geom_line(aes(y=cumParticle.Class.3.Fraction, color= Scenario),size=0.5)
+                                                    }else
+                                                        if(input$Hill_variable == "Particle.Class.4.Fraction"){
+                                                            p1 <- p1 + geom_line(aes(y=cumParticle.Class.4.Fraction, color= Scenario),size=0.5)
+                                                        }else
+                                                            if(input$Hill_variable == "Particle.Class.5.Fraction"){
+                                                                p1 <- p1 + geom_line(aes(y=cumParticle.Class.5.Fraction, color= Scenario),size=0.5)
+                                                            }else
+                                                                if(input$Hill_variable == "Particle.Fraction.Under.0.016.mm"){
+                                                                    p1 <- p1 + geom_line(aes(y=cumParticle.Fraction.Under.0.016.mm, color= Scenario),size=0.5)
+                                                                }else
+                                                                    if(input$Hill_variable == "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."){
+                                                                        p1 <- p1 + geom_line(aes(y=cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color= Scenario),size=0.5)
+                                                                    }
+        
+        
+        p1 <- p1 +  theme_bw()+
+            theme(axis.title = element_text(size=10,color="Black",face="bold"),
+                  axis.text = element_text(size=10,color="BLACK",face="bold"),
+                  legend.title = element_text(size=10,color="BLACK",face="bold"),
+                  legend.text = element_text(size=10,color="BLACK"),
+                  legend.position = "none")+
+            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+        # +scale_fill_brewer(palette="spectral")
+        
+        
+        
+        p1
+        
+    })
+    
+    
+    
+    
+    ############## plots of cumulative absolute values of variable   ############## 
+    ############## vs cumulative percent of total hillslope area   ############## 
+    
+    output$Plot_vs_cumPercArea_abs <- renderPlotly({
+        
+        req(input$Hill_variable)
+        
+        p2 <- hill_arr_by_var_abs()  %>% ggplot(aes(x=cumPercArea))
+        if(input$Hill_variable == "Runoff..mm."){
+            p2 <- p2 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
+        }else
+            if(input$Hill_variable == "Lateral.Flow..mm."){
+                p2 <- p2 + geom_line(aes(y=cumLateralflow.mm, color= Scenario),size=0.5)
+            }else
+                if(input$Hill_variable == "Baseflow..mm."){
+                    p2 <- p2 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
+                }else
+                    if(input$Hill_variable == "Soil.Loss..kg.ha."){
+                        p0.5 <- p2 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                    }else
+                        if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
+                            p2 <- p2 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
+                        }else
+                            if(input$Hill_variable == "Sediment.Yield..kg.ha."){
+                                p2 <- p2 + geom_line(aes(y=cumSedYield.kg.ha, color= Scenario),size=0.5)
+                            }else
+                                if(input$Hill_variable == "Solub..React..P..kg.ha.3."){
+                                    p2 <- p2 + geom_line(aes(y=cumSRP.kg.ha.3, color= Scenario),size=0.5)
+                                }else
+                                    if(input$Hill_variable == "Particulate.P..kg.ha.3."){
+                                        p2 <- p2 + geom_line(aes(y=cumParticulateP.kg.ha.3, color= Scenario),size=0.5)
+                                    }else
+                                        if(input$Hill_variable == "Total.P..kg.ha.3."){
+                                            p2 <- p2 + geom_line(aes(y=cumTotalP.kg.ha.3, color= Scenario),size=0.5)
+                                        }else
+                                            if(input$Hill_variable == "Particle.Class.1.Fraction"){
+                                                p2 <- p2 + geom_line(aes(y=cumParticle.Class.1.Fraction, color= Scenario),size=0.5)
+                                            }else
+                                                if(input$Hill_variable == "Particle.Class.2.Fraction"){
+                                                    p2 <- p2 + geom_line(aes(y=cumParticle.Class.2.Fraction, color= Scenario),size=0.5)
+                                                }else
+                                                    if(input$Hill_variable == "Particle.Class.3.Fraction"){
+                                                        p2 <- p2 + geom_line(aes(y=cumParticle.Class.3.Fraction, color= Scenario),size=0.5)
+                                                    }else
+                                                        if(input$Hill_variable == "Particle.Class.4.Fraction"){
+                                                            p2 <- p2 + geom_line(aes(y=cumParticle.Class.4.Fraction, color= Scenario),size=0.5)
+                                                        }else
+                                                            if(input$Hill_variable == "Particle.Class.5.Fraction"){
+                                                                p2 <- p2 + geom_line(aes(y=cumParticle.Class.5.Fraction, color= Scenario),size=0.5)
+                                                            }else
+                                                                if(input$Hill_variable == "Particle.Fraction.Under.0.016.mm"){
+                                                                    p2 <- p2 + geom_line(aes(y=cumParticle.Fraction.Under.0.016.mm, color= Scenario),size=0.5)
+                                                                }else
+                                                                    if(input$Hill_variable == "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."){
+                                                                        p2 <- p2 + geom_line(aes(y=cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color= Scenario),size=0.5)
+                                                                    }
+        
+        
+        p2 <- p2 +  theme_bw()+
+            theme(axis.title = element_text(size=10,color="Black",face="bold"),
+                  axis.text = element_text(size=10,color="BLACK",face="bold"),
+                  legend.title = element_text(size=10,color="BLACK",face="bold"),
+                  legend.text = element_text(size=10,color="BLACK"),
+                  legend.position = "none")+
+            labs(x="Percent of total hillslope area",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario")
+        # +scale_fill_brewer(palette="spectral")
+        
+        
+        
+        p2
+        
+    })    
+    
+    
+}
+
 # Run the application 
 shinyApp(ui = ui, server = server)
 
