@@ -280,7 +280,7 @@ server <- function(input, output, session) {
     
     
     ############## plots of cumulative percent of total variable   ############## 
-    ############## vs cumulative percent of total hillslope area   ############## 
+    ############## vs cumulative percent of total hillslope area/ channel length   ############## 
     
     output$Plot_vs_cumPercArea <- renderPlotly({
         
@@ -297,7 +297,7 @@ server <- function(input, output, session) {
                     p1 <- p1 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
                 }else
                     if(input$Hill_variable == "Soil.Loss..kg.ha."){
-                        p0.5 <- p1 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                        p1 <- p1 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
                     }else
                         if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
                             p1 <- p1 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
@@ -353,10 +353,79 @@ server <- function(input, output, session) {
     })
     
     
+    output$Plot_vs_cumPercLen <- renderPlotly({
+        
+        req(input$Hill_variable)
+        
+        p3 <- hill_arr_by_var()  %>% ggplot(aes(x=cumPercLen))
+        if(input$Hill_variable == "Runoff..mm."){
+            p3 <- p3 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
+        }else
+            if(input$Hill_variable == "Lateral.Flow..mm."){
+                p3 <- p3 + geom_line(aes(y=cumLateralflow.mm, color= Scenario),size=0.5)
+            }else
+                if(input$Hill_variable == "Baseflow..mm."){
+                    p3 <- p3 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
+                }else
+                    if(input$Hill_variable == "Soil.Loss..kg.ha."){
+                        p3 <- p3 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                    }else
+                        if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
+                            p3 <- p3 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
+                        }else
+                            if(input$Hill_variable == "Sediment.Yield..kg.ha."){
+                                p3 <- p3 + geom_line(aes(y=cumSedYield.kg.ha, color= Scenario),size=0.5)
+                            }else
+                                if(input$Hill_variable == "Solub..React..P..kg.ha.3."){
+                                    p3 <- p3 + geom_line(aes(y=cumSRP.kg.ha.3, color= Scenario),size=0.5)
+                                }else
+                                    if(input$Hill_variable == "Particulate.P..kg.ha.3."){
+                                        p3 <- p3 + geom_line(aes(y=cumParticulateP.kg.ha.3, color= Scenario),size=0.5)
+                                    }else
+                                        if(input$Hill_variable == "Total.P..kg.ha.3."){
+                                            p3 <- p3 + geom_line(aes(y=cumTotalP.kg.ha.3, color= Scenario),size=0.5)
+                                        }else
+                                            if(input$Hill_variable == "Particle.Class.1.Fraction"){
+                                                p3 <- p3 + geom_line(aes(y=cumParticle.Class.1.Fraction, color= Scenario),size=0.5)
+                                            }else
+                                                if(input$Hill_variable == "Particle.Class.2.Fraction"){
+                                                    p3 <- p3 + geom_line(aes(y=cumParticle.Class.2.Fraction, color= Scenario),size=0.5)
+                                                }else
+                                                    if(input$Hill_variable == "Particle.Class.3.Fraction"){
+                                                        p3 <- p3 + geom_line(aes(y=cumParticle.Class.3.Fraction, color= Scenario),size=0.5)
+                                                    }else
+                                                        if(input$Hill_variable == "Particle.Class.4.Fraction"){
+                                                            p3 <- p3 + geom_line(aes(y=cumParticle.Class.4.Fraction, color= Scenario),size=0.5)
+                                                        }else
+                                                            if(input$Hill_variable == "Particle.Class.5.Fraction"){
+                                                                p3 <- p3 + geom_line(aes(y=cumParticle.Class.5.Fraction, color= Scenario),size=0.5)
+                                                            }else
+                                                                if(input$Hill_variable == "Particle.Fraction.Under.0.016.mm"){
+                                                                    p3 <- p3 + geom_line(aes(y=cumParticle.Fraction.Under.0.016.mm, color= Scenario),size=0.5)
+                                                                }else
+                                                                    if(input$Hill_variable == "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."){
+                                                                        p3 <- p3 + geom_line(aes(y=cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color= Scenario),size=0.5)
+                                                                    }
+        
+        
+        p3 <- p3 +  theme_bw()+
+            theme(axis.title = element_text(size=10,color="Black",face="bold"),
+                  axis.text = element_text(size=10,color="BLACK",face="bold"),
+                  legend.title = element_text(size=10,color="BLACK",face="bold"),
+                  legend.text = element_text(size=10,color="BLACK"),
+                  legend.position = "none")+
+            labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+        # +scale_fill_brewer(palette="spectral")
+        
+        
+        
+        p3
+        
+    })
     
     
     ############## plots of cumulative absolute values of variable   ############## 
-    ############## vs cumulative percent of total hillslope area   ############## 
+    ############## vs cumulative percent of total hillslope area/ channel length   ############## 
     
     output$Plot_vs_cumPercArea_abs <- renderPlotly({
         
@@ -373,7 +442,7 @@ server <- function(input, output, session) {
                     p2 <- p2 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
                 }else
                     if(input$Hill_variable == "Soil.Loss..kg.ha."){
-                        p0.5 <- p2 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                        p2 <- p2 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
                     }else
                         if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
                             p2 <- p2 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
@@ -426,7 +495,83 @@ server <- function(input, output, session) {
         
         p2
         
-    })    
+    })
+    
+    
+    
+    output$Plot_vs_cumPercLen_abs <- renderPlotly({
+        
+        req(input$Hill_variable)
+        
+        p4 <- hill_arr_by_var_abs()  %>% ggplot(aes(x=cumPercLen))
+        if(input$Hill_variable == "Runoff..mm."){
+            p4 <- p4 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
+        }else
+            if(input$Hill_variable == "Lateral.Flow..mm."){
+                p4 <- p4 + geom_line(aes(y=cumLateralflow.mm, color= Scenario),size=0.5)
+            }else
+                if(input$Hill_variable == "Baseflow..mm."){
+                    p4 <- p4 + geom_line(aes(y=cumBaseflow.mm, color= Scenario),size=0.5)
+                }else
+                    if(input$Hill_variable == "Soil.Loss..kg.ha."){
+                        p4 <- p4 + geom_line(aes(y=cumSoilLoss.kg.ha, color= Scenario),size=0.5)
+                    }else
+                        if(input$Hill_variable == "Sediment.Deposition..kg.ha."){
+                            p4 <- p4 + geom_line(aes(y=cumSedDep.kg.ha, color= Scenario),size=0.5)
+                        }else
+                            if(input$Hill_variable == "Sediment.Yield..kg.ha."){
+                                p4 <- p4 + geom_line(aes(y=cumSedYield.kg.ha, color= Scenario),size=0.5)
+                            }else
+                                if(input$Hill_variable == "Solub..React..P..kg.ha.3."){
+                                    p4 <- p4 + geom_line(aes(y=cumSRP.kg.ha.3, color= Scenario),size=0.5)
+                                }else
+                                    if(input$Hill_variable == "Particulate.P..kg.ha.3."){
+                                        p4 <- p4 + geom_line(aes(y=cumParticulateP.kg.ha.3, color= Scenario),size=0.5)
+                                    }else
+                                        if(input$Hill_variable == "Total.P..kg.ha.3."){
+                                            p4 <- p4 + geom_line(aes(y=cumTotalP.kg.ha.3, color= Scenario),size=0.5)
+                                        }else
+                                            if(input$Hill_variable == "Particle.Class.1.Fraction"){
+                                                p4 <- p4 + geom_line(aes(y=cumParticle.Class.1.Fraction, color= Scenario),size=0.5)
+                                            }else
+                                                if(input$Hill_variable == "Particle.Class.2.Fraction"){
+                                                    p4 <- p4 + geom_line(aes(y=cumParticle.Class.2.Fraction, color= Scenario),size=0.5)
+                                                }else
+                                                    if(input$Hill_variable == "Particle.Class.3.Fraction"){
+                                                        p4 <- p4 + geom_line(aes(y=cumParticle.Class.3.Fraction, color= Scenario),size=0.5)
+                                                    }else
+                                                        if(input$Hill_variable == "Particle.Class.4.Fraction"){
+                                                            p4 <- p4 + geom_line(aes(y=cumParticle.Class.4.Fraction, color= Scenario),size=0.5)
+                                                        }else
+                                                            if(input$Hill_variable == "Particle.Class.5.Fraction"){
+                                                                p4 <- p4 + geom_line(aes(y=cumParticle.Class.5.Fraction, color= Scenario),size=0.5)
+                                                            }else
+                                                                if(input$Hill_variable == "Particle.Fraction.Under.0.016.mm"){
+                                                                    p4 <- p4 + geom_line(aes(y=cumParticle.Fraction.Under.0.016.mm, color= Scenario),size=0.5)
+                                                                }else
+                                                                    if(input$Hill_variable == "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."){
+                                                                        p4 <- p4 + geom_line(aes(y=cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color= Scenario),size=0.5)
+                                                                    }
+        
+        
+        p4 <- p4 +  theme_bw()+
+            theme(axis.title = element_text(size=10,color="Black",face="bold"),
+                  axis.text = element_text(size=10,color="BLACK",face="bold"),
+                  legend.title = element_text(size=10,color="BLACK",face="bold"),
+                  legend.text = element_text(size=10,color="BLACK"),
+                  legend.position = "none")+
+            labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+        # +scale_fill_brewer(palette="spectral")
+        
+        
+        
+        p4
+        
+    })
+    
+    
+    
+    
     
     
 }
