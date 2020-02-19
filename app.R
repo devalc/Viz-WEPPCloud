@@ -344,7 +344,7 @@ server <- function(input, output, session) {
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
             labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
-        # +scale_fill_brewer(palette="spectral")
+        
         
         
         
@@ -415,7 +415,7 @@ server <- function(input, output, session) {
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
             labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
-        # +scale_fill_brewer(palette="spectral")
+        
         
         
         
@@ -488,8 +488,9 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
+            # scale_color_brewer(palette="RdYlGn") +
             labs(x="Percent of total hillslope area",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario")
-        # +scale_fill_brewer(palette="spectral")
+        
         
         
         
@@ -560,7 +561,7 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+            labs(x="Percent of total channel length",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario")
         # +scale_fill_brewer(palette="spectral")
         
         
