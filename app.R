@@ -118,10 +118,10 @@ ui <- navbarPage("viz-WEPPCloud",
                               helpText("max. file size is 32MB"),
                               
                               
-                              uiOutput("sp_selectfile"),
-                              uiOutput("sp_wshed"),
-                              uiOutput("sp_var"),
-                              uiOutput("sp_scen")
+                              # uiOutput("sp_selectfile"),
+                              # uiOutput("sp_wshed"),
+                              # uiOutput("sp_var"),
+                              # uiOutput("sp_scen")
                           ),
                           
                           # Main panel for displaying outputs ----
