@@ -19,17 +19,15 @@ ui <- navbarPage("viz-WEPPCloud",
                  
                  ## set the theme
                  
-                 theme = shinytheme(theme = "sandstone"),
+                 theme = shinytheme(theme = "flatly"),
                  
                  tabPanel("Hillslope",
                           sidebarPanel(
-                              #uploading the file 
-                              # fileinput() function is used to get the file upload contorl option
-                              fileInput("Hill_file",label ="Uplaod 'Hillslope' file (*_hill_*.csv)", 
-                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
-                              helpText("max. file size is 32MB"),
                               
+                              radioButtons(inputId = "DefOrUserUpload_H",label = "",
+                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
+                              uiOutput("H_FileInput"),
                               uiOutput("Hill_selectfile"),
                               uiOutput("Hill_wshed"),
                               uiOutput("Hill_var"),
@@ -52,13 +50,13 @@ ui <- navbarPage("viz-WEPPCloud",
                  
                  tabPanel("Channel",
                           sidebarPanel(
-                              #uploading the file 
-                              # fileinput() function is used to get the file upload contorl option
-                              fileInput("Chan_file",label ="Uplaod 'Channel' file (*_chn_*.csv)", 
-                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
-                              helpText("max. file size is 32MB"),
                               
                               
+                              radioButtons(inputId = "DefOrUserUpload_C",label = "",
+                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                              
+                              
+                              uiOutput("C_FileInput"),
                               uiOutput("Chan_selectfile"),
                               uiOutput("Chan_wshed"),
                               uiOutput("Chan_var"),
@@ -82,19 +80,23 @@ ui <- navbarPage("viz-WEPPCloud",
                           sidebarPanel(
                               #uploading the file 
                               # fileinput() function is used to get the file upload contorl option
-                              fileInput("Wshed_file",label ="Uplaod 'Watershed' file (*_out_*.csv)", 
-                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
-                              helpText("max. file size is 32MB"),
+                              # fileInput("Wshed_file",label ="Uplaod 'Watershed' file (*_out_*.csv)", 
+                              #           multiple = F, placeholder = "No file selected", accept = ".csv" ),
+                              # helpText("max. file size is 32MB"),
+                              
+                              radioButtons(inputId = "DefOrUserUpload_W",label = "",
+                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               # uiOutput("Wshed_selectfile"),
+                              
+                              uiOutput("W_FileInput"),
                               uiOutput("Wshed_wshed"),
                               
                               radioButtons(inputId = "ScenVvar",label = "Select heatmap or specific variable",
                                            choices = c("Heatmap"="Heatmap","Bar Chart"="Bar Chart"), selected = "Heatmap")
                               
-                              # uiOutput("Wshed_var"),
-                              # uiOutput("Wshed_scen")
+                              
                           ),
                           
                           # Main panel for displaying outputs ----
@@ -106,37 +108,8 @@ ui <- navbarPage("viz-WEPPCloud",
                                   plotOutput("Plot9",height = "800px", width ="800px" )
                                   
                               )
-                              )
-                 ),
-                 
-                 tabPanel("Spatial-Viz",
-                          sidebarPanel(
-                              #uploading the file 
-                              # fileinput() function is used to get the file upload contorl option
-                              fileInput("spfile",label ="Uplaod WEPPCloud Outputs (*.csv files)", 
-                                        multiple = F, placeholder = "No file selected", accept = ".csv" ),
-                              helpText("max. file size is 32MB"),
-                              
-                              
-                              # uiOutput("sp_selectfile"),
-                              # uiOutput("sp_wshed"),
-                              # uiOutput("sp_var"),
-                              # uiOutput("sp_scen")
-                          ),
-                          
-                          # Main panel for displaying outputs ----
-                          mainPanel(
-                              
-                              fluidRow(
-                                  column(6, plotOutput("Plot10")),
-                                  column(6, plotOutput("Plot11"))
-                              ),
-                              fluidRow(
-                                  column(6, plotOutput("Plot12")),
-                                  column(6, plotOutput("Plot13"))
-                              )
-                          ))
-                 
+                          )
+                 )
                  
 )
 
@@ -148,111 +121,199 @@ server <- function(input, output, session) {
     
     ######## Server logic for UI generation for hillslope tab ##########
     
+    output$H_FileInput <- renderUI({
+        if(input$DefOrUserUpload_H == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Hill_file",label ="Uplaod 'Hillslope' file (*_hill_*.csv)", 
+                      multiple = F, placeholder = "No file selected", accept = ".csv" 
+            )}else
+                if(input$DefOrUserUpload_H == 'Default Data'){}
+    })
+    
+    
     Hill_data <- reactive({
-        file1 <- input$Hill_file
-        if(is.null(file1)){return()}
-        validate(
-            need(grepl("hill", input$Hill_file) == TRUE, "Wrong file provided. Hillslope filename should have '_hill_' in filename")
-        )
-        read.table(file=file1$datapath,head=TRUE,sep=",")
+        req(input$DefOrUserUpload_H)
+        if(input$DefOrUserUpload_H == 'Default Data'){
+            file1 <- "data/lt2020_2_hill_summary.csv"
+            read.table(file=file1,head=TRUE,sep=",")
+        }else
+            if(input$DefOrUserUpload_H == 'Upload data'){
+                file1 <- input$Hill_file
+                if(is.null(file1)){return()}
+                validate(
+                    need(grepl("hill", input$Hill_file) == TRUE, "Wrong file provided. Hillslope filename should have '_hill_' in filename")
+                )
+                read.table(file=file1$datapath,head=TRUE,sep=",")
+                
+            }
         
     })
+    
     
     output$Hill_var <- renderUI({
-        req(input$Hill_file)
-        selectInput("Hill_variable", "Select the variable of interest",  colnames(Hill_data()[1:25]),
-                    selected = colnames(Hill_data()[10]) )
-    })
-    
-    output$Hill_wshed <- renderUI({
-        req(input$Hill_file)
-        selectInput("Hill_wshed", "Select the watershed",  unique(Hill_data()$Watershed))
-    })
-    
-    
-    output$Wshed_wshed <- renderUI({
-        req(input$Wshed_file)
-        selectInput("Wshed_wshed", "Select the watershed",  unique(Wshed_data()$Watershed))
-    })
-    
-    
-    
-    ######## Server logic for UI generation for  Channel tab ##########
-    
-    Chan_data <- reactive({
-        file2 <- input$Chan_file
-        if(is.null(file2)){return()}
-        validate(
-            need(grepl("chn", input$Chan_file) == TRUE, "Wrong file provided. Channel filename should have '_chn_' in filename")
-        )
-        read.table(file=file2$datapath,head=TRUE,sep=",")
+        if(input$DefOrUserUpload_H == 'Upload data'){
+            req(Hill_data())
+            selectInput("Hill_variable", "Select the variable of interest",  colnames(Hill_data()[8:25]),
+                        selected = colnames(Hill_data()[10]) )
+        }else
+            if(input$DefOrUserUpload_H == 'Default Data'){
+                selectInput(inputId="Hill_variable",label="Select the variable of interest",
+                            choices =  as.character(unique(colnames(Hill_data())))[8:25],
+                            selected = as.character(unique(colnames(Hill_data())))[10],multiple = F)
+                
+            }
         
     })
     
-    output$Chan_var <- renderUI({
-        req(input$Chan_file)
-        selectInput("Chan_variable", "Select the variable of interest",  colnames(Chan_data()[7:17]),
-                    selected = colnames(Chan_data()[10]) )
+    
+    output$Hill_wshed <- renderUI({
+        if(input$DefOrUserUpload_H == 'Upload data'){
+            req(Hill_data())
+            selectInput("Hill_wshed", "Select the variable of interest",  unique(Hill_data()$Watershed))
+        }else
+            if(input$DefOrUserUpload_H == 'Default Data'){
+                
+                selectInput(inputId="Hill_wshed",label="Select the variable of interest",
+                            choices =   unique(Hill_data()$Watershed))
+                
+            }
+        
     })
     
+    
+    ######## Server logic for UI generation for Channel tab ##########
+    
+    output$C_FileInput <- renderUI({
+        if(input$DefOrUserUpload_C == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Chan_file",label ="Uplaod 'Channel' file (*_chn_*.csv)", 
+                      multiple = F, placeholder = "No file selected", accept = ".csv" 
+            )}else
+                if(input$DefOrUserUpload_C == 'Default Data'){}
+    })
+    
+    Chan_data <- reactive({
+        req(input$DefOrUserUpload_C)
+        if(input$DefOrUserUpload_C == 'Default Data'){
+            file2 <- "data/lt2020_2_chn_summary.csv"
+            read.table(file=file2,head=TRUE,sep=",")
+        }else
+            if(input$DefOrUserUpload_C == 'Upload data'){
+                file2 <- input$Chan_file
+                if(is.null(file2)){return()}
+                validate(
+                    need(grepl("chn", input$Chan_file) == TRUE, "Wrong file provided. Channel filename should have '_chn_' in filename")
+                )
+                read.table(file=file2$datapath,head=TRUE,sep=",")
+                
+            }
+        
+    })
+    
+    
+    output$Chan_var <- renderUI({
+        if(input$DefOrUserUpload_C == 'Upload data'){
+            req(Chan_data())
+            selectInput("Chan_variable", "Select the variable of interest",  colnames(Chan_data()[7:17]),
+                        selected = colnames(Chan_data()[10]) )
+        }else
+            if(input$DefOrUserUpload_C == 'Default Data'){
+                selectInput(inputId="Chan_variable",label="Select the variable of interest",
+                            choices =  as.character(unique(colnames(Chan_data())))[7:17],
+                            selected = as.character(unique(colnames(Chan_data())))[10],multiple = F)
+                
+            }
+        
+    })
+    
+    
     output$Chan_wshed <- renderUI({
-        req(input$Chan_file)
-        selectInput("Chan_wshed", "Select the watershed",  unique(Chan_data()$Watershed))
+        if(input$DefOrUserUpload_C == 'Upload data'){
+            req(Chan_data())
+            selectInput("Chan_wshed", "Select the variable of interest",  unique(Chan_data()$Watershed))
+        }else
+            if(input$DefOrUserUpload_C == 'Default Data'){
+                
+                selectInput(inputId="Chan_wshed",label="Select the variable of interest",
+                            choices =   unique(Chan_data()$Watershed))
+                
+            }
+        
     })
     
     
     ######## Server logic for UI generation for  Watersheds tab ##########
     
+    output$W_FileInput <- renderUI({
+        if(input$DefOrUserUpload_W == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Wshed_file",label ="Uplaod 'Watershed' file (*_out_*.csv)", 
+                      multiple = F, placeholder = "No file selected", accept = ".csv" 
+            )}else
+                if(input$DefOrUserUpload_W == 'Default Data'){}
+    })
+    
+    
     Wshed_data <- reactive({
-        file3 <- input$Wshed_file
-        if(is.null(file3)){return()}
-        validate(
-            need(grepl("out", input$Wshed_file) == TRUE, "Wrong file provided. Watershed filename should have '_out_' in filename")
-        )
-        read.table(file=file3$datapath,head=TRUE,sep=",")
+        req(input$DefOrUserUpload_W)
+        if(input$DefOrUserUpload_W == 'Default Data'){
+            file3 <- "data/lt2020_2_out_summary.csv"
+            read.table(file=file3,head=TRUE,sep=",")
+        }else
+            if(input$DefOrUserUpload_W == 'Upload data'){
+                file3 <- input$Wshed_file
+                if(is.null(file3)){return()}
+                validate(
+                    need(grepl("out", input$Wshed_file) == TRUE, "Wrong file provided. Watershed filename should have '_out_' in filename")
+                )
+                read.table(file=file3$datapath,head=TRUE,sep=",")
+                
+            }
         
     })
     
-    output$Wshed_var <- renderUI({
-        req(input$Wshed_file)
-        selectInput("Wshed_variable", "Select the variable of interest",  colnames(Wshed_data()[7:17]),
-                    selected = colnames(Wshed_data()[10]) )
+    output$Wshed_wshed <- renderUI({
+        if(input$DefOrUserUpload_W == 'Upload data'){
+            req(Wshed_data())
+            selectInput("Wshed_wshed", "Select the variable of interest",  unique(Wshed_data()$Watershed))
+        }else
+            if(input$DefOrUserUpload_W == 'Default Data'){
+                
+                selectInput(inputId="Wshed_wshed",label="Select the variable of interest",
+                            choices =   unique(Wshed_data()$Watershed))
+                
+            }
+        
     })
     
-    output$Wshed_wshed <- renderUI({
-        req(input$Wshed_file)
-        selectInput("wshed", "Select the watershed",  unique(Wshed_data()$Watershed))
-    })
+    
     
     ################# Plotting logic for HILLSLOPE DF (subsetting)#################
     
     hill_subset <- reactive({
-        req(input$Hill_file)
-        Hill_data() %>% 
-            dplyr::filter(Watershed %in% input$Hill_wshed) 
+        req(Hill_data())
+        Hill_data() %>%
+            dplyr::filter(Watershed %in% input$Hill_wshed)
     })
     
     
     ################# Plotting logic for CHANNEL DF (subsetting)#################
     
     Chan_subset <- reactive({
-        req(input$Chan_file)
+        req(Chan_data())
         Chan_data() %>% 
             dplyr::filter(Watershed %in% input$Chan_wshed) 
     })
     
     
+    
     ################# Plotting logic for WATERSHED DF (subsetting)#################
     
     Wshed_subset <- reactive({
-        req(input$Wshed_file)
+        req(Wshed_data())
         Wshed_data() %>% 
-            dplyr::filter(Watershed %in% input$wshed) 
+            dplyr::filter(Watershed %in% input$Wshed_wshed) 
     })
-    
-    # # TEST To SEE if the dataframe from the reactive func is accessible
-                    output$tab1 <- renderTable(
-                        Wshed_subset() %>% head(100) )
     
     ############## Dataframe calculating cumulative percent of total variable: Hillslope   ############## 
     
@@ -280,9 +341,14 @@ server <- function(input, output, session) {
             ungroup()
     })
     
+    # output$tab1 <- renderTable(
+    #   hill_arr_by_var() %>% head(100) )
     
-    ############## Dataframe calculating cumulative absolute value of variable: Hillslope   ############## 
     
+    # 
+    # 
+    # ############## Dataframe calculating cumulative absolute value of variable: Hillslope   ############## 
+    # 
     hill_arr_by_var_abs <- reactive({
         hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
             mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
@@ -305,7 +371,8 @@ server <- function(input, output, session) {
                    cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
             ) %>%
             ungroup()
-    })  
+    })
+    
     
     
     ############## Dataframe calculating cumulative percent of total variable: Channel   ############## 
@@ -344,14 +411,15 @@ server <- function(input, output, session) {
             ungroup()})
     
     
-    ##############    ##############    ##############    ############## 
-    ############## Hillslope plotting server logic   ############## 
-    ##############    ##############    ##############    ############## 
     
-    
-    ############## plots of cumulative percent of total variable   ############## 
-    ############## vs cumulative percent of total hillslope area/ channel length   ############## 
-    
+    # ##############    ##############    ##############    ############## 
+    # ############## Hillslope plotting server logic   ############## 
+    # ##############    ##############    ##############    ############## 
+    # 
+    # 
+    # ############## plots of cumulative percent of total variable   ############## 
+    # ############## vs cumulative percent of total hillslope area/ channel length   ############## 
+    # 
     output$Plot_vs_cumPercArea <- renderPlotly({
         
         req(input$Hill_variable)
@@ -430,8 +498,8 @@ server <- function(input, output, session) {
         p1
         
     })
-    
-    
+    # 
+    # 
     output$Plot_vs_cumPercLen <- renderPlotly({
         
         req(input$Hill_variable)
@@ -510,11 +578,11 @@ server <- function(input, output, session) {
         p3
         
     })
-    
-    
-    ############## plots of cumulative absolute values of variable   ############## 
-    ############## vs cumulative percent of total hillslope area/ channel length   ############## 
-    
+    # 
+    # 
+    # ############## plots of cumulative absolute values of variable   ############## 
+    # ############## vs cumulative percent of total hillslope area/ channel length   ############## 
+    # 
     output$Plot_vs_cumPercArea_abs <- renderPlotly({
         
         req(input$Hill_variable)
@@ -594,9 +662,9 @@ server <- function(input, output, session) {
         p2
         
     })
-    
-    
-    
+    # 
+    # 
+    # 
     output$Plot_vs_cumPercLen_abs <- renderPlotly({
         
         req(input$Hill_variable)
@@ -677,6 +745,7 @@ server <- function(input, output, session) {
     })
     
     
+    
     ##############    ##############    ##############    ############## 
     ############## Channel plotting server logic   ############## 
     ##############    ##############    ##############    ############## 
@@ -718,7 +787,7 @@ server <- function(input, output, session) {
                                            "Thinn93.2020.kikrcs.chn"="#32CD32",
                                            "Thinn96.2020.kikrcs.chn"="#00FF00",
                                            "CurCond.2020.ki5krcs.chn"="#008000"))
-            # +scale_color_brewer(palette="RdYlGn") 
+        # +scale_color_brewer(palette="RdYlGn") 
         
         
         
@@ -824,21 +893,21 @@ server <- function(input, output, session) {
     
     output$Plot9 <- renderPlot({
         # req(input$Wshed_wshed)
-
+        
         Wshed_subset <- Wshed_subset()
-
+        
         if (input$ScenVvar == "Heatmap") {
             d <-  Wshed_subset[,c(2,7:20)] %>% dplyr::mutate_if(is.numeric, scale)
-
+            
             d.m <- reshape2::melt(d)
-
-
+            
+            
             # # TEST To SEE if the dataframe from the reactive func is accessible
             output$tab1 <- renderTable(
                 d.m %>% head(100) )
-
+            
             # a <- plotly::plot_ly(x = ~Scenario, y= ~variable,  z= d.m, type = "heatmap")
-
+            
             ggplot(d.m, aes(Scenario, variable,  fill= value)) +
                 geom_tile(inherit.aes = TRUE)  +
                 scale_fill_distiller(palette = "BrBG", direction = -1) +
@@ -846,41 +915,44 @@ server <- function(input, output, session) {
                     axis.text.x = element_text(angle = 90,colour = "Black", size = 12, face = "bold"),
                     axis.text.y = element_text(colour = "Black", size = 12, face = 'bold'),
                     axis.title = element_blank()
-
+                    
                 )
-
-            }else
-                if (input$ScenVvar == "Bar Chart") {
-
-                    d <-  Wshed_subset[,c(2,7:20)]
-
-                    d.m <- reshape2::melt(d)
-
-                    d.m <- d.m %>%
-                        group_by(variable) %>%
-                        mutate(total = sum(value),
-                               share = (value/total)*100) %>%
-                        ungroup()
-
-                    # # TEST To SEE if the dataframe from the reactive func is accessible
-                    # output$tab1 <- renderTable(
-                    #     d.m %>% head(100) )
-
-
-                    ggplot(d.m) +
-
-                        geom_bar(aes(y = share, x = variable, fill = Scenario), stat = "identity", position = "dodge") +
-                        theme(
-                            axis.text.x = element_text(angle = 45, vjust = ,colour = "Black", size = 12, face = "bold"),
-                            axis.text.y = element_text(colour = "Black", size = 12, face = 'bold'),
-                            axis.title.x = element_blank(),
-                            axis.title.y = element_text(colour = "Black", size = 12, face = 'bold')
-                        ) +coord_flip() + labs(x="Percent of total across all scenarios") + scale_fill_brewer(
-                            palette = "RdYlGn")
-
-
-                }
+            
+        }else
+            if (input$ScenVvar == "Bar Chart") {
+                
+                d <-  Wshed_subset[,c(2,7:20)]
+                
+                d.m <- reshape2::melt(d)
+                
+                d.m <- d.m %>%
+                    group_by(variable) %>%
+                    mutate(total = sum(value),
+                           share = (value/total)*100) %>% 
+                    ungroup()
+                
+                # # TEST To SEE if the dataframe from the reactive func is accessible
+                # output$tab1 <- renderTable(
+                #     d.m %>% head(100) )
+                
+                
+                ggplot(d.m) +
+                    
+                    geom_bar(aes(y = share, x = variable, fill = reorder(Scenario, -share)), stat = "identity", position = "dodge") +
+                    theme(
+                        axis.text.x = element_text(angle = 45, vjust = ,colour = "Black", size = 12, face = "bold"),
+                        axis.text.y = element_text(colour = "Black", size = 12, face = 'bold'),
+                        axis.title.x = element_blank(),
+                        axis.title.y = element_text(colour = "Black", size = 12, face = 'bold'),
+                        legend.title = element_blank()
+                    ) +coord_flip() + labs(x="Percent of total across all scenarios") + scale_fill_brewer(
+                        palette = "RdYlGn")
+                
+                
+            }
     })
+    
+    
     
     
 }
