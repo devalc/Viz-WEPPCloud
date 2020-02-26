@@ -565,16 +565,21 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario") +
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
+            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario") 
+        if(input$DefOrUserUpload_H == 'Default Data'){
+            p1 <- p1 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_H == 'Upload Data'){
+                                                       p1 <- p1 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -645,16 +650,22 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario") +
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
+            labs(x="Percent of total channel length",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+        
+        if(input$DefOrUserUpload_H == 'Default Data'){
+            p3 <- p3 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_H == 'Upload Data'){
+                                                       p3 <- p3 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -729,16 +740,21 @@ server <- function(input, output, session) {
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
             # scale_color_brewer(palette="RdYlGn") +
-            labs(x="Percent of total hillslope area",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario") +
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
+            labs(x="Percent of total hillslope area",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario") 
+        if(input$DefOrUserUpload_H == 'Default Data'){
+            p2 <- p2 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_H == 'Upload Data'){
+                                                       p2 <- p2 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -810,17 +826,21 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total channel length",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario") +
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
-        # +scale_fill_brewer(palette="spectral")
+            labs(x="Percent of total channel length",y=paste("Cumulative", input$Hill_variable, sep = " "), title="",colour="Scenario") 
+        if(input$DefOrUserUpload_H == 'Default Data'){
+            p4 <- p4 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_H == 'Upload Data'){
+                                                       p4 <- p4 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -861,17 +881,21 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total contributing channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")+
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
-        # +scale_color_brewer(palette="RdYlGn") 
+            labs(x="Percent of total contributing channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+        if(input$DefOrUserUpload_C == 'Default Data'){
+            p5 <- p5 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_C == 'Upload data'){
+                                                       p5 <- p5 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -907,17 +931,21 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")+
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
-        # +scale_color_brewer(palette="RdYlGn") 
+            labs(x="Percent of total channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+        if(input$DefOrUserUpload_C == 'Default Data'){
+            p6 <- p6 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_C == 'Upload data'){
+                                                       p6 <- p6 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
@@ -953,17 +981,21 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total channel length",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")+
-            scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
-                                           "HighSev.2020.kikrcs.chn"="#B22222",
-                                           "ModSev.2020.kikrcs.chn"="#DC143C",
-                                           "LowSev.2020.kikrcs.chn"="#FF6347",
-                                           "PrescFire.2020.kikrcs.chn"="#E9967A",
-                                           "Thinn85.2020.kikrcs.chn"="#7CFC00",
-                                           "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                           "Thinn96.2020.kikrcs.chn"="#00FF00",
-                                           "CurCond.2020.ki5krcs.chn"="#008000"))
-        # +scale_color_brewer(palette="RdYlGn") 
+            labs(x="Percent of total channel length",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+        if(input$DefOrUserUpload_C == 'Default Data'){
+            p7 <- p7 +
+                scale_color_manual(values = c( "SimFire.2020.kikrcs.chn"="#FF0000",
+                                               "HighSev.2020.kikrcs.chn"="#B22222",
+                                               "ModSev.2020.kikrcs.chn"="#DC143C",
+                                               "LowSev.2020.kikrcs.chn"="#FF6347",
+                                               "PrescFire.2020.kikrcs.chn"="#E9967A",
+                                               "Thinn85.2020.kikrcs.chn"="#7CFC00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn"="#008000"))}else
+                                                   if(input$DefOrUserUpload_C == 'Upload data'){
+                                                       p7 <- p7 +
+                                                           scale_color_brewer(palette = "virdis")}
         
         
         
