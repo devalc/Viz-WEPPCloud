@@ -28,7 +28,7 @@ ui <- navbarPage("viz-WEPPCloud",
                           sidebarPanel(
                               
                               radioButtons(inputId = "DefOrUserUpload_H",label = "",
-                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
                               uiOutput("Hill_selectfile"),
@@ -56,7 +56,7 @@ ui <- navbarPage("viz-WEPPCloud",
                               
                               
                               radioButtons(inputId = "DefOrUserUpload_C",label = "",
-                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               uiOutput("C_FileInput"),
@@ -88,7 +88,7 @@ ui <- navbarPage("viz-WEPPCloud",
                               # helpText("max. file size is 32MB"),
                               
                               radioButtons(inputId = "DefOrUserUpload_W",label = "",
-                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               # uiOutput("Wshed_selectfile"),
@@ -120,7 +120,7 @@ ui <- navbarPage("viz-WEPPCloud",
                           sidebarPanel(
                               
                               radioButtons(inputId = "DefOrUserUpload_S",label = "",
-                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               uiOutput("S_FileInput"),
