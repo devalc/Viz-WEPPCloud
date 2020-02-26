@@ -12,6 +12,7 @@ library(shinythemes)
 library(shinycssloaders)
 library(plotly)
 library(leaflet)
+library(tmap)
 
 options(shiny.maxRequestSize = 32*1024^2)
 
@@ -344,11 +345,13 @@ server <- function(input, output, session) {
     output$S_var <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             req(Spatial_data())
-            selectInput("S_variable", "Select the variable of interest",  colnames(Spatial_data()))
+            selectInput("S_variable", "Select the variable of interest",  colnames(Spatial_data()),
+                        selected = colnames(Spatial_data())[5],multiple = F)
         }else
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_variable",label="Select the variable of interest",
-                            choices =  as.character(colnames(Spatial_data())),multiple = F)
+                            choices =  as.character(colnames(Spatial_data())),
+                            selected = colnames(Spatial_data())[5], multiple = F)
                 
             }
         
@@ -357,31 +360,15 @@ server <- function(input, output, session) {
     
     #### from what I understand WGS84 latlon coord system needed to use with leaflet 
     
-    # output$Plot11 <- leaflet::renderLeaflet({
-    #   req(Spatial_data())
-    #   tm <- tm_shape(Spatial_data()) + tmap::tm_polygons(input$S_variable, 
-    #                                                      id = "watershed",
-    #                                                      palette = "reds", legend.hist = TRUE, style = "sd")
-    #   tmap_leaflet(tm)
-    # })
-    
-    
-    output$Plot11 <- renderLeaflet({
+    output$Plot11 <- leaflet::renderLeaflet({
         req(Spatial_data())
-        pal <- colorNumeric("viridis", NULL)
-        # pal <- colorBin("YlOrRd", domain = Spatial_data()$input$S_variable)
-        m <- leaflet() %>%
-            addTiles() %>%
-            setView( lng = -120., lat = 39.1, zoom = 10 ) %>%
-            addProviderTiles("Esri.WorldImagery") %>%
-            addPolygons(data = Spatial_data(),
-                        fillColor = ~ pal(Spatial_data()$input$S_variable),
-                        opacity = 1,
-                        weight = 2,
-                        # color = "white",
-                        dashArray = "3",
-                        fillOpacity = 0.7)
+        req(input$S_variable)
+        tm <- tm_shape(Spatial_data()) + tmap::tm_polygons(input$S_variable,
+                                                           id = "watershed",
+                                                           palette = "viridis", legend.hist = TRUE, style = "log10_pretty")
+        tmap_leaflet(tm)
     })
+
     
     
     
