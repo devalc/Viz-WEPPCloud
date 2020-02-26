@@ -11,6 +11,7 @@ library(tidyverse)
 library(shinythemes)
 library(shinycssloaders)
 library(plotly)
+library(leaflet)
 
 options(shiny.maxRequestSize = 32*1024^2)
 
@@ -107,6 +108,32 @@ ui <- navbarPage("viz-WEPPCloud",
                                   # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                                   # column(12, tableOutput("tab1"))
                                   plotOutput("Plot9",height = "800px", width ="800px")%>% withSpinner(color="#0dc5c1")
+                                  
+                              )
+                          )
+                 ),
+                 
+                 
+                 
+                 tabPanel("Spatial-Viz",
+                          sidebarPanel(
+                              
+                              radioButtons(inputId = "DefOrUserUpload_S",label = "",
+                                           choices = c("Use sample data"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                              
+                              
+                              uiOutput("S_FileInput"),
+                              uiOutput("S_var")
+                              
+                          ),
+                          
+                          # Main panel for displaying outputs ----
+                          mainPanel(
+                              
+                              fluidPage(
+                                  
+                                  leaflet::leafletOutput("Plot11",height = "800px", width ="800px" )%>% 
+                                      withSpinner(color="#0dc5c1")
                                   
                               )
                           )
@@ -285,6 +312,75 @@ server <- function(input, output, session) {
                 
             }
         
+    })
+    
+    
+    
+    
+    ######## Server logic for UI generation for spatial-Viz tab ##########
+    
+    output$S_FileInput <- renderUI({
+        if(input$DefOrUserUpload_S == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Spatial_file",label ="Uplaod subcatchements/Channels JSON file", 
+                      multiple = F, placeholder = "No file selected", accept = c(".JSON", ".geojson") 
+            )}else
+                if(input$DefOrUserUpload_S == 'Default Data'){}
+    })
+    
+    
+    Spatial_data <- reactive({
+        req(input$DefOrUserUpload_S)
+        if(input$DefOrUserUpload_S == 'Default Data'){
+            sf::st_read("data/lt_highsev_subcatchments_wgs84.geojson")
+        }else
+            if(input$DefOrUserUpload_S == 'Upload data'){
+                file4 <- input$Spatial_file
+                if(is.null(file4)){return()}
+                sf::st_read(file4$datapath)}
+        
+    })
+    
+    output$S_var <- renderUI({
+        if(input$DefOrUserUpload_S == 'Upload data'){
+            req(Spatial_data())
+            selectInput("S_variable", "Select the variable of interest",  colnames(Spatial_data()))
+        }else
+            if(input$DefOrUserUpload_S == 'Default Data'){
+                selectInput(inputId="S_variable",label="Select the variable of interest",
+                            choices =  as.character(colnames(Spatial_data())),multiple = F)
+                
+            }
+        
+    })
+    
+    
+    #### from what I understand WGS84 latlon coord system needed to use with leaflet 
+    
+    # output$Plot11 <- leaflet::renderLeaflet({
+    #   req(Spatial_data())
+    #   tm <- tm_shape(Spatial_data()) + tmap::tm_polygons(input$S_variable, 
+    #                                                      id = "watershed",
+    #                                                      palette = "reds", legend.hist = TRUE, style = "sd")
+    #   tmap_leaflet(tm)
+    # })
+    
+    
+    output$Plot11 <- renderLeaflet({
+        req(Spatial_data())
+        pal <- colorNumeric("viridis", NULL)
+        # pal <- colorBin("YlOrRd", domain = Spatial_data()$input$S_variable)
+        m <- leaflet() %>%
+            addTiles() %>%
+            setView( lng = -120., lat = 39.1, zoom = 10 ) %>%
+            addProviderTiles("Esri.WorldImagery") %>%
+            addPolygons(data = Spatial_data(),
+                        fillColor = ~ pal(Spatial_data()$input$S_variable),
+                        opacity = 1,
+                        weight = 2,
+                        # color = "white",
+                        dashArray = "3",
+                        fillOpacity = 0.7)
     })
     
     
