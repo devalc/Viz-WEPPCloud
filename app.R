@@ -9,6 +9,7 @@
 library(shiny)
 library(tidyverse)
 library(shinythemes)
+library(shinycssloaders)
 library(plotly)
 
 options(shiny.maxRequestSize = 32*1024^2)
@@ -39,12 +40,12 @@ ui <- navbarPage("viz-WEPPCloud",
                               
                               fluidRow(
                                   # column(6, tableOutput("tab1")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercArea")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercArea_abs"))
+                                  column(6, plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
+                                  column(6, plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               fluidRow(
-                                  column(6, plotlyOutput("Plot_vs_cumPercLen")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercLen_abs"))
+                                  column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
+                                  column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               )
                           )),
                  
@@ -67,11 +68,11 @@ ui <- navbarPage("viz-WEPPCloud",
                           mainPanel(
                               
                               fluidRow(
-                                  column(6,  plotlyOutput("Plot5")),
-                                  column(6, plotlyOutput("Plot6"))
+                                  column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
+                                  column(6, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1"))
                               ),
                               fluidRow(
-                                  column(12, plotlyOutput("Plot7"))
+                                  column(12, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1"))
                                   # column(6, plotlyOutput("Plot8"))
                               )
                           )),
@@ -105,7 +106,7 @@ ui <- navbarPage("viz-WEPPCloud",
                               fluidPage(
                                   # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                                   # column(12, tableOutput("tab1"))
-                                  plotOutput("Plot9",height = "800px", width ="800px" )
+                                  plotOutput("Plot9",height = "800px", width ="800px")%>% withSpinner(color="#0dc5c1")
                                   
                               )
                           )
