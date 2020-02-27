@@ -124,6 +124,8 @@ ui <- navbarPage("viz-WEPPCloud",
                               
                               
                               uiOutput("S_FileInput"),
+                              uiOutput("Spatial_wshed"),
+                              uiOutput("Spatial_scen"),
                               uiOutput("S_var")
                               
                           ),
@@ -333,7 +335,7 @@ server <- function(input, output, session) {
     Spatial_data <- reactive({
         req(input$DefOrUserUpload_S)
         if(input$DefOrUserUpload_S == 'Default Data'){
-            sf::st_read("data/lt_highsev_subcatchments_wgs84.geojson")
+            sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
         }else
             if(input$DefOrUserUpload_S == 'Upload data'){
                 file4 <- input$Spatial_file
@@ -341,6 +343,41 @@ server <- function(input, output, session) {
                 sf::st_read(file4$datapath)}
         
     })
+    
+    
+    output$Spatial_wshed <- renderUI({
+        if(input$DefOrUserUpload_S == 'Upload data'){
+            req(Spatial_data())
+            selectInput("S_wshed", "Select the variable of interest",  unique(Spatial_data()$Watershed),
+                        multiple = F)
+        }else
+            if(input$DefOrUserUpload_S == 'Default Data'){
+                selectInput(inputId="S_wshed",label="Select the variable of interest",
+                            choices =  unique(Spatial_data()$Watershed),
+                            multiple = F)
+                
+            }
+        
+    })
+    
+    
+    output$Spatial_scen <- renderUI({
+        if(input$DefOrUserUpload_S == 'Upload data'){
+            req(Spatial_data())
+            selectInput("S_scen", "Select the variable of interest",  unique(Spatial_data()$Scenario),
+                        multiple = F)
+        }else
+            if(input$DefOrUserUpload_S == 'Default Data'){
+                selectInput(inputId="S_scen",label="Select the variable of interest",
+                            choices =  unique(Spatial_data()$Scenario),
+                            multiple = F)
+                
+            }
+        
+    })
+    
+    
+    
     
     output$S_var <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
@@ -356,6 +393,7 @@ server <- function(input, output, session) {
             }
         
     })
+    
     
     
     #### from what I understand WGS84 latlon coord system needed to use with leaflet 
