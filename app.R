@@ -325,7 +325,7 @@ server <- function(input, output, session) {
     output$S_FileInput <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             message = 'max. file size is 32MB'
-            fileInput("Spatial_file",label ="Uplaod subcatchements/Channels JSON file", 
+            fileInput("Spatial_file",label ="Uplaod subcatchements/Channels JSON/geojson file", 
                       multiple = F, placeholder = "No file selected", accept = c(".JSON", ".geojson") 
             )}else
                 if(input$DefOrUserUpload_S == 'Default Data'){}
@@ -349,11 +349,12 @@ server <- function(input, output, session) {
         if(input$DefOrUserUpload_S == 'Upload data'){
             req(Spatial_data())
             selectInput("S_wshed", "Select the variable of interest",  unique(Spatial_data()$Watershed),
-                        multiple = F)
+                        selected = unique(Spatial_data()$Watershed)[3], multiple = F)
         }else
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_wshed",label="Select the variable of interest",
                             choices =  unique(Spatial_data()$Watershed),
+                            selected = unique(Spatial_data()$Watershed)[3],
                             multiple = F)
                 
             }
@@ -364,12 +365,14 @@ server <- function(input, output, session) {
     output$Spatial_scen <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             req(Spatial_data())
-            selectInput("S_scen", "Select the variable of interest",  unique(Spatial_data()$Scenario),
+            selectInput("S_scen", "Select the scenario of interest",  unique(Spatial_data()$Scenario),
+                        unique(Spatial_data()$Scenario)[2],
                         multiple = F)
         }else
             if(input$DefOrUserUpload_S == 'Default Data'){
-                selectInput(inputId="S_scen",label="Select the variable of interest",
+                selectInput(inputId="S_scen",label="Select the scenario of interest",
                             choices =  unique(Spatial_data()$Scenario),
+                            unique(Spatial_data()$Scenario)[2],
                             multiple = F)
                 
             }
@@ -394,16 +397,25 @@ server <- function(input, output, session) {
         
     })
     
+    ################# Plotting logic for WATERSHED DF (subsetting)#################
     
+    Spatial_subset <- reactive({
+        req(Spatial_data())
+        req(input$S_wshed)
+        Spatial_data() %>% 
+            dplyr::filter(Watershed %in% input$S_wshed & Scenario %in% input$S_scen) 
+    })
     
     #### from what I understand WGS84 latlon coord system needed to use with leaflet 
     
     output$Plot11 <- leaflet::renderLeaflet({
-        req(Spatial_data())
+        req(Spatial_subset())
+        req(input$S_scen)
         req(input$S_variable)
-        tm <- tm_shape(Spatial_data()) + tmap::tm_polygons(input$S_variable,
+        tm <- tm_shape(Spatial_subset()) + tmap::tm_polygons(input$S_variable,
                                                            id = "watershed",
                                                            palette = "viridis", legend.hist = TRUE, style = "log10_pretty")
+        
         tmap_leaflet(tm)
     })
 
