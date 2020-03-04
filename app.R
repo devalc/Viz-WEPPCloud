@@ -533,7 +533,7 @@ server <- function(input, output, session) {
         Chan_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Chan_variable, desc)%>%
             mutate(cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
                    cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
-                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100, ### fix total contributing area/ already a cumulative avalue in the channel file
+                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100,
                    cumDischarge.mm = cumsum(Discharge..mm.),
                    cumSediment.Yield..tonne. = cumsum(Sediment.Yield..tonne.),
                    cumChannel.Erosion..tonne. = cumsum(Channel.Erosion..tonne.),
