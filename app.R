@@ -13,6 +13,7 @@ library(shinycssloaders)
 library(plotly)
 library(leaflet)
 library(tmap)
+library(ggthemes)
 
 options(shiny.maxRequestSize = 100*1024^2)
 
@@ -70,8 +71,8 @@ ui <- navbarPage("viz-WEPPcloud",
                           mainPanel(
                               
                               fluidRow(
-                                  column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1"))
+                                  # column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
+                                  column(12, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1"))
                               ),
                               fluidRow(
                                   column(12, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1"))
@@ -335,7 +336,7 @@ server <- function(input, output, session) {
     Spatial_data <- reactive({
         req(input$DefOrUserUpload_S)
         if(input$DefOrUserUpload_S == 'Default Data'){
-            sf::st_read("data/lt2020_6_subcatchments_wgs84_split_wshed_and_scen.geojson")
+            sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
         }else
             if(input$DefOrUserUpload_S == 'Upload data'){
                 file4 <- input$Spatial_file
@@ -354,7 +355,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_wshed",label="Select the variable of interest",
                             choices =  unique(Spatial_data()$Watershed),
-                            selected = unique(Spatial_data()$Watershed)[11],
+                            selected = unique(Spatial_data()$Watershed)[3],
                             multiple = F)
                 
             }
@@ -372,7 +373,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_scen",label="Select the scenario of interest",
                             choices =  unique(Spatial_data()$Scenario),
-                            unique(Spatial_data()$Scenario)[1],
+                            unique(Spatial_data()$Scenario)[2],
                             multiple = F)
                 
             }
@@ -391,7 +392,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_variable",label="Select the variable of interest",
                             choices =  as.character(colnames(Spatial_data())),
-                            selected = colnames(Spatial_data())[1], multiple = F)
+                            selected = colnames(Spatial_data())[10], multiple = F)
                 
             }
         
