@@ -5,7 +5,7 @@ eventually work as a decision support tool.
 
 At present it has the capability to get WEPPCloud generated hillslope, channel and watershed output files and preprocesses them in the back end and perform visualizations both (spatial and non spatial plots) based on the user selected variables 
 
-## Find this applicaiton in action with the test data at the following URL:
+## Find this applicaiton in action here:
 
 https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
