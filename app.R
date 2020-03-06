@@ -319,8 +319,6 @@ server <- function(input, output, session) {
     })
     
     
-    
-    
     ######## Server logic for UI generation for spatial-Viz tab ##########
     
     output$S_FileInput <- renderUI({
@@ -336,7 +334,8 @@ server <- function(input, output, session) {
     Spatial_data <- reactive({
         req(input$DefOrUserUpload_S)
         if(input$DefOrUserUpload_S == 'Default Data'){
-            sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
+            # sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
+            readRDS("data/lt2020_6_subcatchments_wgs84_split_wshed_and_scen.RDS")
         }else
             if(input$DefOrUserUpload_S == 'Upload data'){
                 file4 <- input$Spatial_file
@@ -355,7 +354,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_wshed",label="Select the variable of interest",
                             choices =  unique(Spatial_data()$Watershed),
-                            selected = unique(Spatial_data()$Watershed)[3],
+                            selected = unique(Spatial_data()$Watershed)[19],
                             multiple = F)
                 
             }
@@ -373,7 +372,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_scen",label="Select the scenario of interest",
                             choices =  unique(Spatial_data()$Scenario),
-                            unique(Spatial_data()$Scenario)[2],
+                            unique(Spatial_data()$Scenario)[1],
                             multiple = F)
                 
             }
@@ -392,7 +391,7 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Default Data'){
                 selectInput(inputId="S_variable",label="Select the variable of interest",
                             choices =  as.character(colnames(Spatial_data())),
-                            selected = colnames(Spatial_data())[10], multiple = F)
+                            selected = colnames(Spatial_data())[4], multiple = F)
                 
             }
         
