@@ -35,7 +35,12 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Hill_selectfile"),
                               uiOutput("Hill_wshed"),
                               uiOutput("Hill_var"),
-                              uiOutput("Hill_scen")
+                              uiOutput("Hill_scen"),
+                              
+                              sliderInput("thresh_H", "Thresholding Percent:",
+                                          min = 0, max = 100,
+                                          value = 100, step = 5)    
+                              
                           ),
                           
                           # Main panel for displaying outputs ----
@@ -64,7 +69,12 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Chan_selectfile"),
                               uiOutput("Chan_wshed"),
                               uiOutput("Chan_var"),
-                              uiOutput("Chan_scen")
+                              uiOutput("Chan_scen"),
+                              
+                              
+                              sliderInput("thresh_C", "Thresholding Percent:",
+                                          min = 0, max = 100,
+                                          value = 100, step = 5)    
                           ),
                           
                           # Main panel for displaying outputs ----
@@ -72,10 +82,12 @@ ui <- navbarPage("viz-WEPPcloud",
                               
                               fluidRow(
                                   # column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
-                                  column(12, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1"))
+                                  column(6, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1")),
+                                  column(6, plotlyOutput("Plot6_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               fluidRow(
-                                  column(12, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1"))
+                                  column(6, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1")),
+                                  column(6, plotlyOutput("Plot7_abs")%>% withSpinner(color="#0dc5c1"))
                                   # column(6, plotlyOutput("Plot8"))
                               )
                           )),
@@ -167,7 +179,7 @@ server <- function(input, output, session) {
         req(input$DefOrUserUpload_H)
         if(input$DefOrUserUpload_H == 'Default Data'){
             file1 <- "data/lt2020_6_hill_summary.csv"
-            read.table(file=file1,head=TRUE,sep=",")
+            read.table(file=file1,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_H == 'Upload data'){
                 file1 <- input$Hill_file
@@ -175,7 +187,7 @@ server <- function(input, output, session) {
                 validate(
                     need(grepl("hill", input$Hill_file) == TRUE, "Wrong file provided. Hillslope filename should have '_hill_' in filename")
                 )
-                read.table(file=file1$datapath,head=TRUE,sep=",")
+                read.table(file=file1$datapath,header=TRUE,sep=",")
                 
             }
         
@@ -228,7 +240,7 @@ server <- function(input, output, session) {
         req(input$DefOrUserUpload_C)
         if(input$DefOrUserUpload_C == 'Default Data'){
             file2 <- "data/lt2020_6_chn_summary.csv"
-            read.table(file=file2,head=TRUE,sep=",")
+            read.table(file=file2,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_C == 'Upload data'){
                 file2 <- input$Chan_file
@@ -236,7 +248,7 @@ server <- function(input, output, session) {
                 validate(
                     need(grepl("chn", input$Chan_file) == TRUE, "Wrong file provided. Channel filename should have '_chn_' in filename")
                 )
-                read.table(file=file2$datapath,head=TRUE,sep=",")
+                read.table(file=file2$datapath,header=TRUE,sep=",")
                 
             }
         
@@ -290,7 +302,7 @@ server <- function(input, output, session) {
         req(input$DefOrUserUpload_W)
         if(input$DefOrUserUpload_W == 'Default Data'){
             file3 <- "data/lt2020_6_out_summary.csv"
-            read.table(file=file3,head=TRUE,sep=",")
+            read.table(file=file3,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_W == 'Upload data'){
                 file3 <- input$Wshed_file
@@ -298,7 +310,7 @@ server <- function(input, output, session) {
                 validate(
                     need(grepl("out", input$Wshed_file) == TRUE, "Wrong file provided. Watershed filename should have '_out_' in filename")
                 )
-                read.table(file=file3$datapath,head=TRUE,sep=",")
+                read.table(file=file3$datapath,header = TRUE,sep=",")
                 
             }
         
@@ -450,8 +462,8 @@ server <- function(input, output, session) {
     })
     
     ############## Dataframe calculating cumulative percent of total variable: Hillslope   ############## 
-    
-    hill_arr_by_var <- reactive({
+    ### this is the DF for plot 1 on hillslopes tab
+    hill_arr_by_var_HA <- reactive({
         hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
             mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                    cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
@@ -471,9 +483,35 @@ server <- function(input, output, session) {
                    cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction)/sum(Particle.Class.5.Fraction)*100,
                    cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm)/sum(Particle.Fraction.Under.0.016.mm)*100,
                    cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)/sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)*100
-            ) %>%
+            ) %>% dplyr::filter(cumPercArea<input$thresh_H) %>%
             ungroup()
     })
+    
+    ## this is the dataframe for plot 3 on the hillslopes tab (the channel length plot)
+    hill_arr_by_var_CL <- reactive({
+        hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
+            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
+                   cumRunoff.mm = cumsum(Runoff..mm.)/sum(Runoff..mm.)*100,
+                   cumLateralflow.mm = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
+                   cumBaseflow.mm = cumsum(Baseflow..mm.)/sum(Baseflow..mm.)*100,
+                   cumSoilLoss.kg.ha = cumsum(Soil.Loss..kg.ha.)/sum(Soil.Loss..kg.ha.)*100,
+                   cumSedDep.kg.ha = cumsum(Sediment.Deposition..kg.ha.)/sum(Sediment.Deposition..kg.ha.)*100,
+                   cumSedYield.kg.ha = cumsum(Sediment.Yield..kg.ha.)/sum(Sediment.Yield..kg.ha.)*100,
+                   cumSRP.kg.ha.3 = cumsum(Solub..React..P..kg.ha.3.)/sum(Solub..React..P..kg.ha.3.)*100,
+                   cumParticulateP.kg.ha.3 = cumsum(Particulate.P..kg.ha.3.)/sum(Particulate.P..kg.ha.3.)*100,
+                   cumTotalP.kg.ha.3 = cumsum(Total.P..kg.ha.3.)/sum(Total.P..kg.ha.3.)*100,
+                   cumParticle.Class.1.Fraction = cumsum(Particle.Class.1.Fraction)/sum(Particle.Class.1.Fraction)*100,
+                   cumParticle.Class.2.Fraction = cumsum(Particle.Class.2.Fraction)/sum(Particle.Class.2.Fraction)*100,
+                   cumParticle.Class.3.Fraction = cumsum(Particle.Class.3.Fraction)/sum(Particle.Class.3.Fraction)*100,
+                   cumParticle.Class.4.Fraction = cumsum(Particle.Class.4.Fraction)/sum(Particle.Class.4.Fraction)*100,
+                   cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction)/sum(Particle.Class.5.Fraction)*100,
+                   cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm)/sum(Particle.Fraction.Under.0.016.mm)*100,
+                   cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)/sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)*100
+            ) %>% dplyr::filter(cumPercLen<input$thresh_H) %>%
+            ungroup()
+    })
+    
     
     # output$tab1 <- renderTable(
     #   hill_arr_by_var() %>% head(100) )
@@ -482,8 +520,8 @@ server <- function(input, output, session) {
     # 
     # 
     # ############## Dataframe calculating cumulative absolute value of variable: Hillslope   ############## 
-    # 
-    hill_arr_by_var_abs <- reactive({
+    # ### this is the DF for plot 2 on hillslopes tab
+    hill_arr_by_var_HA_abs <- reactive({
         hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
             mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
                    cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
@@ -503,15 +541,40 @@ server <- function(input, output, session) {
                    cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction),
                    cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm),
                    cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
-            ) %>%
+            ) %>% dplyr::filter(cumPercArea<input$thresh_H) %>%
             ungroup()
     })
     
     
+    # ### this is the DF for plot 4 on hillslopes tab
+    hill_arr_by_var_CL_abs <- reactive({
+        hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc)%>%
+            mutate(cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100,
+                   cumRunoff.mm = cumsum(Runoff..mm.),
+                   cumLateralflow.mm = cumsum(Lateral.Flow..mm.),
+                   cumBaseflow.mm = cumsum(Baseflow..mm.),
+                   cumSoilLoss.kg.ha = cumsum(Soil.Loss..kg.ha.),
+                   cumSedDep.kg.ha = cumsum(Sediment.Deposition..kg.ha.),
+                   cumSedYield.kg.ha = cumsum(Sediment.Yield..kg.ha.),
+                   cumSRP.kg.ha.3 = cumsum(Solub..React..P..kg.ha.3.),
+                   cumParticulateP.kg.ha.3 = cumsum(Particulate.P..kg.ha.3.),
+                   cumTotalP.kg.ha.3 = cumsum(Total.P..kg.ha.3.),
+                   cumParticle.Class.1.Fraction = cumsum(Particle.Class.1.Fraction),
+                   cumParticle.Class.2.Fraction = cumsum(Particle.Class.2.Fraction),
+                   cumParticle.Class.3.Fraction = cumsum(Particle.Class.3.Fraction),
+                   cumParticle.Class.4.Fraction = cumsum(Particle.Class.4.Fraction),
+                   cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction),
+                   cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm),
+                   cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
+            ) %>% dplyr::filter(cumPercLen<input$thresh_H) %>% 
+            ungroup()
+    })
+    
     
     ############## Dataframe calculating cumulative percent of total variable: Channel   ############## 
-    
-    chn_arr_by_var <- reactive({
+    #### df for plot thresholded by percent of channel area
+    chn_arr_by_var_CA <- reactive({
         Chan_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Chan_variable, desc)%>%
             mutate(cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
                    cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
@@ -524,12 +587,31 @@ server <- function(input, output, session) {
                    cumSRP.kg.ha. = cumsum(Solub..React..P..kg.ha.)/sum(Solub..React..P..kg.ha.)*100,
                    cumParticulateP.kg.ha. = cumsum(Particulate.P..kg.ha.)/sum(Particulate.P..kg.ha.)*100,
                    cumTotalP.kg.ha. = cumsum(Total.P..kg.ha.)/sum(Total.P..kg.ha.)*100) %>%
+            dplyr::filter(cumPercChanArea<input$thresh_C) %>%
+            ungroup()})
+    
+    
+    #### df for plot thresholded by percent of channel Length
+    chn_arr_by_var_CL <- reactive({
+        Chan_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Chan_variable, desc)%>%
+            mutate(cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
+                   cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100,
+                   cumDischarge.mm = cumsum(Discharge..mm.)/sum(Discharge..mm.)*100,
+                   cumSediment.Yield..tonne. = cumsum(Sediment.Yield..tonne.)/sum(Sediment.Yield..tonne.)*100,
+                   cumChannel.Erosion..tonne. = cumsum(Channel.Erosion..tonne.)/sum(Channel.Erosion..tonne.)*100,
+                   cumUpland.Charge..mm. = cumsum(Upland.Charge..mm.)/sum(Upland.Charge..mm.)*100,
+                   cumLateral.Flow..mm. = cumsum(Lateral.Flow..mm.)/sum(Lateral.Flow..mm.)*100,
+                   cumSRP.kg.ha. = cumsum(Solub..React..P..kg.ha.)/sum(Solub..React..P..kg.ha.)*100,
+                   cumParticulateP.kg.ha. = cumsum(Particulate.P..kg.ha.)/sum(Particulate.P..kg.ha.)*100,
+                   cumTotalP.kg.ha. = cumsum(Total.P..kg.ha.)/sum(Total.P..kg.ha.)*100) %>% 
+                       dplyr::filter(cumPercLen<input$thresh_C) %>%
             ungroup()})
     
     
     ############## Dataframe calculating cumulative absolute value of variable: Channel   ############## 
-    
-    chn_arr_by_var_abs <- reactive({
+    #### df for plot thresholded by percent of channel area with abs numbers
+    chn_arr_by_var_CA_abs <- reactive({
         Chan_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Chan_variable, desc)%>%
             mutate(cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
                    cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
@@ -542,6 +624,24 @@ server <- function(input, output, session) {
                    cumSRP.kg.ha. = cumsum(Solub..React..P..kg.ha.),
                    cumParticulateP.kg.ha. = cumsum(Particulate.P..kg.ha.),
                    cumTotalP.kg.ha. = cumsum(Total.P..kg.ha.)) %>%
+            dplyr::filter(cumPercChanArea<input$thresh_C) %>%
+            ungroup()})
+    
+    #### df for plot thresholded by percent of channel area with abs numbers
+    chn_arr_by_var_CL_abs <- reactive({
+        Chan_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Chan_variable, desc)%>%
+            mutate(cumPercChanArea = cumsum(Channel.Area..ha.)/sum(Channel.Area..ha.)*100,
+                   cumPercLen = cumsum(Length..m.)/sum(Length..m.)*100,
+                   cumPercContriChanArea = cumsum(Contributing.Channel.Area..ha.)/sum(Contributing.Channel.Area..ha.)*100, ### fix total contributing area/ already a cumulative avalue in the channel file
+                   cumDischarge.mm = cumsum(Discharge..mm.),
+                   cumSediment.Yield..tonne. = cumsum(Sediment.Yield..tonne.),
+                   cumChannel.Erosion..tonne. = cumsum(Channel.Erosion..tonne.),
+                   cumUpland.Charge..mm. = cumsum(Upland.Charge..mm.),
+                   cumLateral.Flow..mm. = cumsum(Lateral.Flow..mm.),
+                   cumSRP.kg.ha. = cumsum(Solub..React..P..kg.ha.),
+                   cumParticulateP.kg.ha. = cumsum(Particulate.P..kg.ha.),
+                   cumTotalP.kg.ha. = cumsum(Total.P..kg.ha.)) %>%
+            dplyr::filter(cumPercLen<input$thresh_C) %>%
             ungroup()})
     
     
@@ -558,7 +658,7 @@ server <- function(input, output, session) {
         
         req(input$Hill_variable)
         
-        p1 <- hill_arr_by_var()  %>% ggplot(aes(x=cumPercArea))
+        p1 <- hill_arr_by_var_HA()  %>% ggplot(aes(x=cumPercArea))
         if(input$Hill_variable == "Runoff..mm."){
             p1 <- p1 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
         }else
@@ -615,7 +715,7 @@ server <- function(input, output, session) {
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario") 
+            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
         if(input$DefOrUserUpload_H == 'Default Data'){
             p1 <- p1 +
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
@@ -644,7 +744,7 @@ server <- function(input, output, session) {
         
         req(input$Hill_variable)
         
-        p3 <- hill_arr_by_var()  %>% ggplot(aes(x=cumPercLen))
+        p3 <- hill_arr_by_var_CL()  %>% ggplot(aes(x=cumPercLen))
         if(input$Hill_variable == "Runoff..mm."){
             p3 <- p3 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
         }else
@@ -734,7 +834,7 @@ server <- function(input, output, session) {
         
         req(input$Hill_variable)
         
-        p2 <- hill_arr_by_var_abs()  %>% ggplot(aes(x=cumPercArea))
+        p2 <- hill_arr_by_var_HA_abs()  %>% ggplot(aes(x=cumPercArea))
         if(input$Hill_variable == "Runoff..mm."){
             p2 <- p2 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
         }else
@@ -822,7 +922,7 @@ server <- function(input, output, session) {
         
         req(input$Hill_variable)
         
-        p4 <- hill_arr_by_var_abs()  %>% ggplot(aes(x=cumPercLen))
+        p4 <- hill_arr_by_var_CL_abs()  %>% ggplot(aes(x=cumPercLen))
         if(input$Hill_variable == "Runoff..mm."){
             p4 <- p4 + geom_line(aes(y=cumRunoff.mm  , color= Scenario),size=0.5)
         }else
@@ -909,35 +1009,86 @@ server <- function(input, output, session) {
     ##############    ##############    ##############    ############## 
     
     
-    output$Plot5 <- renderPlotly({
+    # output$Plot5 <- renderPlotly({
+    #     req(input$Chan_variable)
+    #     p5 <- chn_arr_by_var_CA() %>% ggplot(aes(x= cumPercContriChanArea))
+    #     if(input$Chan_variable ==  "Discharge..mm."){
+    #         p5 <- p5 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
+    #             if(input$Chan_variable ==  "Sediment.Yield..tonne."){
+    #                 p5 <- p5 + geom_line(aes(y=cumSediment.Yield..tonne.  , color= Scenario),size=0.5)}else
+    #                     if(input$Chan_variable ==  "Channel.Erosion..tonne."){
+    #                         p5 <- p5 + geom_line(aes(y=cumChannel.Erosion..tonne.  , color= Scenario),size=0.5)}else
+    #                             if(input$Chan_variable ==  "Upland.Charge..mm."){
+    #                                 p5 <- p5 + geom_line(aes(y=cumUpland.Charge..mm.  , color= Scenario),size=0.5)}else
+    #                                     if(input$Chan_variable ==  "Lateral.Flow..mm."){
+    #                                         p5 <- p5 + geom_line(aes(y=cumLateral.Flow..mm.  , color= Scenario),size=0.5)}else
+    #                                             if(input$Chan_variable ==  "Solub..React..P..kg.ha."){
+    #                                                 p5 <- p5 + geom_line(aes(y=cumSRP.kg.ha.  , color= Scenario),size=0.5)}else
+    #                                                     if(input$Chan_variable ==  "Particulate.P..kg.ha."){
+    #                                                         p5 <- p5 + geom_line(aes(y=cumParticulateP.kg.ha.  , color= Scenario),size=0.5)}else
+    #                                                             if(input$Chan_variable ==  "Total.P..kg.ha."){
+    #                                                                 p5 <- p5 + geom_line(aes(y=cumTotalP.kg.ha.  , color= Scenario),size=0.5)}
+    #     
+    #     p5 <- p5 +  theme_bw()+
+    #         theme(axis.title = element_text(size=10,color="Black",face="bold"),
+    #               axis.text = element_text(size=10,color="BLACK",face="bold"),
+    #               legend.title = element_text(size=10,color="BLACK",face="bold"),
+    #               legend.text = element_text(size=10,color="BLACK"),
+    #               legend.position = "none")+
+    #         labs(x="Percent of total contributing channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+    #     if(input$DefOrUserUpload_C == 'Default Data'){
+    #         p5 <- p5 +
+    #             scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
+    #                                            "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
+    #                                            "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+    #                                            "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
+    #                                            "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
+    #                                            "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
+    #                                            "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
+    #                                            # "Thinn93.2020.kikrcs.chn"="#32CD32",
+    #                                            # "Thinn96.2020.kikrcs.chn"="#00FF00",
+    #                                            "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
+    #                                                if(input$DefOrUserUpload_C == 'Upload data'){
+    #                                                    p5 <- p5 +
+    #                                                        scale_color_brewer(palette = "virdis")}
+    #     
+    #     
+    #     
+    #     p5
+    #     
+    # })
+    
+    
+    
+    output$Plot6 <- renderPlotly({
         req(input$Chan_variable)
-        p5 <- chn_arr_by_var() %>% ggplot(aes(x= cumPercContriChanArea))
+        p6 <- chn_arr_by_var_CA() %>% ggplot(aes(x= cumPercChanArea))
         if(input$Chan_variable ==  "Discharge..mm."){
-            p5 <- p5 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
+            p6 <- p6 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
                 if(input$Chan_variable ==  "Sediment.Yield..tonne."){
-                    p5 <- p5 + geom_line(aes(y=cumSediment.Yield..tonne.  , color= Scenario),size=0.5)}else
+                    p6 <- p6 + geom_line(aes(y=cumSediment.Yield..tonne.  , color= Scenario),size=0.5)}else
                         if(input$Chan_variable ==  "Channel.Erosion..tonne."){
-                            p5 <- p5 + geom_line(aes(y=cumChannel.Erosion..tonne.  , color= Scenario),size=0.5)}else
+                            p6 <- p6 + geom_line(aes(y=cumChannel.Erosion..tonne.  , color= Scenario),size=0.5)}else
                                 if(input$Chan_variable ==  "Upland.Charge..mm."){
-                                    p5 <- p5 + geom_line(aes(y=cumUpland.Charge..mm.  , color= Scenario),size=0.5)}else
+                                    p6 <- p6 + geom_line(aes(y=cumUpland.Charge..mm.  , color= Scenario),size=0.5)}else
                                         if(input$Chan_variable ==  "Lateral.Flow..mm."){
-                                            p5 <- p5 + geom_line(aes(y=cumLateral.Flow..mm.  , color= Scenario),size=0.5)}else
+                                            p6 <- p6 + geom_line(aes(y=cumLateral.Flow..mm.  , color= Scenario),size=0.5)}else
                                                 if(input$Chan_variable ==  "Solub..React..P..kg.ha."){
-                                                    p5 <- p5 + geom_line(aes(y=cumSRP.kg.ha.  , color= Scenario),size=0.5)}else
+                                                    p6 <- p6 + geom_line(aes(y=cumSRP.kg.ha.  , color= Scenario),size=0.5)}else
                                                         if(input$Chan_variable ==  "Particulate.P..kg.ha."){
-                                                            p5 <- p5 + geom_line(aes(y=cumParticulateP.kg.ha.  , color= Scenario),size=0.5)}else
+                                                            p6 <- p6 + geom_line(aes(y=cumParticulateP.kg.ha.  , color= Scenario),size=0.5)}else
                                                                 if(input$Chan_variable ==  "Total.P..kg.ha."){
-                                                                    p5 <- p5 + geom_line(aes(y=cumTotalP.kg.ha.  , color= Scenario),size=0.5)}
+                                                                    p6 <- p6 + geom_line(aes(y=cumTotalP.kg.ha.  , color= Scenario),size=0.5)}
         
-        p5 <- p5 +  theme_bw()+
+        p6 <- p6 +  theme_bw()+
             theme(axis.title = element_text(size=10,color="Black",face="bold"),
                   axis.text = element_text(size=10,color="BLACK",face="bold"),
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none")+
-            labs(x="Percent of total contributing channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+            labs(x="Percent of total channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
         if(input$DefOrUserUpload_C == 'Default Data'){
-            p5 <- p5 +
+            p6 <- p6 +
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
@@ -949,20 +1100,19 @@ server <- function(input, output, session) {
                                                # "Thinn96.2020.kikrcs.chn"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_C == 'Upload data'){
-                                                       p5 <- p5 +
+                                                       p6 <- p6 +
                                                            scale_color_brewer(palette = "virdis")}
         
         
         
-        p5
+        p6
         
     })
     
     
-    
-    output$Plot6 <- renderPlotly({
+    output$Plot6_abs <- renderPlotly({
         req(input$Chan_variable)
-        p6 <- chn_arr_by_var() %>% ggplot(aes(x= cumPercChanArea))
+        p6 <- chn_arr_by_var_CA_abs() %>% ggplot(aes(x= cumPercChanArea))
         if(input$Chan_variable ==  "Discharge..mm."){
             p6 <- p6 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
                 if(input$Chan_variable ==  "Sediment.Yield..tonne."){
@@ -1011,9 +1161,11 @@ server <- function(input, output, session) {
     
     
     
+    
+    
     output$Plot7 <- renderPlotly({
         req(input$Chan_variable)
-        p7 <- chn_arr_by_var() %>% ggplot(aes(x= cumPercLen))
+        p7 <- chn_arr_by_var_CL() %>% ggplot(aes(x= cumPercLen))
         if(input$Chan_variable ==  "Discharge..mm."){
             p7 <- p7 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
                 if(input$Chan_variable ==  "Sediment.Yield..tonne."){
@@ -1059,6 +1211,57 @@ server <- function(input, output, session) {
         p7
         
     })
+    
+    output$Plot7_abs <- renderPlotly({
+        req(input$Chan_variable)
+        p7 <- chn_arr_by_var_CL_abs() %>% ggplot(aes(x= cumPercLen))
+        if(input$Chan_variable ==  "Discharge..mm."){
+            p7 <- p7 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
+                if(input$Chan_variable ==  "Sediment.Yield..tonne."){
+                    p7 <- p7 + geom_line(aes(y=cumSediment.Yield..tonne.  , color= Scenario),size=0.5)}else
+                        if(input$Chan_variable ==  "Channel.Erosion..tonne."){
+                            p7 <- p7 + geom_line(aes(y=cumChannel.Erosion..tonne.  , color= Scenario),size=0.5)}else
+                                if(input$Chan_variable ==  "Upland.Charge..mm."){
+                                    p7 <- p7 + geom_line(aes(y=cumUpland.Charge..mm.  , color= Scenario),size=0.5)}else
+                                        if(input$Chan_variable ==  "Lateral.Flow..mm."){
+                                            p7 <- p7 + geom_line(aes(y=cumLateral.Flow..mm.  , color= Scenario),size=0.5)}else
+                                                if(input$Chan_variable ==  "Solub..React..P..kg.ha."){
+                                                    p7 <- p7 + geom_line(aes(y=cumSRP.kg.ha.  , color= Scenario),size=0.5)}else
+                                                        if(input$Chan_variable ==  "Particulate.P..kg.ha."){
+                                                            p7 <- p7 + geom_line(aes(y=cumParticulateP.kg.ha.  , color= Scenario),size=0.5)}else
+                                                                if(input$Chan_variable ==  "Total.P..kg.ha."){
+                                                                    p7 <- p7 + geom_line(aes(y=cumTotalP.kg.ha.  , color= Scenario),size=0.5)}
+        
+        p7 <- p7 +  theme_bw()+
+            theme(axis.title = element_text(size=10,color="Black",face="bold"),
+                  axis.text = element_text(size=10,color="BLACK",face="bold"),
+                  legend.title = element_text(size=10,color="BLACK",face="bold"),
+                  legend.text = element_text(size=10,color="BLACK"),
+                  legend.position = "none")+
+            labs(x="Percent of total channel length",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
+        if(input$DefOrUserUpload_C == 'Default Data'){
+            p7 <- p7 +
+                scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
+                                               "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
+                                               "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
+                                               "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
+                                               "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
+                                               "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
+                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
+                                                   if(input$DefOrUserUpload_C == 'Upload data'){
+                                                       p7 <- p7 +
+                                                           scale_color_brewer(palette = "virdis")}
+        
+        
+        
+        p7
+        
+    })
+    
+    
     
     ##############    ##############    ##############    ############## 
     ############## Watershed Summary plotting server logic   ############## 
