@@ -94,11 +94,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  tabPanel("Watershed",
                           sidebarPanel(
-                              #uploading the file 
-                              # fileinput() function is used to get the file upload contorl option
-                              # fileInput("Wshed_file",label ="Uplaod 'Watershed' file (*_out_*.csv)", 
-                              #           multiple = F, placeholder = "No file selected", accept = ".csv" ),
-                              # helpText("max. file size is 32MB"),
+                              
                               
                               radioButtons(inputId = "DefOrUserUpload_W",label = "",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
@@ -178,7 +174,7 @@ server <- function(input, output, session) {
     Hill_data <- reactive({
         req(input$DefOrUserUpload_H)
         if(input$DefOrUserUpload_H == 'Default Data'){
-            file1 <- "data/lt2020_6_hill_summary.csv"
+            file1 <- "data/lt2020_6_hill_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file1,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_H == 'Upload data'){
@@ -239,7 +235,7 @@ server <- function(input, output, session) {
     Chan_data <- reactive({
         req(input$DefOrUserUpload_C)
         if(input$DefOrUserUpload_C == 'Default Data'){
-            file2 <- "data/lt2020_6_chn_summary.csv"
+            file2 <- "data/lt2020_6_chn_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file2,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_C == 'Upload data'){
@@ -301,7 +297,7 @@ server <- function(input, output, session) {
     Wshed_data <- reactive({
         req(input$DefOrUserUpload_W)
         if(input$DefOrUserUpload_W == 'Default Data'){
-            file3 <- "data/lt2020_6_out_summary.csv"
+            file3 <- "data/lt2020_6_out_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file3,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_W == 'Upload data'){
@@ -721,12 +717,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_H == 'Upload Data'){
                                                        p1 <- p1 +
@@ -808,12 +805,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_H == 'Upload Data'){
                                                        p3 <- p3 +
@@ -898,12 +896,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_H == 'Upload Data'){
                                                        p2 <- p2 +
@@ -985,12 +984,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_H == 'Upload Data'){
                                                        p4 <- p4 +
@@ -1004,62 +1004,7 @@ server <- function(input, output, session) {
     
     
     
-    ##############    ##############    ##############    ############## 
-    ############## Channel plotting server logic   ############## 
-    ##############    ##############    ##############    ############## 
-    
-    
-    # output$Plot5 <- renderPlotly({
-    #     req(input$Chan_variable)
-    #     p5 <- chn_arr_by_var_CA() %>% ggplot(aes(x= cumPercContriChanArea))
-    #     if(input$Chan_variable ==  "Discharge..mm."){
-    #         p5 <- p5 + geom_line(aes(y=cumDischarge.mm  , color= Scenario),size=0.5)}else
-    #             if(input$Chan_variable ==  "Sediment.Yield..tonne."){
-    #                 p5 <- p5 + geom_line(aes(y=cumSediment.Yield..tonne.  , color= Scenario),size=0.5)}else
-    #                     if(input$Chan_variable ==  "Channel.Erosion..tonne."){
-    #                         p5 <- p5 + geom_line(aes(y=cumChannel.Erosion..tonne.  , color= Scenario),size=0.5)}else
-    #                             if(input$Chan_variable ==  "Upland.Charge..mm."){
-    #                                 p5 <- p5 + geom_line(aes(y=cumUpland.Charge..mm.  , color= Scenario),size=0.5)}else
-    #                                     if(input$Chan_variable ==  "Lateral.Flow..mm."){
-    #                                         p5 <- p5 + geom_line(aes(y=cumLateral.Flow..mm.  , color= Scenario),size=0.5)}else
-    #                                             if(input$Chan_variable ==  "Solub..React..P..kg.ha."){
-    #                                                 p5 <- p5 + geom_line(aes(y=cumSRP.kg.ha.  , color= Scenario),size=0.5)}else
-    #                                                     if(input$Chan_variable ==  "Particulate.P..kg.ha."){
-    #                                                         p5 <- p5 + geom_line(aes(y=cumParticulateP.kg.ha.  , color= Scenario),size=0.5)}else
-    #                                                             if(input$Chan_variable ==  "Total.P..kg.ha."){
-    #                                                                 p5 <- p5 + geom_line(aes(y=cumTotalP.kg.ha.  , color= Scenario),size=0.5)}
-    #     
-    #     p5 <- p5 +  theme_bw()+
-    #         theme(axis.title = element_text(size=10,color="Black",face="bold"),
-    #               axis.text = element_text(size=10,color="BLACK",face="bold"),
-    #               legend.title = element_text(size=10,color="BLACK",face="bold"),
-    #               legend.text = element_text(size=10,color="BLACK"),
-    #               legend.position = "none")+
-    #         labs(x="Percent of total contributing channel area",y=paste("Percent of total ", input$Chan_variable, sep = " "), title="",colour="Scenario")
-    #     if(input$DefOrUserUpload_C == 'Default Data'){
-    #         p5 <- p5 +
-    #             scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
-    #                                            "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
-    #                                            "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
-    #                                            "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
-    #                                            "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
-    #                                            "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
-    #                                            "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-    #                                            # "Thinn93.2020.kikrcs.chn"="#32CD32",
-    #                                            # "Thinn96.2020.kikrcs.chn"="#00FF00",
-    #                                            "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
-    #                                                if(input$DefOrUserUpload_C == 'Upload data'){
-    #                                                    p5 <- p5 +
-    #                                                        scale_color_brewer(palette = "virdis")}
-    #     
-    #     
-    #     
-    #     p5
-    #     
-    # })
-    
-    
-    
+ 
     output$Plot6 <- renderPlotly({
         req(input$Chan_variable)
         p6 <- chn_arr_by_var_CA() %>% ggplot(aes(x= cumPercChanArea))
@@ -1092,12 +1037,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_C == 'Upload data'){
                                                        p6 <- p6 +
@@ -1142,12 +1088,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_C == 'Upload data'){
                                                        p6 <- p6 +
@@ -1195,12 +1142,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_C == 'Upload data'){
                                                        p7 <- p7 +
@@ -1244,12 +1192,13 @@ server <- function(input, output, session) {
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
                                                "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli"="#B22222",
                                                "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                                               "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
                                                "ModSevS.2020.ki5krcs.chn_12"="#DC143C",
                                                "LowSevS.2020.ki5krcs.chn_12"="#FF6347",
                                                "PrescFireS.2020.ki5krcs.chn_12"="#E9967A",
                                                "Thinn85.2020.ki5krcs.chn_12"="#7CFC00",
-                                               # "Thinn93.2020.kikrcs.chn"="#32CD32",
-                                               # "Thinn96.2020.kikrcs.chn"="#00FF00",
+                                               "Thinn93.2020.kikrcs.chn_12"="#32CD32",
+                                               "Thinn96.2020.kikrcs.chn_12"="#00FF00",
                                                "CurCond.2020.ki5krcs.chn_cs12"="#008000"))}else
                                                    if(input$DefOrUserUpload_C == 'Upload data'){
                                                        p7 <- p7 +
