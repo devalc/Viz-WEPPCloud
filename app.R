@@ -1,10 +1,22 @@
-# -*- coding: utf-8 -*-
-#"""
-#Created on Fri Jan 17 19:35:48 2020
-
-#@author: Chinmay Deval
-
-### 
+## --------------------------------------------------------------------------------------##
+##
+## Script name: 
+##
+## Purpose of the script:
+##
+## @author: Chinmay Deval
+##
+## Created on Fri Jan 17 19:35:48 2020
+##
+## Copyright (c) Chinmay Deval, 2020
+## Email: chinmay.deval91@gmail.com
+##
+## --------------------------------------------------------------------------------------##
+##    Notes:
+##   
+##
+## --------------------------------------------------------------------------------------##
+## ----------------------------------Load packages---------------------------------------##
 
 library(shiny)
 library(tidyverse)
@@ -15,8 +27,10 @@ library(leaflet)
 library(tmap)
 library(ggthemes)
 
+## ----------------------------------Init Options---------------------------------------##
 options(shiny.maxRequestSize = 100*1024^2)
 
+## ----------------------------------define UI------------------------------------------##
 
 ui <- navbarPage("viz-WEPPcloud",
                  
@@ -153,9 +167,8 @@ ui <- navbarPage("viz-WEPPcloud",
                  
 )
 
+## ----------------------------------define server logic------------------------------------------##
 
-
-# Define server logic required to draw a histogram
 
 server <- function(input, output, session) {
     
@@ -174,7 +187,8 @@ server <- function(input, output, session) {
     Hill_data <- reactive({
         req(input$DefOrUserUpload_H)
         if(input$DefOrUserUpload_H == 'Default Data'){
-            file1 <- "data/lt2020_6_hill_summary_with_all_scenarios_03_11_2020.csv"
+            file1 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_hill_summary.csv")
+            # file1 <- "data/lt2020_6_hill_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file1,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_H == 'Upload data'){
@@ -220,7 +234,7 @@ server <- function(input, output, session) {
         
     })
     
-    
+## ----------------------------------define Channel tab server logic------------------------------------------##
     ######## Server logic for UI generation for Channel tab ##########
     
     output$C_FileInput <- renderUI({
@@ -235,7 +249,8 @@ server <- function(input, output, session) {
     Chan_data <- reactive({
         req(input$DefOrUserUpload_C)
         if(input$DefOrUserUpload_C == 'Default Data'){
-            file2 <- "data/lt2020_6_chn_summary_with_all_scenarios_03_11_2020.csv"
+            file2 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_chn_summary.csv")
+            # file2 <- "data/lt2020_6_chn_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file2,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_C == 'Upload data'){
@@ -281,7 +296,7 @@ server <- function(input, output, session) {
         
     })
     
-    
+## ----------------------------------define watershed tab server logic------------------------------------------##  
     ######## Server logic for UI generation for  Watersheds tab ##########
     
     output$W_FileInput <- renderUI({
@@ -297,7 +312,8 @@ server <- function(input, output, session) {
     Wshed_data <- reactive({
         req(input$DefOrUserUpload_W)
         if(input$DefOrUserUpload_W == 'Default Data'){
-            file3 <- "data/lt2020_6_out_summary_with_all_scenarios_03_11_2020.csv"
+            file3 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_out_summary.csv")
+            # file3 <- "data/lt2020_6_out_summary_with_all_scenarios_03_11_2020.csv"
             read.table(file=file3,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_W == 'Upload data'){
@@ -326,7 +342,7 @@ server <- function(input, output, session) {
         
     })
     
-    
+## ----------------------------------define spatial-Viz tab server logic------------------------------------------##    
     ######## Server logic for UI generation for spatial-Viz tab ##########
     
     output$S_FileInput <- renderUI({
@@ -601,7 +617,7 @@ server <- function(input, output, session) {
                    cumSRP.kg.ha. = cumsum(Solub..React..P..kg.ha.)/sum(Solub..React..P..kg.ha.)*100,
                    cumParticulateP.kg.ha. = cumsum(Particulate.P..kg.ha.)/sum(Particulate.P..kg.ha.)*100,
                    cumTotalP.kg.ha. = cumsum(Total.P..kg.ha.)/sum(Total.P..kg.ha.)*100) %>% 
-                       dplyr::filter(cumPercLen<input$thresh_C) %>%
+            dplyr::filter(cumPercLen<input$thresh_C) %>%
             ungroup()})
     
     
@@ -1004,7 +1020,7 @@ server <- function(input, output, session) {
     
     
     
- 
+    
     output$Plot6 <- renderPlotly({
         req(input$Chan_variable)
         p6 <- chn_arr_by_var_CA() %>% ggplot(aes(x= cumPercChanArea))
