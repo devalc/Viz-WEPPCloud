@@ -37,7 +37,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  ## set the theme
                  
-                 theme = shinytheme(theme = "flatly"),
+                 theme = shinytheme(theme = "united"),
                  
                  tabPanel("Hillslope",
                           sidebarPanel(
@@ -70,15 +70,17 @@ ui <- navbarPage("viz-WEPPcloud",
                               
                               fluidRow(
                                   # column(6, tableOutput("tab1")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
+                                  column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
+                              HTML("<br><br>"),
                               fluidRow(
                                   column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
+                          HTML("<br><br><br>"),
                               fluidRow(
-                                  column(6, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"),offset = 1)
+                                  column(6, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
                               )
                           )),
                  
@@ -234,11 +236,11 @@ server <- function(input, output, session) {
     output$Hill_wshed <- renderUI({
         if(input$DefOrUserUpload_H == 'Upload data'){
             req(Hill_data())
-            selectInput("Hill_wshed", "Select the variable of interest",  unique(Hill_data()$Watershed))
+            selectInput("Hill_wshed", "Select the watershed of interest",  unique(Hill_data()$Watershed))
         }else
             if(input$DefOrUserUpload_H == 'Default Data'){
                 
-                selectInput(inputId="Hill_wshed",label="Select the variable of interest",
+                selectInput(inputId="Hill_wshed",label="Select the watershed of interest",
                             choices =   unique(Hill_data()$Watershed),selected =   unique(Hill_data()$Watershed)[11])
                 
             }
@@ -774,8 +776,10 @@ server <- function(input, output, session) {
                   axis.text = element_text(size=10,color="BLACK",face="bold"),
                   legend.title = element_text(size=10,color="BLACK",face="bold"),
                   legend.text = element_text(size=10,color="BLACK"),
-                  legend.position = "none")+
-            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), title="",colour="Scenario")
+                  legend.position = "none",
+                  title = element_text(size=10,color="Black",face="bold") )+
+            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), 
+                 title= paste("% hillslope area contributing", input$Hill_variable, sep = " " ),colour="Scenario")
         if(input$DefOrUserUpload_H == 'Default Data'){
             p1 <- p1 +
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
