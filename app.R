@@ -36,13 +36,13 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  
                  ## set the theme
-                 
+                 ###I like on of these themes: readable, flatly, journal,united, sandstone
                  theme = shinytheme(theme = "united"),
                  
                  tabPanel("Hillslope",
                           sidebarPanel(
                               
-                              radioButtons(inputId = "DefOrUserUpload_H",label = "What Data shall I Use?",
+                              radioButtons(inputId = "DefOrUserUpload_H",label = "What Data shall I use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
@@ -58,8 +58,14 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Hill_scen"),
                               
                               radioButtons(inputId = "summary_DT_by_var_H",label = "Summarize Sediment by:",
-                                           choices = c("Land Use"="Landuse","Soil Type"="Soiltype"), 
+                                           choices = c("Land Use"="Landuse","Soil Type"="Soiltype", "Both" = "Both"), 
                                            selected = "Landuse")
+                              
+                              # radioButtons(inputId = "AvgWestShoreNos_H",
+                              # label = "Do you want average sediment summary for West shore?",
+                              #              choices = c("Yes"="Yes","No"="No"), selected = "Yes"),
+                              # 
+                              # uiOutput("H_AvgWestShoreSummary")
                               
                               
                               
@@ -78,11 +84,19 @@ ui <- navbarPage("viz-WEPPcloud",
                                   column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
-                          HTML("<br><br><br>"),
+                              HTML("<br><br><br>")
+                              ),
+                              
                               fluidRow(
-                                  column(6, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
-                              )
-                          )),
+                                  
+                                  column(10, offset = 1, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
+                                  ),
+                              # HTML("<br><br><br>"),
+                              # fluidRow(
+                              # column(6, DT::dataTableOutput("WS_Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
+                              # 
+                              # )
+                          ),
                  
                  tabPanel("Channel",
                           sidebarPanel(
@@ -195,6 +209,18 @@ server <- function(input, output, session) {
             )}else
                 if(input$DefOrUserUpload_H == 'Default Data'){}
     })
+    
+    # output$H_AvgWestShoreSummary <- renderUI({
+    #     if(input$AvgWestShoreNos_H == 'No'){
+    #         }else
+    #             if(input$AvgWestShoreNos_H == 'Yes'){
+    #                 radioButtons(inputId = "WestShore_summary_by_var",label = "By which variable:",
+    #                              choices = c("Land Use"="Landuse","Soil Type"="Soiltype", "Both" = "Both"), 
+    #                              selected = "Landuse")
+    #             }
+    # })
+    # 
+    
     
     
     Hill_data <- reactive({
@@ -557,27 +583,81 @@ server <- function(input, output, session) {
     ##### DF for summary datatable 
     
     sed_stats_df <- reactive({
+        
         if (input$summary_DT_by_var_H == "Landuse") {
             hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
                 dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
                               Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
                 group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
-                dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))
+                dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
         }else
             if(input$summary_DT_by_var_H == "Soiltype") {
                 hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
                     dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
                                   Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
-                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) 
-            }
+                   group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+                    
+            }else
+                if(input$summary_DT_by_var_H == "Both") {
+                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                        dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+                                      Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+                        dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+                    
+                }
     })
+    
+    ### WEst Shore summary stats df
+    
+    # WS_sed_stats_df <- reactive({
+    #     
+    #     if (input$AvgWestShoreNos_H == "Landuse") {
+    #         hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #             dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+    #                           Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #             group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
+    #             dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
+    #     }else
+    #         if(input$AvgWestShoreNos_H == "Soiltype") {
+    #             hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                 dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
+    #                               Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #                 group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+    #                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+    #             
+    #         }else
+    #             if(input$AvgWestShoreNos_H == "Both") {
+    #                 hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                     dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+    #                                   Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #                     group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+    #                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+    #                 
+    #             }
+    # })
     
     
     ##### render table summary output
     output$Sed_stats_by_category <- DT::renderDataTable(
-        sed_stats_df())
+        sed_stats_df(), extensions = 'Scroller', options = list(
+            deferRender = TRUE,
+            scroller = TRUE,
+            scrollY=400,
+            compact = TRUE,
+            columnDefs = list(list(className = 'dt-left')),
+            fillContainer = T,
+            class = "display"
+            
+            
+        ))
     
+    #### West shore summary stats table
+    
+    # output$WS_Sed_stats_by_category <- DT::renderDataTable(
+    #     WS_sed_stats_df())
+    # 
     
     # 
     # 
