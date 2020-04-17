@@ -42,18 +42,26 @@ ui <- navbarPage("viz-WEPPcloud",
                  tabPanel("Hillslope",
                           sidebarPanel(
                               
-                              radioButtons(inputId = "DefOrUserUpload_H",label = "",
+                              radioButtons(inputId = "DefOrUserUpload_H",label = "What Data shall I Use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
                               uiOutput("Hill_selectfile"),
                               uiOutput("Hill_wshed"),
                               uiOutput("Hill_var"),
+                              
+                              
+                              sliderInput("thresh_H", "Thresholding Plots:",
+                                          min = 0, max = 100,
+                                          value = 100, step = 5),
+                              
                               uiOutput("Hill_scen"),
                               
-                              sliderInput("thresh_H", "Thresholding Percent:",
-                                          min = 0, max = 100,
-                                          value = 100, step = 5)    
+                              radioButtons(inputId = "summary_DT_by_var_H",label = "Summarize Sediment by:",
+                                           choices = c("Land Use"="Landuse","Soil Type"="Soiltype"), 
+                                           selected = "Landuse")
+                              
+                              
                               
                           ),
                           
@@ -68,6 +76,9 @@ ui <- navbarPage("viz-WEPPcloud",
                               fluidRow(
                                   column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
+                              ),
+                              fluidRow(
+                                  column(6, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"),offset = 1)
                               )
                           )),
                  
@@ -229,6 +240,23 @@ server <- function(input, output, session) {
                 
                 selectInput(inputId="Hill_wshed",label="Select the variable of interest",
                             choices =   unique(Hill_data()$Watershed),selected =   unique(Hill_data()$Watershed)[11])
+                
+            }
+        
+    })
+    
+    output$Hill_scen <- renderUI({
+        if(input$DefOrUserUpload_H == 'Upload data'){
+            req(Hill_data())
+            selectInput("Hill_scen", "Select Scenario do display data summary",  unique(Hill_data()$Scenario),
+                        unique(Hill_data()$Scenario)[1],
+                        multiple = F)
+        }else
+            if(input$DefOrUserUpload_H == 'Default Data'){
+                selectInput(inputId="Hill_scen",label="Select Scenario do display data summary",
+                            choices =  unique(Hill_data()$Scenario),
+                            unique(Hill_data()$Scenario)[1],
+                            multiple = F)
                 
             }
         
@@ -524,9 +552,29 @@ server <- function(input, output, session) {
             ungroup()
     })
     
+    ##### DF for summary datatable 
     
-    # output$tab1 <- renderTable(
-    #   hill_arr_by_var() %>% head(100) )
+    sed_stats_df <- reactive({
+        if (input$summary_DT_by_var_H == "Landuse") {
+            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+                              Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
+                dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))
+        }else
+            if(input$summary_DT_by_var_H == "Soiltype") {
+                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
+                                  Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
+                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) 
+            }
+    })
+    
+    
+    ##### render table summary output
+    output$Sed_stats_by_category <- DT::renderDataTable(
+        sed_stats_df())
     
     
     # 
