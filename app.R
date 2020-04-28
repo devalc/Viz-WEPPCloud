@@ -34,15 +34,17 @@ options(shiny.maxRequestSize = 100*1024^2)
 
 ui <- navbarPage("viz-WEPPcloud",
                  
-                 
+## ----------------------------------Set Theme------------------------------------------##                 
                  ## set the theme
                  ###I like on of these themes: readable, flatly, journal,united, sandstone
                  theme = shinytheme(theme = "united"),
-                 
+
+
+## ----------------------------------Start defining Tabs------------------------------------------##                 
                  tabPanel("Hillslope",
                           sidebarPanel(
                               
-                              radioButtons(inputId = "DefOrUserUpload_H",label = "What Data shall I use?",
+                              radioButtons(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
@@ -97,12 +99,12 @@ ui <- navbarPage("viz-WEPPcloud",
                               # 
                               # )
                           ),
-                 
+## --------------------------------------------------------------------------------------##                 
                  tabPanel("Channel",
                           sidebarPanel(
                               
                               
-                              radioButtons(inputId = "DefOrUserUpload_C",label = "",
+                              radioButtons(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
@@ -132,12 +134,12 @@ ui <- navbarPage("viz-WEPPcloud",
                                   # column(6, plotlyOutput("Plot8"))
                               )
                           )),
-                 
+## ---------------------------------------------------------------------------------------##                 
                  tabPanel("Watershed",
                           sidebarPanel(
                               
                               
-                              radioButtons(inputId = "DefOrUserUpload_W",label = "",
+                              radioButtons(inputId = "DefOrUserUpload_W",label = "What data shall I use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
@@ -164,19 +166,24 @@ ui <- navbarPage("viz-WEPPcloud",
                           )
                  ),
                  
-                 
+## --------------------------------------------------------------------------------------##                 
                  
                  tabPanel("Spatial-Viz",
                           sidebarPanel(
                               
-                              radioButtons(inputId = "DefOrUserUpload_S",label = "",
+                              radioButtons(inputId = "DefOrUserUpload_S",label = "What data shall I use?",
                                            choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               uiOutput("S_FileInput"),
+                              uiOutput("S_FileInput_Chan"),
                               uiOutput("Spatial_wshed"),
                               uiOutput("Spatial_scen"),
                               uiOutput("S_var")
+                              
+                              # radioButtons(inputId = "showchan_S",label = "Display Channels?",
+                              #              choices = c("Yes"="Yes","No"="No"), selected = "No")
+                              # 
                               
                           ),
                           
@@ -221,7 +228,7 @@ server <- function(input, output, session) {
     #             }
     # })
     # 
-    
+## ----------------------------------Hillslope server logic------------------------------------------##    
     output$H_FileInput <- renderUI({
         if(input$DefOrUserUpload_H == 'Upload data'){
             message = 'max. file size is 32MB'
@@ -297,8 +304,9 @@ server <- function(input, output, session) {
             }
         
     })
-    
-## ----------------------------------define Channel tab server logic------------------------------------------##
+
+## ----------------------------------Channel server logic------------------------------------------##    
+
     ######## Server logic for UI generation for Channel tab ##########
     
     output$C_FileInput <- renderUI({
@@ -360,7 +368,7 @@ server <- function(input, output, session) {
         
     })
     
-## ----------------------------------define watershed tab server logic------------------------------------------##  
+## ----------------------------------Watershed Server logic------------------------------------------##  
     ######## Server logic for UI generation for  Watersheds tab ##########
     
     output$W_FileInput <- renderUI({
@@ -406,18 +414,26 @@ server <- function(input, output, session) {
         
     })
     
-## ----------------------------------define spatial-Viz tab server logic------------------------------------------##    
+## ----------------------------------Spatial-Viz tab server logic------------------------------------------##    
     ######## Server logic for UI generation for spatial-Viz tab ##########
     
     output$S_FileInput <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             message = 'max. file size is 32MB'
-            fileInput("Spatial_file",label ="Uplaod subcatchements/Channels JSON/geojson file", 
-                      multiple = F, placeholder = "No file selected", accept = c(".JSON", ".geojson") 
+            fileInput("Spatial_file",label ="Uplaod subcatchements JSON/geojson/RDS file", 
+                      multiple = F, placeholder = "No file selected", accept = c(".JSON", ".geojson", ".RDS") 
             )}else
                 if(input$DefOrUserUpload_S == 'Default Data'){}
     })
     
+    output$S_FileInput_Chan <- renderUI({
+        if(input$DefOrUserUpload_S == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Spatial_file_chan",label ="Uplaod Channels JSON/geojson/RDS file", 
+                      multiple = F, placeholder = "No file selected", accept = c(".JSON", ".geojson", ".RDS") 
+            )}else
+                if(input$DefOrUserUpload_S == 'Default Data'){}
+    })
     
     Spatial_data <- reactive({
         req(input$DefOrUserUpload_S)
@@ -430,6 +446,20 @@ server <- function(input, output, session) {
                 if(is.null(file4)){return()}
                 sf::st_read(file4$datapath)}
         
+    })
+    
+    ## spatial channel data
+    Spatial_data_chan <- reactive({
+        req(input$DefOrUserUpload_S)
+        if(input$DefOrUserUpload_S == 'Default Data'){
+            # sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
+            readRDS("data/lt2020_6_channels_wgs84_split_wshed_and_scen.rds")
+        }else
+            if(input$DefOrUserUpload_S == 'Upload data'){
+                file5 <- input$Spatial_file_chan
+                if(is.null(file5)){return()}
+                sf::st_read(file5$datapath)}
+
     })
     
     
@@ -468,8 +498,6 @@ server <- function(input, output, session) {
     })
     
     
-    
-    
     output$S_var <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             req(Spatial_data())
@@ -485,32 +513,12 @@ server <- function(input, output, session) {
         
     })
     
-    ################# Plotting logic for WATERSHED DF (subsetting)#################
-    
-    Spatial_subset <- reactive({
-        req(Spatial_data())
-        req(input$S_wshed)
-        Spatial_data() %>% 
-            dplyr::filter(Watershed %in% input$S_wshed & Scenario %in% input$S_scen) 
-    })
-    
-    #### from what I understand WGS84 latlon coord system needed to use with leaflet 
-    
-    output$Plot11 <- leaflet::renderLeaflet({
-        req(Spatial_subset())
-        req(input$S_scen)
-        req(input$S_variable)
-        tm <- tm_shape(Spatial_subset()) + tmap::tm_polygons(input$S_variable,
-                                                             id = "watershed",
-                                                             palette = "viridis", legend.hist = TRUE, style = "log10_pretty")
-        
-        tmap_leaflet(tm)
-    })
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Plotting logic-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
     
     
-    
-    
-    ################# Plotting logic for HILLSLOPE DF (subsetting)#################
+    ################# Filtering logic for HILLSLOPE DF#################
     
     hill_subset <- reactive({
         req(Hill_data())
@@ -519,7 +527,7 @@ server <- function(input, output, session) {
     })
     
     
-    ################# Plotting logic for CHANNEL DF (subsetting)#################
+    ################# Filtering logic for CHANNEL DF ################
     
     Chan_subset <- reactive({
         req(Chan_data())
@@ -528,14 +536,36 @@ server <- function(input, output, session) {
     })
     
     
-    
-    ################# Plotting logic for WATERSHED DF (subsetting)#################
+    ################# Filtering logic for WATERSHED DF ################
     
     Wshed_subset <- reactive({
         req(Wshed_data())
         Wshed_data() %>% 
             dplyr::filter(Watershed %in% input$Wshed_wshed) 
     })
+    
+    ################# Filtering logic for spatial DF #################
+    
+    Spatial_subset <- reactive({
+        req(Spatial_data())
+        req(input$S_wshed)
+        Spatial_data() %>% 
+            dplyr::filter(Watershed %in% input$S_wshed & Scenario %in% input$S_scen) 
+    })
+    
+    ################# Filtering logic for spatial channel DF #################
+    
+    Spatial_subset_chan <- reactive({
+        req(Spatial_data_chan())
+        req(input$S_wshed)
+        Spatial_data_chan() %>% 
+            dplyr::filter(Watershed %in% input$S_wshed & Scenario %in% input$S_scen) 
+    })
+    
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Dataframe Calculations for hillslopes-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
+    
     
     ############## Dataframe calculating cumulative percent of total variable: Hillslope   ############## 
     ### this is the DF for plot 1 on hillslopes tab
@@ -588,96 +618,8 @@ server <- function(input, output, session) {
             ungroup()
     })
     
-    ##### DF for summary datatable 
     
-    sed_stats_df <- reactive({
-        
-        if (input$summary_DT_by_var_H == "Landuse") {
-            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                dplyr::arrange_at(.vars = input$Hill_variable, desc)%>%
-                dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
-                dplyr::filter(cumPercArea<input$thresh_H)%>% 
-                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-                              Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-                group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
-                dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
-        }else
-            if(input$summary_DT_by_var_H == "Soiltype") {
-                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                    dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
-                    dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
-                    dplyr::filter(cumPercArea<input$thresh_H)%>%
-                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
-                                  Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-                   group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
-                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
-                    
-            }else
-                if(input$summary_DT_by_var_H == "Both") {
-                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                        dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
-                        dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
-                        dplyr::filter(cumPercArea<input$thresh_H)%>%
-                        dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-                                      Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
-                        dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
-                    
-                }
-    })
-    
-    ### WEst Shore summary stats df
-    
-    # WS_sed_stats_df <- reactive({
-    #     
-    #     if (input$AvgWestShoreNos_H == "Landuse") {
-    #         hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-    #             dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-    #                           Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-    #             group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
-    #             dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
-    #     }else
-    #         if(input$AvgWestShoreNos_H == "Soiltype") {
-    #             hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-    #                 dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
-    #                               Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-    #                 group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
-    #                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
-    #             
-    #         }else
-    #             if(input$AvgWestShoreNos_H == "Both") {
-    #                 hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-    #                     dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-    #                                   Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
-    #                     group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
-    #                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
-    #                 
-    #             }
-    # })
-    
-    
-    ##### render table summary output
-    output$Sed_stats_by_category <- DT::renderDataTable(
-        sed_stats_df(), extensions = 'Scroller', options = list(
-            deferRender = TRUE,
-            scroller = TRUE,
-            scrollY=400,
-            compact = TRUE,
-            columnDefs = list(list(className = 'dt-left')),
-            fillContainer = T,
-            class = "display"
-            
-            
-        ))
-    
-    #### West shore summary stats table
-    
-    # output$WS_Sed_stats_by_category <- DT::renderDataTable(
-    #     WS_sed_stats_df())
-    # 
-    
-    # 
-    # 
+ 
     # ############## Dataframe calculating cumulative absolute value of variable: Hillslope   ############## 
     # ### this is the DF for plot 2 on hillslopes tab
     hill_arr_by_var_HA_abs <- reactive({
@@ -729,6 +671,10 @@ server <- function(input, output, session) {
             ) %>% dplyr::filter(cumPercLen<input$thresh_H) %>% 
             ungroup()
     })
+    
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Dataframe Calculations for Channels-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
     
     
     ############## Dataframe calculating cumulative percent of total variable: Channel   ############## 
@@ -803,13 +749,10 @@ server <- function(input, output, session) {
             dplyr::filter(cumPercLen<input$thresh_C) %>%
             ungroup()})
     
-    
-    
-    # ##############    ##############    ##############    ############## 
-    # ############## Hillslope plotting server logic   ############## 
-    # ##############    ##############    ##############    ############## 
-    # 
-    # 
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Plots:Hillslopes-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
+
     # ############## plots of cumulative percent of total variable   ############## 
     # ############## vs cumulative percent of total hillslope area/ channel length   ############## 
     # 
@@ -1168,8 +1111,9 @@ server <- function(input, output, session) {
         
     })
     
-    
-    
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Plots:Channels-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
     
     output$Plot6 <- renderPlotly({
         req(input$Chan_variable)
@@ -1376,11 +1320,9 @@ server <- function(input, output, session) {
         
     })
     
-    
-    
-    ##############    ##############    ##############    ############## 
-    ############## Watershed Summary plotting server logic   ############## 
-    ##############    ##############    ##############    ##############  
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Plots:Watershed-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
     
     output$Plot9 <- renderPlot({
         # req(input$Wshed_wshed)
@@ -1394,8 +1336,8 @@ server <- function(input, output, session) {
             
             
             # # TEST To SEE if the dataframe from the reactive func is accessible
-            output$tab1 <- renderTable(
-                d.m %>% head(100) )
+            # output$tab1 <- renderTable(
+            #     d.m %>% head(100) )
             
             # a <- plotly::plot_ly(x = ~Scenario, y= ~variable,  z= d.m, type = "heatmap")
             
@@ -1442,10 +1384,125 @@ server <- function(input, output, session) {
                 
             }
     })
+ 
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Plots:Spatial DF-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
+
+    #### from what I understand WGS84 latlon coord system needed to use with leaflet 
+    
+    output$Plot11 <- leaflet::renderLeaflet({
+        req(Spatial_subset())
+        req(input$S_scen)
+        req(input$S_variable)
+        tm <- tm_shape(Spatial_subset()) + 
+            tmap::tm_polygons(input$S_variable,
+                              id = "watershed",
+                              palette = "viridis",
+                              legend.hist = TRUE, style = "log10_pretty")
+            
+        
+        tmap_leaflet(tm)
+    })
+
     
     
+## -----------------------------------------------------------------------------------------------------------##    
+## ---------------------------------Data Summary Tables logic-------------------------------------------------------##    
+## -----------------------------------------------------------------------------------------------------------##        
+
+    ##### DF for summary datatables on the hillslopes tab 
+    
+    sed_stats_df <- reactive({
+        
+        if (input$summary_DT_by_var_H == "Landuse") {
+            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                dplyr::arrange_at(.vars = input$Hill_variable, desc)%>%
+                dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                dplyr::filter(cumPercArea<input$thresh_H)%>% 
+                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+                              Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
+                dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
+        }else
+            if(input$summary_DT_by_var_H == "Soiltype") {
+                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                    dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
+                    dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                    dplyr::filter(cumPercArea<input$thresh_H)%>%
+                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
+                                  Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+                
+            }else
+                if(input$summary_DT_by_var_H == "Both") {
+                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                        dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
+                        dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                        dplyr::filter(cumPercArea<input$thresh_H)%>%
+                        dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+                                      Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+                        dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+                    
+                }
+    })
+    
+    ### WEst Shore summary stats df
+    
+    # WS_sed_stats_df <- reactive({
+    #     
+    #     if (input$AvgWestShoreNos_H == "Landuse") {
+    #         hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #             dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+    #                           Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #             group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
+    #             dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
+    #     }else
+    #         if(input$AvgWestShoreNos_H == "Soiltype") {
+    #             hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                 dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
+    #                               Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #                 group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+    #                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+    #             
+    #         }else
+    #             if(input$AvgWestShoreNos_H == "Both") {
+    #                 hill_data() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                     dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
+    #                                   Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+    #                     group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
+    #                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
+    #                 
+    #             }
+    # })
     
     
+    ##### render table summary output
+    output$Sed_stats_by_category <- DT::renderDataTable(
+        sed_stats_df(), extensions = 'Scroller', options = list(
+            deferRender = TRUE,
+            scroller = TRUE,
+            scrollY=400,
+            compact = TRUE,
+            columnDefs = list(list(className = 'dt-left')),
+            fillContainer = T,
+            class = "display"
+            
+            
+        ))
+    
+    #### West shore summary stats table
+    
+    # output$WS_Sed_stats_by_category <- DT::renderDataTable(
+    #     WS_sed_stats_df())
+    # 
+    
+    
+## -----------------------------------------------------------------------------------------------------------##    
+
+
 }
 
 # Run the application 
