@@ -1,8 +1,8 @@
 ## --------------------------------------------------------------------------------------##
 ##
-## Script name: 
+## Script name: app.R
 ##
-## Purpose of the script:
+## Purpose of the script: Script to ingest and visualize WEPPcloud simulations 
 ##
 ## @author: Chinmay Deval
 ##
@@ -90,7 +90,7 @@ ui <- navbarPage("viz-WEPPcloud",
                               fluidRow(
                                   
                                   column(10, offset = 1, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
-                                  ),
+                                  )
                               # HTML("<br><br><br>"),
                               # fluidRow(
                               # column(6, DT::dataTableOutput("WS_Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
@@ -201,14 +201,15 @@ server <- function(input, output, session) {
     
     ######## Server logic for UI generation for hillslope tab ##########
     
-    output$H_FileInput <- renderUI({
-        if(input$DefOrUserUpload_H == 'Upload data'){
-            message = 'max. file size is 32MB'
-            fileInput("Hill_file",label ="Uplaod 'Hillslope' file (*_hill_*.csv)", 
-                      multiple = F, placeholder = "No file selected", accept = ".csv" 
-            )}else
-                if(input$DefOrUserUpload_H == 'Default Data'){}
-    })
+    # output$H_FileInput <- renderUI({
+    #     if(input$DefOrUserUpload_H == 'Upload data'){
+    #         # message = 'max. file size is 32MB'
+    #         textInput("Hill_file",label ="Provide URL pointing to 'Hillslope' file (*_hill_*.csv) on WEPPcloud",
+    #                   placeholder = "URL to hillslope file" )
+    #         #actionButton("goButton", "Go!")
+    #         }else
+    #             if(input$DefOrUserUpload_H == 'Default Data'){}
+    # })
     
     # output$H_AvgWestShoreSummary <- renderUI({
     #     if(input$AvgWestShoreNos_H == 'No'){
@@ -221,7 +222,14 @@ server <- function(input, output, session) {
     # })
     # 
     
-    
+    output$H_FileInput <- renderUI({
+        if(input$DefOrUserUpload_H == 'Upload data'){
+            message = 'max. file size is 32MB'
+            fileInput("Hill_file",label ="Uplaod 'Hillslope' file (*_hill_*.csv)", 
+                      multiple = F, placeholder = "No file selected", accept = ".csv" 
+            )}else
+                if(input$DefOrUserUpload_H == 'Default Data'){}
+    })
     
     Hill_data <- reactive({
         req(input$DefOrUserUpload_H)
@@ -586,6 +594,9 @@ server <- function(input, output, session) {
         
         if (input$summary_DT_by_var_H == "Landuse") {
             hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                dplyr::arrange_at(.vars = input$Hill_variable, desc)%>%
+                dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                dplyr::filter(cumPercArea<input$thresh_H)%>% 
                 dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
                               Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
                 group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
@@ -593,6 +604,9 @@ server <- function(input, output, session) {
         }else
             if(input$summary_DT_by_var_H == "Soiltype") {
                 hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                    dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
+                    dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                    dplyr::filter(cumPercArea<input$thresh_H)%>%
                     dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
                                   Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
@@ -601,6 +615,9 @@ server <- function(input, output, session) {
             }else
                 if(input$summary_DT_by_var_H == "Both") {
                     hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                        dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
+                        dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
+                        dplyr::filter(cumPercArea<input$thresh_H)%>%
                         dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
                                       Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
                         group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
@@ -858,8 +875,9 @@ server <- function(input, output, session) {
                   legend.text = element_text(size=10,color="BLACK"),
                   legend.position = "none",
                   title = element_text(size=10,color="Black",face="bold") )+
-            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " "), 
-                 title= paste("% hillslope area contributing", input$Hill_variable, sep = " " ),colour="Scenario")
+            labs(x="Percent of total hillslope area",y=paste("Percent of total", input$Hill_variable, sep = " ") 
+                 #title= paste("% hillslope area contributing", input$Hill_variable, sep = " " )
+                 ,colour="Scenario")
         if(input$DefOrUserUpload_H == 'Default Data'){
             p1 <- p1 +
                 scale_color_manual(values = c( "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"="#FF0000",
