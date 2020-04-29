@@ -458,7 +458,8 @@ server <- function(input, output, session) {
             if(input$DefOrUserUpload_S == 'Upload data'){
                 file5 <- input$Spatial_file_chan
                 if(is.null(file5)){return()}
-                sf::st_read(file5$datapath)}
+                sf::st_read(file5$datapath)
+                }
 
     })
     
