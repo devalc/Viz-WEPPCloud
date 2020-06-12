@@ -32,8 +32,10 @@ options(shiny.maxRequestSize = 100*1024^2)
 
 ## ----------------------------------define UI------------------------------------------##
 
-ui <- navbarPage("viz-WEPPcloud",
-                 
+ui <- navbarPage("viz-WEPPcloud", 
+                 fluid = TRUE, 
+                 collapsible = TRUE,
+                 # footer = includeHTML("footer.html"),
 ## ----------------------------------Set Theme------------------------------------------##                 
                  ## set the theme
                  ###I like on of these themes: readable, flatly, journal,united, sandstone
@@ -78,11 +80,15 @@ ui <- navbarPage("viz-WEPPcloud",
                               
                               fluidRow(
                                   # column(6, tableOutput("tab1")),
+                                  column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp1")),
+                                  column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp2")),
                                   column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               HTML("<br><br>"),
                               fluidRow(
+                                  column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp3")),
+                                  column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp4")),
                                   column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
                                   column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
@@ -100,40 +106,40 @@ ui <- navbarPage("viz-WEPPcloud",
                               # )
                           ),
 ## --------------------------------------------------------------------------------------##                 
-                 tabPanel("Channel",
-                          sidebarPanel(
-                              
-                              
-                              radioButtons(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
-                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
-                              
-                              
-                              uiOutput("C_FileInput"),
-                              uiOutput("Chan_selectfile"),
-                              uiOutput("Chan_wshed"),
-                              uiOutput("Chan_var"),
-                              uiOutput("Chan_scen"),
-                              
-                              
-                              sliderInput("thresh_C", "Thresholding Percent:",
-                                          min = 0, max = 100,
-                                          value = 100, step = 5)    
-                          ),
-                          
-                          # Main panel for displaying outputs ----
-                          mainPanel(
-                              
-                              fluidRow(
-                                  # column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot6_abs")%>% withSpinner(color="#0dc5c1"))
-                              ),
-                              fluidRow(
-                                  column(6, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot7_abs")%>% withSpinner(color="#0dc5c1"))
-                                  # column(6, plotlyOutput("Plot8"))
-                              )
-                          )),
+                 # tabPanel("Channel",
+                 #          sidebarPanel(
+                 #              
+                 #              
+                 #              radioButtons(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
+                 #                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                 #              
+                 #              
+                 #              uiOutput("C_FileInput"),
+                 #              uiOutput("Chan_selectfile"),
+                 #              uiOutput("Chan_wshed"),
+                 #              uiOutput("Chan_var"),
+                 #              uiOutput("Chan_scen"),
+                 #              
+                 #              
+                 #              sliderInput("thresh_C", "Thresholding Percent:",
+                 #                          min = 0, max = 100,
+                 #                          value = 100, step = 5)    
+                 #          ),
+                 #          
+                 #          # Main panel for displaying outputs ----
+                 #          mainPanel(
+                 #              
+                 #              fluidRow(
+                 #                  # column(6,  plotlyOutput("Plot5")%>% withSpinner(color="#0dc5c1")),
+                 #                  column(6, plotlyOutput("Plot6")%>% withSpinner(color="#0dc5c1")),
+                 #                  column(6, plotlyOutput("Plot6_abs")%>% withSpinner(color="#0dc5c1"))
+                 #              ),
+                 #              fluidRow(
+                 #                  column(6, plotlyOutput("Plot7")%>% withSpinner(color="#0dc5c1")),
+                 #                  column(6, plotlyOutput("Plot7_abs")%>% withSpinner(color="#0dc5c1"))
+                 #                  # column(6, plotlyOutput("Plot8"))
+                 #              )
+                 #          )),
 ## ---------------------------------------------------------------------------------------##                 
                  tabPanel("Watershed",
                           sidebarPanel(
@@ -197,7 +203,17 @@ ui <- navbarPage("viz-WEPPcloud",
                                   
                               )
                           )
-                 )
+                 ),
+## -----------------------------------------About Tab---------------------------------------------##                 
+
+                tabPanel("About",
+                    mainPanel(
+                        fluidPage(
+                            
+                        )
+                    )
+                    
+                )
                  
 )
 
@@ -261,12 +277,12 @@ server <- function(input, output, session) {
     output$Hill_var <- renderUI({
         if(input$DefOrUserUpload_H == 'Upload data'){
             req(Hill_data())
-            selectInput("Hill_variable", "Select the variable of interest",  colnames(Hill_data()[8:29]),
+            selectInput("Hill_variable", "Select the variable of interest",  colnames(Hill_data()[10:29]),
                         selected = colnames(Hill_data()[10]) )
         }else
             if(input$DefOrUserUpload_H == 'Default Data'){
                 selectInput(inputId="Hill_variable",label="Select the variable of interest",
-                            choices =  as.character(unique(colnames(Hill_data())))[8:29],
+                            choices =  as.character(unique(colnames(Hill_data())))[c(10:15, 20:29)],
                             selected = as.character(unique(colnames(Hill_data())))[10],multiple = F)
                 
             }
@@ -757,6 +773,12 @@ server <- function(input, output, session) {
     # ############## plots of cumulative percent of total variable   ############## 
     # ############## vs cumulative percent of total hillslope area/ channel length   ############## 
     # 
+    
+    # output$Exp1 <- renderText({ 
+    #     paste("Blah Blah")
+    # })
+    # 
+    
     output$Plot_vs_cumPercArea <- renderPlotly({
         
         req(input$Hill_variable)
