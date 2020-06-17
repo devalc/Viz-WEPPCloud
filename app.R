@@ -26,6 +26,7 @@ library(plotly)
 library(leaflet)
 library(tmap)
 library(ggthemes)
+library(scrollrevealR)
 
 ## ----------------------------------Init Options---------------------------------------##
 options(shiny.maxRequestSize = 100*1024^2)
@@ -45,9 +46,10 @@ ui <- navbarPage("viz-WEPPcloud",
 ## ----------------------------------Start defining Tabs------------------------------------------##                 
                  tabPanel("Hillslope",
                           sidebarPanel(
+                              # style = "position:fixed;width:inherit;", width = 2,
                               
                               radioButtons(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
-                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
                               uiOutput("Hill_selectfile"),
@@ -55,7 +57,7 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Hill_var"),
                               
                               
-                              sliderInput("thresh_H", "Thresholding Plots:",
+                              sliderInput("thresh_H", "Plot Threshold (%):",
                                           min = 0, max = 100,
                                           value = 100, step = 5),
                               
@@ -77,22 +79,57 @@ ui <- navbarPage("viz-WEPPcloud",
                           
                           # Main panel for displaying outputs ----
                           mainPanel(
-                              
+                              # width = 9,
                               fluidRow(
-                                  # column(6, tableOutput("tab1")),
-                                  column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp1")),
-                                  column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp2")),
+                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-right:0px;", offset = 0,  textOutput("Exp1")),
+                                  tags$head(tags$style("#Exp1{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+                                        ),
+                                  column(5,style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 1, textOutput("Exp2")),
+                                  tags$head(tags$style("#Exp2{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+                                  )),
+                              HTML("<br><br>"),
+                              fluidRow(
+                                  # tags$head(tags$style("#Exp1{color:red; font-size:12px; font-style:normal;}")),
+                                  # column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp2")),
                                   column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
+                                  column(6,align = "center", plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               HTML("<br><br>"),
                               fluidRow(
-                                  column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp3")),
-                                  column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp4")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
-                                  column(6, plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
+                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-right:0px;", offset = 0,  textOutput("Exp3")),
+                                  tags$head(tags$style("#Exp1{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+                                  ),
+                                  column(5,style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 1, textOutput("Exp4")),
+                                  tags$head(tags$style("#Exp2{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+                                  )),
+                              HTML("<br><br>"),
+                              fluidRow(
+                                  # column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp3")),
+                                  # column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp4")),
+                                  column(6,align = "center", plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
+                                  column(6,align = "center", plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
-                              HTML("<br><br><br>")
+                              HTML("<br><br>")
                               ),
                               
                               fluidRow(
@@ -111,7 +148,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  #              
                  #              
                  #              radioButtons(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
-                 #                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                 #                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                  #              
                  #              
                  #              uiOutput("C_FileInput"),
@@ -146,7 +183,7 @@ ui <- navbarPage("viz-WEPPcloud",
                               
                               
                               radioButtons(inputId = "DefOrUserUpload_W",label = "What data shall I use?",
-                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               # uiOutput("Wshed_selectfile"),
@@ -178,7 +215,7 @@ ui <- navbarPage("viz-WEPPcloud",
                           sidebarPanel(
                               
                               radioButtons(inputId = "DefOrUserUpload_S",label = "What data shall I use?",
-                                           choices = c("Use sample data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
                               uiOutput("S_FileInput"),
@@ -774,10 +811,6 @@ server <- function(input, output, session) {
     # ############## vs cumulative percent of total hillslope area/ channel length   ############## 
     # 
     
-    # output$Exp1 <- renderText({ 
-    #     paste("Blah Blah")
-    # })
-    # 
     
     output$Plot_vs_cumPercArea <- renderPlotly({
         
@@ -1133,6 +1166,27 @@ server <- function(input, output, session) {
         p4
         
     })
+    
+## -----------------------------------------------------------------------------------------------------------## 
+##  Generate plot descriptions ##
+## -----------------------------------------------------------------------------------------------------------##    
+    output$Exp1 <- renderText({
+        require(input$Hill_variable)
+        paste("What percent of total", " ", input$Hill_variable , " ", "is generated from what percent of total hillslope area ?")
+    })
+    
+    output$Exp2 <- renderText({
+        paste("Cumulatively what fraction of the total", " ", input$Hill_variable , " ", "is generated from what percent of total hillslope area ?")
+    })
+    
+    output$Exp3 <- renderText({
+        paste("What percent of total", " ", input$Hill_variable , " ", "is generated from what percent of total channel length ?")
+    })
+    
+    output$Exp4 <- renderText({
+        paste("Cumulatively what fraction of the total", " ", input$Hill_variable , " ", "is generated from what percent of total channel length ?")
+    })
+    # 
     
 ## -----------------------------------------------------------------------------------------------------------##    
 ## ---------------------------------Plots:Channels-------------------------------------------------------##    
