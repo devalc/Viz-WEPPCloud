@@ -26,27 +26,31 @@ library(plotly)
 library(leaflet)
 library(tmap)
 library(ggthemes)
-library(scrollrevealR)
+# library(scrollrevealR)
 
 ## ----------------------------------Init Options---------------------------------------##
 options(shiny.maxRequestSize = 100*1024^2)
 
 ## ----------------------------------define UI------------------------------------------##
 
-ui <- navbarPage("viz-WEPPcloud", 
+ui <- navbarPage("viz-WEPPcloud",
+                 position = "fixed-top",
                  fluid = TRUE, 
                  collapsible = TRUE,
                  # footer = includeHTML("footer.html"),
 ## ----------------------------------Set Theme------------------------------------------##                 
                  ## set the theme
                  ###I like on of these themes: readable, flatly, journal,united, sandstone
-                 theme = shinytheme(theme = "united"),
+                 theme = shinytheme(theme = "flatly"),
+
+
 
 
 ## ----------------------------------Start defining Tabs------------------------------------------##                 
                  tabPanel("Hillslope",
+                          tags$style(type="text/css", "body {padding-top: 70px;}"),
                           sidebarPanel(
-                              # style = "position:fixed;width:inherit;", width = 2,
+                              style = "position:fixed;width:inherit;", width = 2,
                               
                               radioButtons(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
                                            choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
@@ -79,9 +83,11 @@ ui <- navbarPage("viz-WEPPcloud",
                           
                           # Main panel for displaying outputs ----
                           mainPanel(
-                              # width = 9,
+                              # HTML("<br style = “line-height:5;”><br>"),
+                              width = 10,
+                              style='padding:50px;',
                               fluidRow(
-                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-right:0px;", offset = 0,  textOutput("Exp1")),
+                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp1")),
                                   tags$head(tags$style("#Exp1{color: black;
                                   font-size: 16px;
                                   font-style: normal;
@@ -97,16 +103,16 @@ ui <- navbarPage("viz-WEPPcloud",
                                   text-align: center;
                                   }")
                                   )),
-                              HTML("<br><br>"),
+                              HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
                                   # tags$head(tags$style("#Exp1{color:red; font-size:12px; font-style:normal;}")),
                                   # column(6, div(style = "height:100px;background-color:#ffedcc;", align = "center"), textOutput("Exp2")),
                                   column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
                                   column(6,align = "center", plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
-                              HTML("<br><br>"),
+                              HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
-                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-right:0px;", offset = 0,  textOutput("Exp3")),
+                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp3")),
                                   tags$head(tags$style("#Exp1{color: black;
                                   font-size: 16px;
                                   font-style: normal;
@@ -122,26 +128,26 @@ ui <- navbarPage("viz-WEPPcloud",
                                   text-align: center;
                                   }")
                                   )),
-                              HTML("<br><br>"),
+                              HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
+                                  
                                   # column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp3")),
                                   # column(6, div(style = "height:100px;background-color: #ffedcc;", align = "center"), textOutput("Exp4")),
                                   column(6,align = "center", plotlyOutput("Plot_vs_cumPercLen")%>% withSpinner(color="#0dc5c1")),
                                   column(6,align = "center", plotlyOutput("Plot_vs_cumPercLen_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
-                              HTML("<br><br>")
-                              ),
+                              HTML("<br style = “line-height:5;”><br>"),
                               
                               fluidRow(
                                   
-                                  column(10, offset = 1, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
+                                  column(12, align = "center", offset = 0, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
                                   )
                               # HTML("<br><br><br>"),
                               # fluidRow(
                               # column(6, DT::dataTableOutput("WS_Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
                               # 
                               # )
-                          ),
+                          )),
 ## --------------------------------------------------------------------------------------##                 
                  # tabPanel("Channel",
                  #          sidebarPanel(
@@ -1497,8 +1503,7 @@ server <- function(input, output, session) {
                 dplyr::arrange_at(.vars = input$Hill_variable, desc)%>%
                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
                 dplyr::filter(cumPercArea<input$thresh_H)%>% 
-                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-                              Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.) %>%
                 group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>%
                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean))%>% dplyr::mutate_if(is.numeric, round,2) 
         }else
@@ -1507,8 +1512,7 @@ server <- function(input, output, session) {
                     dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
                     dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
                     dplyr::filter(cumPercArea<input$thresh_H)%>%
-                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.,
-                                  Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.) %>%
                     group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
                 
@@ -1518,8 +1522,7 @@ server <- function(input, output, session) {
                         dplyr::arrange_at(.vars = input$Hill_variable, desc)%>% 
                         dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.)/sum(Hillslope.Area..ha.)*100) %>%
                         dplyr::filter(cumPercArea<input$thresh_H)%>%
-                        dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.,
-                                      Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) %>%
+                        dplyr::select(SoilDesc, LanduseDesc, Slope, Sediment.Yield..kg.ha.) %>%
                         group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean=mean)) %>% 
                         dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round,2) 
                     
