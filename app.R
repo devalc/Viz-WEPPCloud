@@ -50,7 +50,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  tabPanel("Hillslope",
                           tags$style(type="text/css", "body {padding-top: 70px;}"),
                           sidebarPanel(
-                              style = "position:fixed;width:inherit;", width = 2,
+                              style = "position:fixed;width:inherit;", width = 3,
                               
                               radioButtons(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
                                            choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
@@ -84,7 +84,7 @@ ui <- navbarPage("viz-WEPPcloud",
                           # Main panel for displaying outputs ----
                           mainPanel(
                               # HTML("<br style = “line-height:5;”><br>"),
-                              width = 10,
+                              width = 9,
                               style='padding:50px;',
                               fluidRow(
                                   column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp1")),
@@ -209,7 +209,7 @@ ui <- navbarPage("viz-WEPPcloud",
                               fluidPage(
                                   # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                                   # column(12, tableOutput("tab1"))
-                                  plotOutput("Plot9",height = "800px", width ="800px")%>% withSpinner(color="#0dc5c1")
+                                  plotlyOutput("Plot9",height = "800px", width ="800px")%>% withSpinner(color="#0dc5c1")
                                   
                               )
                           )
@@ -1407,7 +1407,7 @@ server <- function(input, output, session) {
 ## ---------------------------------Plots:Watershed-------------------------------------------------------##    
 ## -----------------------------------------------------------------------------------------------------------##        
     
-    output$Plot9 <- renderPlot({
+    output$Plot9 <- renderPlotly({
         # req(input$Wshed_wshed)
         
         Wshed_subset <- Wshed_subset()
@@ -1422,17 +1422,16 @@ server <- function(input, output, session) {
             # output$tab1 <- renderTable(
             #     d.m %>% head(100) )
             
-            # a <- plotly::plot_ly(x = ~Scenario, y= ~variable,  z= d.m, type = "heatmap")
-            
-            ggplot(d.m, aes(Scenario, variable,  fill= value)) +
+            a<-  ggplot(d.m, aes(Scenario, variable,  fill= value)) +
                 geom_tile(inherit.aes = TRUE)  +
-                scale_fill_distiller(palette = "BrBG", direction = -1) +
+                scale_fill_distiller(palette =  "Spectral", direction = -1) +
                 theme(
-                    axis.text.x = element_text(angle = 90,colour = "Black", size = 12, face = "bold"),
-                    axis.text.y = element_text(colour = "Black", size = 12, face = 'bold'),
+                    axis.text.x = element_text(angle = 90,colour = "Black"),
+                    axis.text.y = element_text(colour = "Black"),
                     axis.title = element_blank()
                     
                 )
+           ggplotly(a)
             
         }else
             if (input$ScenVvar == "Bar Chart") {
@@ -1441,6 +1440,8 @@ server <- function(input, output, session) {
                 
                 d.m <- reshape2::melt(d)
                 
+                ## Calculates percent contribution of each variable across all 
+                ## the simulated scenarios
                 d.m <- d.m %>%
                     group_by(variable) %>%
                     mutate(total = sum(value),
@@ -1452,17 +1453,18 @@ server <- function(input, output, session) {
                 #     d.m %>% head(100) )
                 
                 
-                ggplot(d.m) +
+               b<- ggplot(d.m) +
                     
                     geom_bar(aes(y = share, x = variable, fill = reorder(Scenario, -share)), stat = "identity", position = "dodge") +
                     theme(
-                        axis.text.x = element_text(angle = 45, vjust = ,colour = "Black", size = 12, face = "bold"),
-                        axis.text.y = element_text(colour = "Black", size = 12, face = 'bold'),
+                        axis.text.x = element_text(angle = 45, vjust = ,colour = "Black"),
+                        axis.text.y = element_text(colour = "Black"),
                         axis.title.x = element_blank(),
-                        axis.title.y = element_text(colour = "Black", size = 12, face = 'bold'),
+                        axis.title.y = element_blank(),
                         legend.title = element_blank()
-                    ) +coord_flip() + labs(x="Percent of total across all scenarios") + scale_fill_brewer(
-                        palette = "RdYlGn")
+                    ) +coord_flip() + labs(y="Percent of total across all scenarios") + scale_fill_brewer(
+                        palette = "RdYlGn") + theme(legend.position="none")
+               ggplotly(b)
                 
                 
             }
