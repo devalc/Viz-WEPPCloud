@@ -60,7 +60,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  tabPanel("Home", icon = icon("home"),
 
-                          setBackgroundImage(src = "background1.JPG", shinydashboard = FALSE),
+                          setBackgroundImage(src = "background1.png", shinydashboard = FALSE),
                           mainPanel(
                               fluidPage(
                                   HTML("<br style = “line-height:30;”><br>"),
@@ -69,7 +69,7 @@ ui <- navbarPage("viz-WEPPcloud",
                                              
                                              HTML('<div class="jumbotron" style="background-color:#F8F8FF;">
                                                       <h1>viz-WEPPcloud</h1>
-                                                      <h4>Supporting decision making by using outputs from a process based model!</h4>
+                                                      <h4>Supporting targeted management using outputs of a process based model!</h4>
                                                       </div>')
                                              
                                              # border:2px solid black;
@@ -80,14 +80,13 @@ ui <- navbarPage("viz-WEPPcloud",
                                            fluidRow(
                                                column(12, offset =3, align  = "center",
                                                column(4,  align  = "center", 
-                                                      thumbnail_label1(image = 'background.JPG', label = 'Watershed',
-                                                                       content = "Compare variables across 
-                                                                       different simulated scenarios in a particular watershed"),
+                                                      thumbnail_label1(image = 'background.png', label = 'Watershed',
+                                                                       content = "Compare impacts management on water yield and water quality variables 
+                                                                       in a particular watershed in one glance."),
                                                       actionBttn("Wbutton", "Navigate to Watershed",icon = icon("list-alt"))),
                                                column(4, align  = "center", 
-                                                      thumbnail_label1(image = 'hillslope_img.JPG', label = 'Hillslope',
-                                                                         content = 'Identify most important hillslopes 
-                                                                         that when managed will have maximum impact on the 
+                                                      thumbnail_label1(image = 'hillslope_img.png', label = 'Hillslope',
+                                                                         content = 'Identify hillslopes that can be targeted for management to minimize impact on the 
                                                                        variable of interest in a particular watershed'),
                                                       actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"))),
                                                column(4, align  = "center", thumbnail_label1(image = 'spatial_imp.PNG', label = 'Spatial',
@@ -147,8 +146,11 @@ ui <- navbarPage("viz-WEPPcloud",
                               fluidPage(
                                   # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                                   # column(12, tableOutput("tab1"))
-                                  plotlyOutput("Plot9",height = "800px", width ="800px")%>% withSpinner(color="#0dc5c1")
-                                  
+                                  fluidRow(
+                                      column(12,
+                                  plotlyOutput("Plot9",height = "700px", width ="800px")%>% withSpinner(color="#0dc5c1")
+                                  )
+                                  )
                               )
                           )
                  ),
@@ -190,49 +192,16 @@ ui <- navbarPage("viz-WEPPcloud",
                           ),
 
                           mainPanel(
-                              # HTML("<br style = “line-height:5;”><br>"),
                               width = 9,
                               style='padding:50px;',
-                              fluidRow(
-                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp1")),
-                                  tags$head(tags$style("#Exp1{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }")
-                                  ),
-                                  column(5,style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 1, textOutput("Exp2")),
-                                  tags$head(tags$style("#Exp2{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }")
-                                  )),
+                              uiOutput("Exp1_Exp2"),
                               HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
                                   column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
                                   column(6,align = "center", plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               HTML("<br style = “line-height:5;”><br>"),
-                              fluidRow(
-                                  column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp3")),
-                                  tags$head(tags$style("#Exp1{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }")
-                                  ),
-                                  column(5,style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 1, textOutput("Exp4")),
-                                  tags$head(tags$style("#Exp2{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }")
-                                  )),
+                              uiOutput("Exp3_Exp4"),
                               HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
                                   
@@ -442,6 +411,70 @@ server <- function(input, output, session) {
                 
             }
         
+    })
+   
+    ## -----------------------------------------------------------------------------------------------------------## 
+    ##  Generate plot descriptions ##
+    ## -----------------------------------------------------------------------------------------------------------##    
+    output$Exp1 <- renderText({
+        paste("What percent of total hillslope area contributes a large fraction of total", " ", input$Hill_variable , " ", "?")
+    })
+    
+    output$Exp2 <- renderText({
+        paste("What percent of total hillslope area contributes a large fraction of cumulative", " ", input$Hill_variable , " ", "?")
+    })
+    
+    output$Exp3 <- renderText({
+        paste("What percent of total channel length contributes a large fraction of total", " ", input$Hill_variable , " ", "?")
+    })
+    
+    output$Exp4 <- renderText({
+        paste("What percent of total channel length contributes a large fraction of cumulative", " ", input$Hill_variable , " ", "?")
+    })
+    # 
+    
+    
+    output$Exp1_Exp2 <- renderUI({
+        req(Hill_data())
+        fluidRow(
+            column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp1")),
+            tags$head(tags$style("#Exp1{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+            ),
+            column(5,style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 1, textOutput("Exp2")),
+            tags$head(tags$style("#Exp2{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+            ))
+    })
+    
+    
+    output$Exp3_Exp4 <- renderUI({
+        req(Hill_data())
+        fluidRow(
+            column(6, style = "height:60px;background-color:#F5F5F5;padding-left:10px;", offset = 0,  textOutput("Exp3")),
+            tags$head(tags$style("#Exp1{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+            ),
+            column(5,style = "height:60px;background-color:#F5F5F5;padding-left:10px;", offset = 1, textOutput("Exp4")),
+            tags$head(tags$style("#Exp2{color: black;
+                                  font-size: 16px;
+                                  font-style: normal;
+                                  font-family: Helvetica;
+                                  text-align: center;
+                                  }")
+            ))
     })
     
     ## ----------------------------------Channel server logic------------------------------------------##    
@@ -1253,27 +1286,7 @@ server <- function(input, output, session) {
         
     })
     
-    ## -----------------------------------------------------------------------------------------------------------## 
-    ##  Generate plot descriptions ##
-    ## -----------------------------------------------------------------------------------------------------------##    
-    output$Exp1 <- renderText({
-        require(input$Hill_variable)
-        paste("What percent of total", " ", input$Hill_variable , " ", "is generated from what percent of total hillslope area ?")
-    })
-    
-    output$Exp2 <- renderText({
-        paste("Cumulatively what fraction of the total", " ", input$Hill_variable , " ", "is generated from what percent of total hillslope area ?")
-    })
-    
-    output$Exp3 <- renderText({
-        paste("What percent of total", " ", input$Hill_variable , " ", "is generated from what percent of total channel length ?")
-    })
-    
-    output$Exp4 <- renderText({
-        paste("Cumulatively what fraction of the total", " ", input$Hill_variable , " ", "is generated from what percent of total channel length ?")
-    })
-    # 
-    
+   
     ## -----------------------------------------------------------------------------------------------------------##    
     ## ---------------------------------Plots:Channels-------------------------------------------------------##    
     ## -----------------------------------------------------------------------------------------------------------##        
