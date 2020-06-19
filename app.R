@@ -125,17 +125,30 @@ ui <- navbarPage("viz-WEPPcloud",
                           sidebarPanel(
                               
                               style = "position:fixed;width:inherit;", width = 3,
-                              radioButtons(inputId = "DefOrUserUpload_W",label = "What data shall I use?",
-                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                              awesomeRadio(inputId = "DefOrUserUpload_W",
+                                           label = "What data shall I use?",
+                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data",
+                                                       "Upload your own data"="Upload data"),
+                                           selected = "Default Data",
+                                           status= 'success'),
                               
                               
                               # uiOutput("Wshed_selectfile"),
                               
                               uiOutput("W_FileInput"),
+                              
+                              awesomeRadio(inputId = "AreaVsScen",label = "How do you want to compare?",
+                                           choices = c("One Watershed, All Scenarios"="allscen",
+                                                       "One Scenario, All Watersheds"="allwat"),
+                                           selected = "allscen",
+                                           status= 'success'),
+                              
                               uiOutput("Wshed_wshed"),
                               
-                              radioButtons(inputId = "ScenVvar",label = "Select heatmap or specific variable",
-                                           choices = c("Heatmap"="Heatmap","Bar Chart"="Bar Chart"), selected = "Heatmap")
+                              awesomeRadio(inputId = "ScenVvar",label = "Select visualization type",
+                                           choices = c("Heatmap"="Heatmap","Bar Chart"="Bar Chart"),
+                                           selected = "Heatmap",
+                                           status= 'success')
                               
                               
                           ),
@@ -173,15 +186,18 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Hill_var"),
                               
                               
-                              sliderInput("thresh_H", "Plot Threshold (%):",
+                              knobInput("thresh_H", "Plot Threshold (%):",
                                           min = 0, max = 100,
-                                          value = 100, step = 5),
+                                          value = 100, fgColor = "#428BCA",
+                                        inputColor = "#428BCA"),
                               
                               uiOutput("Hill_scen"),
                               
-                              radioButtons(inputId = "summary_DT_by_var_H",label = "Summarize Sediment by:",
+                              awesomeRadio(inputId = "summary_DT_by_var_H",label = "Summarize Sediment by:",
                                            choices = c("Land Use"="Landuse","Soil Type"="Soiltype", "Both" = "Both"), 
-                                           selected = "Landuse")
+                                           selected = "Landuse",
+                                           status= 'success'
+                                           )
                               
                               # radioButtons(inputId = "AvgWestShoreNos_H",
                               # label = "Do you want average sediment summary for West shore?",
@@ -577,12 +593,25 @@ server <- function(input, output, session) {
     output$Wshed_wshed <- renderUI({
         if(input$DefOrUserUpload_W == 'Upload data'){
             req(Wshed_data())
-            selectInput("Wshed_wshed", "Select the variable of interest",  unique(Wshed_data()$Watershed))
+            if(input$AreaVsScen == 'allscen'){
+            selectInput("Wshed_wshed", "Select the watershed of interest",
+                        unique(Wshed_data()$Watershed))
+                }else
+                    if(input$AreaVsScen == 'allwat'){
+                        selectInput("Wshed_wshed", "Select the scenario of interest",
+                                    unique(Wshed_data()$Scenario))
+                    }
         }else
             if(input$DefOrUserUpload_W == 'Default Data'){
-                
-                selectInput(inputId="Wshed_wshed",label="Select the variable of interest",
-                            choices =   unique(Wshed_data()$Watershed),selected =   unique(Hill_data()$Watershed)[11])
+                if(input$AreaVsScen == 'allscen'){
+                selectInput(inputId="Wshed_wshed",label="Select the watershed of interest",
+                            choices =   unique(Wshed_data()$Watershed),
+                            selected =   unique(Hill_data()$Watershed)[11])
+                    }else
+                        if(input$AreaVsScen == 'allwat'){
+                            selectInput("Wshed_wshed", "Select the scenario of interest",
+                                                                     unique(Wshed_data()$Scenario))
+                        }
                 
             }
         
@@ -717,8 +746,11 @@ server <- function(input, output, session) {
     
     Wshed_subset <- reactive({
         req(Wshed_data())
-        Wshed_data() %>% 
-            dplyr::filter(Watershed %in% input$Wshed_wshed) 
+        req(input$AreaVsScen)
+        if(input$AreaVsScen == 'allscen'){
+            Wshed_data() %>% dplyr::filter(Watershed %in% input$Wshed_wshed)}else
+                if(input$AreaVsScen == 'allwat'){
+                    Wshed_data() %>% dplyr::filter(Scenario %in% input$Wshed_wshed)}
     })
     
     ################# Filtering logic for spatial DF #################
@@ -1508,10 +1540,9 @@ server <- function(input, output, session) {
         # req(input$Wshed_wshed)
         
         Wshed_subset <- Wshed_subset()
-        
-        if (input$ScenVvar == "Heatmap") {
+        if(input$AreaVsScen == 'allscen'){
+            if (input$ScenVvar == "Heatmap") {
             d <-  Wshed_subset[,c(2,7:20)] %>% dplyr::mutate_if(is.numeric, scale)
-            
             d.m <- reshape2::melt(d)
             
             
@@ -1564,7 +1595,64 @@ server <- function(input, output, session) {
                 ggplotly(b)
                 
                 
-            }
+            }}else
+                if(input$AreaVsScen == 'allwat'){
+                    if (input$ScenVvar == "Heatmap") {
+                        d <-  Wshed_subset[,c(3,7:20)] %>% dplyr::mutate_if(is.numeric, scale)
+                        d.m <- reshape2::melt(d)
+                        
+                        
+                        # # TEST To SEE if the dataframe from the reactive func is accessible
+                        # output$tab1 <- renderTable(
+                        #     d.m %>% head(100) )
+                        
+                        a<-  ggplot(d.m, aes(Watershed, variable,  fill= value)) +
+                            geom_tile(inherit.aes = TRUE)  +
+                            scale_fill_distiller(palette =  "Spectral", direction = -1) +
+                            theme(
+                                axis.text.x = element_text(angle = 90,colour = "Black"),
+                                axis.text.y = element_text(colour = "Black"),
+                                axis.title = element_blank()
+                                
+                            )
+                        ggplotly(a)
+                        
+                    }else
+                        if (input$ScenVvar == "Bar Chart") {
+                            
+                            d <-  Wshed_subset[,c(3,7:20)]
+                            
+                            d.m <- reshape2::melt(d)
+                            
+                            ## Calculates percent contribution of each variable across all 
+                            ## the simulated scenarios
+                            d.m <- d.m %>%
+                                group_by(variable) %>%
+                                mutate(total = sum(value),
+                                       share = (value/total)*100) %>% 
+                                ungroup()
+                            
+                            # # TEST To SEE if the dataframe from the reactive func is accessible
+                            # output$tab1 <- renderTable(
+                            #     d.m %>% head(100) )
+                            
+                            
+                            b<- ggplot(d.m) +
+                                
+                                geom_bar(aes(y = share, x = variable, fill = reorder(Watershed, -share)), stat = "identity", position = "dodge") +
+                                theme(
+                                    axis.text.x = element_text(angle = 45, vjust = ,colour = "Black"),
+                                    axis.text.y = element_text(colour = "Black"),
+                                    axis.title.x = element_blank(),
+                                    axis.title.y = element_blank(),
+                                    legend.title = element_blank()
+                                ) +coord_flip() + labs(y="Percent of total across all Watersheds") + scale_fill_brewer(
+                                    palette = "RdYlGn") + theme(legend.position="none")
+                            ggplotly(b)
+                            
+                            
+                        }
+                }
     })
     
     ## -----------------------------------------------------------------------------------------------------------##    
