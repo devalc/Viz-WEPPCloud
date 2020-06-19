@@ -81,7 +81,7 @@ ui <- navbarPage("viz-WEPPcloud",
                                                column(12, offset =3, align  = "center",
                                                column(4,  align  = "center", 
                                                       thumbnail_label1(image = 'background.png', label = 'Watershed',
-                                                                       content = "Compare impacts management on water yield and water quality variables 
+                                                                       content = "Compare impacts of management on water yield and water quality variables 
                                                                        in a particular watershed in one glance."),
                                                       actionBttn("Wbutton", "Navigate to Watershed",icon = icon("list-alt"))),
                                                column(4, align  = "center", 
@@ -124,7 +124,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  tabPanel("Watershed",
                           sidebarPanel(
                               
-                              
+                              style = "position:fixed;width:inherit;", width = 3,
                               radioButtons(inputId = "DefOrUserUpload_W",label = "What data shall I use?",
                                            choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
@@ -142,7 +142,9 @@ ui <- navbarPage("viz-WEPPcloud",
                           
                           # Main panel for displaying outputs ----
                           mainPanel(
-                              
+                              width = 9,
+                              style='padding:50px;',
+                              uiOutput("Wshed_Exp"),
                               fluidPage(
                                   # plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                                   # column(12, tableOutput("tab1"))
@@ -639,14 +641,16 @@ server <- function(input, output, session) {
     output$Spatial_wshed <- renderUI({
         if(input$DefOrUserUpload_S == 'Upload data'){
             req(Spatial_data())
-            selectInput("S_wshed", "Select the variable of interest",  unique(Spatial_data()$Watershed),
-                        selected = unique(Spatial_data()$Watershed)[11], multiple = F)
+            pickerInput("S_wshed", "Select the watershed of interest",  unique(Spatial_data()$Watershed),
+                        options = list(`actions-box` = TRUE),
+                        selected = unique(Spatial_data()$Watershed)[11], multiple = T)
         }else
             if(input$DefOrUserUpload_S == 'Default Data'){
-                selectInput(inputId="S_wshed",label="Select the variable of interest",
+                pickerInput(inputId="S_wshed",label="Select the watershed of interest",
                             choices =  unique(Spatial_data()$Watershed),
+                            options = list(`actions-box` = TRUE),
                             selected = unique(Spatial_data()$Watershed)[19],
-                            multiple = F)
+                            multiple = T)
                 
             }
         
