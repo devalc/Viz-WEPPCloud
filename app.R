@@ -60,7 +60,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  tabPanel("Home", icon = icon("home"),
 
-                          setBackgroundImage(src = "about1.JPG", shinydashboard = FALSE),
+                          setBackgroundImage(src = "background1.JPG", shinydashboard = FALSE),
                           mainPanel(
                               fluidPage(
                                   HTML("<br style = “line-height:30;”><br>"),
@@ -80,7 +80,7 @@ ui <- navbarPage("viz-WEPPcloud",
                                            fluidRow(
                                                column(12, offset =3, align  = "center",
                                                column(4,  align  = "center", 
-                                                      thumbnail_label1(image = 'about.JPG', label = 'Watershed',
+                                                      thumbnail_label1(image = 'background.JPG', label = 'Watershed',
                                                                        content = "Compare variables across 
                                                                        different simulated scenarios in a particular watershed"),
                                                       actionBttn("Wbutton", "Navigate to Watershed",icon = icon("list-alt"))),
