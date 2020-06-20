@@ -51,6 +51,8 @@ ui <- navbarPage("viz-WEPPcloud",
                  ###I like on of these themes: readable, flatly, journal,united, sandstone
                  theme = shinytheme(theme = "flatly"),
                  
+                 ## ----------------------------------google-Analytics------------------------------------------##
+                 # tags$head(includeHTML(("google-analytics.html"))),
                  
                  
                  ## ----------------------------------Start defining Tabs------------------------------------------##
@@ -177,7 +179,7 @@ ui <- navbarPage("viz-WEPPcloud",
                           sidebarPanel(
                               style = "position:fixed;width:inherit;", width = 3,
                               
-                              radioButtons(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
+                              awesomeRadio(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
                                            choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
@@ -199,7 +201,7 @@ ui <- navbarPage("viz-WEPPcloud",
                                            status= 'success'
                                            )
                               
-                              # radioButtons(inputId = "AvgWestShoreNos_H",
+                              # awesomeRadio(inputId = "AvgWestShoreNos_H",
                               # label = "Do you want average sediment summary for West shore?",
                               #              choices = c("Yes"="Yes","No"="No"), selected = "Yes"),
                               # 
@@ -245,7 +247,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  tabPanel("Spatial-Viz",
                           sidebarPanel(
                               
-                              radioButtons(inputId = "DefOrUserUpload_S",label = "What data shall I use?",
+                              awesomeRadio(inputId = "DefOrUserUpload_S",label = "What data shall I use?",
                                            choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               
@@ -255,7 +257,7 @@ ui <- navbarPage("viz-WEPPcloud",
                               uiOutput("Spatial_scen"),
                               uiOutput("S_var")
                               
-                              # radioButtons(inputId = "showchan_S",label = "Display Channels?",
+                              # awesomeRadio(inputId = "showchan_S",label = "Display Channels?",
                               #              choices = c("Yes"="Yes","No"="No"), selected = "No")
                               # 
                               
@@ -278,7 +280,7 @@ ui <- navbarPage("viz-WEPPcloud",
                  #          sidebarPanel(
                  #              
                  #              
-                 #              radioButtons(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
+                 #              awesomeRadio(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
                  #                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
                  #              
                  #              
@@ -348,7 +350,7 @@ server <- function(input, output, session) {
     #     if(input$AvgWestShoreNos_H == 'No'){
     #         }else
     #             if(input$AvgWestShoreNos_H == 'Yes'){
-    #                 radioButtons(inputId = "WestShore_summary_by_var",label = "By which variable:",
+    #                 awesomeRadio(inputId = "WestShore_summary_by_var",label = "By which variable:",
     #                              choices = c("Land Use"="Landuse","Soil Type"="Soiltype", "Both" = "Both"), 
     #                              selected = "Landuse")
     #             }
