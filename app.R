@@ -52,8 +52,17 @@ ui <- navbarPage("viz-WEPPcloud",
                  theme = shinytheme(theme = "flatly"),
                  
                  ## ----------------------------------google-Analytics------------------------------------------##
-                 # tags$head(includeHTML(("google-analytics.html"))),
                  
+                 # tags$head(includeHTML(("google-analytics.html"))),
+                 # tags$head(HTML("<script async src='https://www.googletagmanager.com/gtag/js?id=UA-170134899-1'></script>
+                 #                    <script>
+                 #                    window.dataLayer = window.dataLayer || [];
+                 #                function gtag(){dataLayer.push(arguments);}
+                 #                gtag('js', new Date());
+                 #                
+                 #                gtag('config', 'UA-170134899-1');
+                 #                </script>"
+                 # )),
                  
                  ## ----------------------------------Start defining Tabs------------------------------------------##
                  
