@@ -29,6 +29,7 @@ library(tmap)
 library(ggthemes)
 library(shinyBS)
 library(shinyLP)
+library(DT)
 source("global.R")
 
 ## ----------------------------------Init Options---------------------------------------##
@@ -53,7 +54,9 @@ ui <- navbarPage("viz-WEPPcloud",
                  
                  ## ----------------------------------google-Analytics------------------------------------------##
                  
-                 # tags$head(includeHTML(("google-analytics.html"))),
+                 
+                 
+                 
                  # tags$head(HTML("<script async src='https://www.googletagmanager.com/gtag/js?id=UA-170134899-1'></script>
                  #                    <script>
                  #                    window.dataLayer = window.dataLayer || [];
@@ -70,6 +73,8 @@ ui <- navbarPage("viz-WEPPcloud",
                  ## -----------------------------------------About Tab---------------------------------------------##                 
                  
                  tabPanel("Home", icon = icon("home"),
+                          
+                          tags$head(includeHTML(("google-analytics.html"))),
 
                           setBackgroundImage(src = "background1.png", shinydashboard = FALSE),
                           mainPanel(
@@ -90,20 +95,20 @@ ui <- navbarPage("viz-WEPPcloud",
                                   fluidPage(HTML("<br style = “line-height:20;”><br>"),
                                            fluidRow(
                                                column(12, offset =3, align  = "center",
-                                               column(4,  align  = "center", 
+                                               column(4,   align  = "center",
                                                       thumbnail_label1(image = 'background.png', label = 'Watershed',
-                                                                       content = "Compare impacts of management on water yield and water quality variables 
+                                                                       content = "Compare impacts of land management and fire scenarios on water yield and water quality 
                                                                        in a particular watershed in one glance."),
-                                                      actionBttn("Wbutton", "Navigate to Watershed",icon = icon("list-alt"))),
+                                                      actionBttn("Wbutton", "Navigate to Watershed",icon = icon("line-chart"))),
                                                column(4, align  = "center", 
                                                       thumbnail_label1(image = 'hillslope_img.png', label = 'Hillslope',
                                                                          content = 'Identify hillslopes that can be targeted for management to minimize impact on the 
-                                                                       variable of interest in a particular watershed'),
+                                                                       water quality in a particular watershed'),
                                                       actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"))),
                                                column(4, align  = "center", thumbnail_label1(image = 'spatial_imp.PNG', label = 'Spatial',
-                                                                         content = 'Spatially visualize hillslopes that are important for
-                                                                         management'),
-                                                      actionBttn("Sbutton", "Navigate to Spatial-Viz",icon = icon("list-alt")))
+                                                                         content = 'Visualize hillslopes that can be targeted for management to minimize impact on the 
+                                                                       water quality in a particular watershed'),
+                                                      actionBttn("Sbutton", "Navigate to Spatial-Viz",icon = icon("line-chart")))
                                                )
                                            )),
                                   
@@ -189,18 +194,23 @@ ui <- navbarPage("viz-WEPPcloud",
                               style = "position:fixed;width:inherit;", width = 3,
                               
                               awesomeRadio(inputId = "DefOrUserUpload_H",label = "What data shall I use?",
-                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
+                                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data",
+                                                       "Upload your own data"="Upload data"), selected = "Default Data"),
                               
                               uiOutput("H_FileInput"),
                               uiOutput("Hill_selectfile"),
                               uiOutput("Hill_wshed"),
                               uiOutput("Hill_var"),
                               
-                              
-                              knobInput("thresh_H", "Plot Threshold (%):",
+                              sliderInput("thresh_H", "Plot Threshold (%):",
                                           min = 0, max = 100,
-                                          value = 100, fgColor = "#428BCA",
-                                        inputColor = "#428BCA"),
+                                          value = 100, step = NULL, round = TRUE, 
+                                          format = "#,##0.#####", locale = "us", ticks = TRUE, animate = FALSE),
+                              
+                              # knobInput("thresh_H", "Plot Threshold (%):",
+                              #             min = 0, max = 100,
+                              #             value = 100, fgColor = "#428BCA",
+                              #           inputColor = "#428BCA"),
                               
                               uiOutput("Hill_scen"),
                               
@@ -223,14 +233,14 @@ ui <- navbarPage("viz-WEPPcloud",
                           mainPanel(
                               width = 9,
                               style='padding:50px;',
-                              uiOutput("Exp1_Exp2"),
+                              uiOutput("Exp1_Exp2")%>% withSpinner(color="#0dc5c1"),
                               HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
                                   column(6, align = "center", plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color="#0dc5c1")),
                                   column(6,align = "center", plotlyOutput("Plot_vs_cumPercArea_abs")%>% withSpinner(color="#0dc5c1"))
                               ),
                               HTML("<br style = “line-height:5;”><br>"),
-                              uiOutput("Exp3_Exp4"),
+                              uiOutput("Exp3_Exp4")%>% withSpinner(color="#0dc5c1"),
                               HTML("<br style = “line-height:5;”><br>"),
                               fluidRow(
                                   
@@ -241,7 +251,10 @@ ui <- navbarPage("viz-WEPPcloud",
                               
                               fluidRow(
                                   
-                                  column(12, align = "center", offset = 0, DT::dataTableOutput("Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
+                                  column(12, align = "center", offset = 0, 
+                                         DT::dataTableOutput("Sed_stats_by_category"
+                                                             ) %>% 
+                                             withSpinner(color="#0dc5c1"))
                               )
                               # HTML("<br><br><br>"),
                               # fluidRow(
@@ -378,8 +391,8 @@ server <- function(input, output, session) {
     Hill_data <- reactive({
         req(input$DefOrUserUpload_H)
         if(input$DefOrUserUpload_H == 'Default Data'){
-            file1 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_hill_summary.csv")
-            # file1 <- "data/lt2020_6_hill_summary_with_all_scenarios_03_11_2020.csv"
+            # file1 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_hill_summary.csv")
+            file1 <- "data/lt2020_6_hill_summary_with_all_scenarios_04_15_2020.csv"
             read.table(file=file1,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_H == 'Upload data'){
@@ -446,25 +459,31 @@ server <- function(input, output, session) {
     ##  Generate plot descriptions ##
     ## -----------------------------------------------------------------------------------------------------------##    
     output$Exp1 <- renderText({
-        paste("What percent of total hillslope area contributes a large fraction of total", " ", input$Hill_variable , " ", "?")
+        paste("What percent of total hillslope area contributes a large fraction of total",
+              " ", input$Hill_variable , " ", "?")
     })
     
     output$Exp2 <- renderText({
-        paste("What percent of total hillslope area contributes a large fraction of cumulative", " ", input$Hill_variable , " ", "?")
+        paste("What percent of total hillslope area contributes a large fraction of cumulative",
+              " ", input$Hill_variable , " ", "?")
     })
     
     output$Exp3 <- renderText({
-        paste("What percent of total channel length contributes a large fraction of total", " ", input$Hill_variable , " ", "?")
+        paste("What percent of total channel length contributes a large fraction of total",
+              " ", input$Hill_variable , " ", "?")
     })
     
     output$Exp4 <- renderText({
-        paste("What percent of total channel length contributes a large fraction of cumulative", " ", input$Hill_variable , " ", "?")
+        paste("What percent of total channel length contributes a large fraction of cumulative",
+              " ", input$Hill_variable , " ", "?")
     })
     # 
     
     
     output$Exp1_Exp2 <- renderUI({
-        req(Hill_data())
+        req(hill_arr_by_var_HA())
+        req(hill_arr_by_var_HA_abs())
+
         fluidRow(
             column(6, style = "height:60px;background-color:#F5F5F5;padding-left:0px;", offset = 0,  textOutput("Exp1")),
             tags$head(tags$style("#Exp1{color: black;
@@ -486,7 +505,8 @@ server <- function(input, output, session) {
     
     
     output$Exp3_Exp4 <- renderUI({
-        req(Hill_data())
+        req(hill_arr_by_var_CL())
+        req(hill_arr_by_var_CL_abs())
         fluidRow(
             column(6, style = "height:60px;background-color:#F5F5F5;padding-left:10px;", offset = 0,  textOutput("Exp3")),
             tags$head(tags$style("#Exp1{color: black;
@@ -585,8 +605,8 @@ server <- function(input, output, session) {
     Wshed_data <- reactive({
         req(input$DefOrUserUpload_W)
         if(input$DefOrUserUpload_W == 'Default Data'){
-            file3 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_out_summary.csv")
-            # file3 <- "data/lt2020_6_out_summary_with_all_scenarios_03_11_2020.csv"
+            # file3 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_out_summary.csv")
+            file3 <- "data/lt2020_6_out_summary_with_all_scenarios_04_15_2020.csv"
             read.table(file=file3,header=TRUE,sep=",")
         }else
             if(input$DefOrUserUpload_W == 'Upload data'){
@@ -1758,19 +1778,29 @@ server <- function(input, output, session) {
     
     
     ##### render table summary output
-    output$Sed_stats_by_category <- DT::renderDataTable(
-        sed_stats_df(), extensions = 'Scroller', options = list(
-            deferRender = TRUE,
-            scroller = TRUE,
-            scrollY=400,
-            compact = TRUE,
-            columnDefs = list(list(className = 'dt-left')),
-            fillContainer = T,
-            class = "display"
-            
-            
-        ))
+    # output$Sed_stats_by_category <- DT::renderDataTable(
+    #     sed_stats_df(), extensions = 'Scroller', options = list(
+    #         deferRender = TRUE,
+    #         scroller = TRUE,
+    #         scrollY=400,
+    #         compact = TRUE,
+    #         columnDefs = list(list(className = 'dt-left')),
+    #         fillContainer = T,
+    #         class = "display"
+    #         
+    #         
+    #     ))
     
+    output$Sed_stats_by_category <- DT::renderDataTable(
+        sed_stats_df(), options = list(
+                    deferRender = TRUE,
+                    # scroller = TRUE,
+                    scrollY=400,
+                    compact = TRUE,
+                    columnDefs = list(list(className = 'dt-left')),
+                    fillContainer = F,
+                    class = "display"))
+
     #### West shore summary stats table
     
     # output$WS_Sed_stats_by_category <- DT::renderDataTable(
