@@ -73,6 +73,7 @@ ui <- navbarPage(
         setBackgroundImage(src = "background1.png", shinydashboard = FALSE),
         mainPanel(
             fluidPage(HTML("<br style = “line-height:30;”><br>"),
+                      
                       fluidRow(
                           column(
                               12,
@@ -215,7 +216,8 @@ ui <- navbarPage(
         # Main panel for displaying outputs ----
         mainPanel(
             width = 9,
-            style = 'padding:50px;',
+            style = 'padding:80px;',
+            # setBackgroundColor("#ffffff",shinydashboard = FALSE),
             uiOutput("Wshed_Exp"),
             fluidPage(# plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                 # column(12, tableOutput("tab1"))
