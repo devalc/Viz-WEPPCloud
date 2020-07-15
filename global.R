@@ -17,3 +17,23 @@ thumbnail_label1 <- function(image, label, content){
                     div(class = "caption", h3(label), p(content)
                     )))))
 }
+
+
+### customize the html bakground image function to blur the image
+
+setBackgroundImage1 <- function(src = NULL, shinydashboard = FALSE) {
+    if (isTRUE(shinydashboard)) {
+        el <- ".content-wrapper"
+    } else {
+        el <- "body"
+    }
+    css <- paste0(
+        el, " {background: url(", src, ") no-repeat center center fixed;
+           -webkit-background-size: cover;
+           -moz-background-size: cover;
+           -o-background-size: cover;
+           background-size: cover;
+        backdrop-filter: blur(5px);}"
+    )
+    tags$head(tags$style(HTML(css)))
+}

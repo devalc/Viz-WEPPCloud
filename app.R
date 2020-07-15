@@ -24,14 +24,13 @@ library(tidyverse)
 library(shinythemes)
 library(shinycssloaders)
 library(shinyWidgets)
-library(plotly)
+library(plotly, quietly = TRUE)
 library(leaflet)
 library(tmap)
 library(ggthemes)
-library(shinyBS)
-library(shinyLP)
-library(DT)
-library(crosstalk)
+library(shinyBS, quietly = TRUE)
+library(shinyLP, quietly = TRUE)
+library(DT, quietly = TRUE)
 source("global.R")
 
 ## ----------------------------------Init Options---------------------------------------##
@@ -83,9 +82,9 @@ ui <- navbarPage(
                               HTML(
                                   '<div class="jumbotron" style="background-color:#ffffff;">
                                                       <h1>viz-WEPPcloud</h1>
-                                                      <h4>Supporting targeted management using outputs of a process based model!</h4>
+                                                      <h4>Informing targeted management using outputs of a process based model!</h4>
                                                       </div>'
-                              )
+                              ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
                               
                           )
                       )),
@@ -147,9 +146,9 @@ ui <- navbarPage(
                             align = "center"
                         ),
                         tags$p(
-                            a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPCloud', .noWS = "outside"),
-                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project model. It estimates
-                                                          hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. Especially useful for
+                            a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
+                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP"), 'model. It estimates
+                                                          hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
                                                           post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
                             .noWS = c("after-begin", "before-end"),
                             align = "center"
@@ -251,6 +250,16 @@ ui <- navbarPage(
                 selected = "Default Data"
             ),
             
+            # prettyRadioButtons(inputId = "analysis_method",
+            #         label = "Show analysis:",
+            #         choices = c("Relative to current conditions", "Independent scenarios"),
+            #         icon = icon("check"),
+            #         bigger = TRUE,
+            #         status = "info",
+            #         animation = "jelly",
+            #         selected = "Independent scenarios"
+            # ),
+            
             uiOutput("H_FileInput"),
             uiOutput("Hill_selectfile"),
             uiOutput("Hill_wshed"),
@@ -296,9 +305,9 @@ ui <- navbarPage(
         mainPanel(
             width = 9,
             style = 'padding:50px;',
-            uiOutput("Exp1_Exp2") %>% withSpinner(color =
-                                                      "#0dc5c1"),
-            HTML("<br style = “line-height:5;”><br>"),
+            # uiOutput("Exp1_Exp2") %>% withSpinner(color =
+            #                                           "#0dc5c1"),
+            # HTML("<br style = “line-height:5;”><br>"),
             fluidRow(
                 column(
                     6,
@@ -311,9 +320,9 @@ ui <- navbarPage(
                     plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(color = "#0dc5c1")
                 )
             ),
-            HTML("<br style = “line-height:5;”><br>"),
-            uiOutput("Exp3_Exp4") %>% withSpinner(color =
-                                                      "#0dc5c1"),
+            # HTML("<br style = “line-height:5;”><br>"),
+            # uiOutput("Exp3_Exp4") %>% withSpinner(color =
+            #                                           "#0dc5c1"),
             HTML("<br style = “line-height:5;”><br>"),
             fluidRow(
                 column(
@@ -329,15 +338,18 @@ ui <- navbarPage(
             ),
             HTML("<br style = “line-height:5;”><br>"),
             
-            fluidRow(
-                column(
-                    12,
-                    align = "center",
-                    offset = 0,
-                    DT::dataTableOutput("Sed_stats_by_category") %>%
-                        withSpinner(color = "#0dc5c1")
-                )
-            )
+            uiOutput("tab_H")
+            
+            # fluidRow(
+            #     column(
+            #         12,
+            #         align = "center",
+            #         offset = 0,
+            #         style = "background-color:#ECF0F1;",
+            #         DT::dataTableOutput("Sed_stats_by_category") %>%
+            #             withSpinner(color = "#0dc5c1")
+            #     )
+            # )
             # HTML("<br><br><br>"),
             # fluidRow(
             # column(6, DT::dataTableOutput("WS_Sed_stats_by_category") %>% withSpinner(color="#0dc5c1"))
@@ -409,22 +421,16 @@ ui <- navbarPage(
             style = 'padding:80px;',
             
             fluidRow(
-            leaflet::leafletOutput("Plot11", height = "500px", width = "1020px") %>%
+            leaflet::leafletOutput("Plot11", height = "500px", width = "990px") %>%
                 withSpinner(color = "#0dc5c1")
             
             
         ),
         HTML("<br style = “line-height:5;”><br>"),
         
-        fluidRow(
-            column(
-                12,
-                align = "center",
-                offset = 0,
-                DT::dataTableOutput("spatial_table") %>%
-                    withSpinner(color = "#0dc5c1")
-            )
-        )
+        uiOutput("tab_sp")
+        
+        
         )
     )
     
@@ -493,25 +499,7 @@ server <- function(input, output, session) {
     
     ######## Server logic for UI generation for hillslope tab ##########
     
-    # output$H_FileInput <- renderUI({
-    #     if(input$DefOrUserUpload_H == 'Upload data'){
-    #         # message = 'max. file size is 32MB'
-    #         textInput("Hill_file",label ="Provide URL pointing to 'Hillslope' file (*_hill_*.csv) on WEPPcloud",
-    #                   placeholder = "URL to hillslope file" )
-    #         #actionButton("goButton", "Go!")
-    #         }else
-    #             if(input$DefOrUserUpload_H == 'Default Data'){}
-    # })
     
-    # output$H_AvgWestShoreSummary <- renderUI({
-    #     if(input$AvgWestShoreNos_H == 'No'){
-    #         }else
-    #             if(input$AvgWestShoreNos_H == 'Yes'){
-    #                 awesomeRadio(inputId = "WestShore_summary_by_var",label = "By which variable:",
-    #                              choices = c("Land Use"="Landuse","Soil Type"="Soiltype", "Both" = "Both"),
-    #                              selected = "Landuse")
-    #             }
-    # })
     #
     ## ----------------------------------Hillslope server logic------------------------------------------##
     output$H_FileInput <- renderUI({
@@ -646,7 +634,7 @@ server <- function(input, output, session) {
                                  "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
                                  "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
                                  "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                                 "Simulated fire-fccs fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
                                  "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
                                  "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
                                  
@@ -658,6 +646,25 @@ server <- function(input, output, session) {
             }
         
     })
+    
+    
+    output$tab_H <- renderUI({
+        req(sed_stats_df())
+        
+        fluidRow(
+            column(
+                12,
+                align = "center",
+                offset = 0,
+                style = "background-color:#ECF0F1;",
+                DT::dataTableOutput("Sed_stats_by_category") %>%
+                    withSpinner(color = "#0dc5c1")
+            )
+        )
+        
+    })
+    
+    
     
     ## -----------------------------------------------------------------------------------------------------------##
     ##  Generate plot descriptions ##
@@ -1140,6 +1147,21 @@ server <- function(input, output, session) {
         
     })
     
+    
+    output$tab_sp <- renderUI({
+        req(spdftab())
+        fluidRow(
+            column(
+                12,
+                align = "center",
+                offset = 0,
+                style = "background-color:#ECF0F1;",
+                DT::dataTableOutput("spatial_table") %>%
+                    withSpinner(color = "#0dc5c1")
+            )
+        )
+    })
+    
     ## -----------------------------------------------------------------------------------------------------------##
     ## ---------------------------------Plotting logic-------------------------------------------------------##
     ## -----------------------------------------------------------------------------------------------------------##
@@ -1248,6 +1270,18 @@ server <- function(input, output, session) {
             ) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
             ungroup()
     })
+    
+    
+    ####### Datafrme calculating relative cumulative percent of total variable relative to current conditions
+    
+    # hill_arr_by_var_HA_rel <- reactive({hill_arr_by_var_HA() %>%
+    #     reshape2::melt(id.vars = c("ProjectName", "Scenario", "Watershed",
+    #                                "Soil", "LanduseDesc", "SoilDesc",
+    #                                "WeppID", "TopazID", "Landuse", "cumPercArea")) %>%
+    #     group_by(variable) %>% 
+    #     mutate(diffValue = value[Scenario == "CurCond.2020.ki5krcs.chn_cs12"]-value)
+    # 
+    # })
     
     ## this is the dataframe for plot 3 on the hillslopes tab (the channel length plot)
     hill_arr_by_var_CL <- reactive({
@@ -1550,7 +1584,7 @@ server <- function(input, output, session) {
                                                                     }
         
         
-        p1 <- p1 +  theme_bw() +
+        p1 <- p1 + theme_bw() +
             theme(
                 axis.title = element_text(
                     size = 10,
@@ -1569,16 +1603,27 @@ server <- function(input, output, session) {
                 ),
                 legend.text = element_text(size = 10, color = "BLACK"),
                 legend.position = "none",
-                title = element_text(
+                plot.margin=unit(c(2,0.5,1,0.5),"cm"),
+                plot.title = element_text(
                     size = 10,
-                    color = "Black",
-                    face = "bold"
+                    color = "#000000",
+                    face = "bold",
+                    family="Bauhaus 93",
+                    vjust = 1,
+                    hjust = 0.5
+                    
                 )
             ) +
             labs(
                 x = "Percent of total hillslope area",
-                y = paste("Percent of total", input$Hill_variable, sep = " ")
-                #title= paste("% hillslope area contributing", input$Hill_variable, sep = " " )
+                y = "Percent of total selected variable",
+                # y = paste("Percent of total", input$Hill_variable, sep = " "),
+                title= paste(
+                    "What percent of total hillslope area contributes\na large fraction of total\n",
+                    "",
+                    input$Hill_variable ,
+                    "?"
+                )
                 ,
                 colour = "Scenario"
             )
@@ -1614,9 +1659,11 @@ server <- function(input, output, session) {
             }
         
         
-        
-        
         p1
+        
+        # ggplotly(p1,dynamicTicks = TRUE) %>%
+        #     rangeslider() %>%
+        #     layout(hovermode = "x")
         
     })
     #
@@ -1719,12 +1766,28 @@ server <- function(input, output, session) {
                     face = "bold"
                 ),
                 legend.text = element_text(size = 10, color = "BLACK"),
-                legend.position = "none"
+                legend.position = "none",
+                plot.margin=unit(c(2,0.5,1,0.5),"cm"),
+                plot.title = element_text(
+                    size = 10,
+                    color = "#000000",
+                    face = "bold",
+                    family="Bauhaus 93",
+                    vjust = 1,
+                    hjust = 0.5
+                    
+                )
             ) +
             labs(
                 x = "Percent of total channel length",
-                y = paste("Percent of total", input$Hill_variable, sep = " "),
-                title = "",
+                y = "Percent of total selected variable",
+                # y = paste("Percent of total", input$Hill_variable, sep = " "),
+                title= paste(
+                    "What percent of total channel length contributes\na large fraction of total\n",
+                    "",
+                    input$Hill_variable ,
+                    "?"
+                ),
                 colour = "Scenario"
             )
         
@@ -1869,13 +1932,29 @@ server <- function(input, output, session) {
                     face = "bold"
                 ),
                 legend.text = element_text(size = 10, color = "BLACK"),
-                legend.position = "none"
+                legend.position = "none",
+                plot.margin=unit(c(2,0.5,1,0.5),"cm"),
+                plot.title = element_text(
+                    size = 10,
+                    color = "#000000",
+                    face = "bold",
+                    family="Bauhaus 93",
+                    vjust = 1,
+                    hjust = 0.5
+                    
+                )
             ) +
             # scale_color_brewer(palette="RdYlGn") +
             labs(
                 x = "Percent of total hillslope area",
-                y = paste("Cumulative", input$Hill_variable, sep = " "),
-                title = "",
+                y = "Percent of total selected variable",
+                # y = paste("Cumulative", input$Hill_variable, sep = " "),
+                title= paste(
+                    "What percent of total hillslope area contributes\na large fraction of cumulative\n",
+                    "",
+                    input$Hill_variable ,
+                    "?"
+                ),
                 colour = "Scenario"
             )
         if (input$DefOrUserUpload_H == 'Default Data') {
@@ -2017,12 +2096,28 @@ server <- function(input, output, session) {
                     face = "bold"
                 ),
                 legend.text = element_text(size = 10, color = "BLACK"),
-                legend.position = "none"
+                legend.position = "none",
+                plot.margin=unit(c(2,0.5,1,0.5),"cm"),
+                plot.title = element_text(
+                    size = 10,
+                    color = "#000000",
+                    face = "bold",
+                    family="Bauhaus 93",
+                    vjust = 1,
+                    hjust = 0.5
+                    
+                )
             ) +
             labs(
                 x = "Percent of total channel length",
-                y = paste("Cumulative", input$Hill_variable, sep = " "),
-                title = "",
+                y = "Percent of total selected variable",
+                # y = paste("Cumulative", input$Hill_variable, sep = " "),
+                title= paste(
+                    "What percent of total channel length contributes\na large fraction of cumulative\n",
+                    "",
+                    input$Hill_variable ,
+                    "?"
+                ),
                 colour = "Scenario"
             )
         if (input$DefOrUserUpload_H == 'Default Data') {
@@ -2561,8 +2656,9 @@ server <- function(input, output, session) {
                             axis.title.x = element_blank(),
                             axis.title.y = element_blank(),
                             legend.title = element_blank()
-                        ) + coord_flip() + labs(y = "Percent of total across all scenarios") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
-                                                                                                                                                 "none")
+                        ) + coord_flip() + labs(y = "Percent of total across all scenarios") + 
+                        scale_fill_brewer(palette = "RdYlGn") + 
+                        theme(legend.position ="none")
                     ggplotly(b)
                     
                     
@@ -2749,16 +2845,44 @@ server <- function(input, output, session) {
     
 
     
+    # output$Sed_stats_by_category <- DT::renderDataTable(
+    #     sed_stats_df(),
+    #     options = list(
+    #         dom = 'Bfrtip',
+    #         deferRender = TRUE,
+    #         scrollY = 400,
+    #         compact = TRUE,
+    #         scroller = TRUE,
+    #         scrollX = TRUE,
+    #         scrollY = FALSE,
+    #         pageLength = 5,
+    #         fixedHeader = TRUE,
+    #         fillContainer = TRUE,
+    #         class = "display",
+    #         columnDefs = list(list(className = 'dt-left'))
+    #     )
+    # )
+    
+    
     output$Sed_stats_by_category <- DT::renderDataTable(
         sed_stats_df(),
+        extensions = list("Buttons" = NULL),
         options = list(
-            deferRender = TRUE,
+            dom = 'Bfrtip',
+            buttons = 
+                list('copy', 'print', list(
+                    extend = 'collection',
+                    buttons = c('csv', 'excel', 'pdf'),
+                    text = 'Download'
+                )),
             # scroller = TRUE,
-            scrollY = 400,
-            compact = TRUE,
-            columnDefs = list(list(className = 'dt-left')),
+            scrollX = TRUE,
+            scrollY = FALSE,
+            pageLength = 5,
+            fixedHeader = TRUE,
             fillContainer = F,
-            class = "display"
+            class = "display",
+            columnDefs = list(list(className = 'dt-left'))
         )
     )
     
@@ -2791,7 +2915,7 @@ server <- function(input, output, session) {
                     buttons = c('csv', 'excel', 'pdf'),
                     text = 'Download'
                 )),
-            scroller = TRUE,
+            # scroller = TRUE,
             scrollX = TRUE,
             scrollY = FALSE,
             pageLength = 5,
