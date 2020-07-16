@@ -166,6 +166,11 @@ ui <- navbarPage(
     ## -----------------------------------------Watershed Tab---------------------------------------------##
     tabPanel(
         "Watershed",
+        
+        tags$head(includeHTML((
+            "google-analytics.html"
+        ))),
+        
         sidebarPanel(
             style = "position:fixed;width:inherit;",
             width = 3,
@@ -186,6 +191,8 @@ ui <- navbarPage(
             
             uiOutput("W_FileInput"),
             
+            uiOutput("Wshed_wshed"),
+            
             awesomeRadio(
                 inputId = "AreaVsScen",
                 label = "How do you want to compare?",
@@ -198,7 +205,6 @@ ui <- navbarPage(
                 status = 'success'
             ),
             
-            uiOutput("Wshed_wshed"),
             
             awesomeRadio(
                 inputId = "ScenVvar",
@@ -234,6 +240,11 @@ ui <- navbarPage(
     ## -----------------------------------------Hillslope Tab---------------------------------------------##
     tabPanel(
         "Hillslope",
+        
+        tags$head(includeHTML((
+            "google-analytics.html"
+        ))),
+        
         tags$style(type = "text/css", "body {padding-top: 70px;}"),
         sidebarPanel(
             style = "position:fixed;width:inherit;",
@@ -363,6 +374,11 @@ ui <- navbarPage(
     
     tabPanel(
         "Spatial-Viz",
+        
+        tags$head(includeHTML((
+            "google-analytics.html"
+        ))),
+        
         tags$style(type = "text/css", "body {padding-top: 80px;}"),
         sidebarPanel(
             style = "position:fixed;width:inherit;",
@@ -420,8 +436,10 @@ ui <- navbarPage(
             width = 9,
             style = 'padding:80px;',
             
-            fluidRow(
-            leaflet::leafletOutput("Plot11", height = "500px", width = "990px") %>%
+            fluidRow(column(12,
+                            # align = "center",
+                            # offset = 0,
+            leaflet::leafletOutput("Plot11")) %>%
                 withSpinner(color = "#0dc5c1")
             
             
@@ -1619,7 +1637,7 @@ server <- function(input, output, session) {
                 y = "Percent of total selected variable",
                 # y = paste("Percent of total", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total hillslope area contributes\na large fraction of total\n",
+                    "What percent of total hillslope area\ncontributes a large fraction of total\n",
                     "",
                     input$Hill_variable ,
                     "?"
@@ -1783,7 +1801,7 @@ server <- function(input, output, session) {
                 y = "Percent of total selected variable",
                 # y = paste("Percent of total", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total channel length contributes\na large fraction of total\n",
+                    "What percent of total channel length\ncontributes a large fraction of total\n",
                     "",
                     input$Hill_variable ,
                     "?"
@@ -1950,7 +1968,7 @@ server <- function(input, output, session) {
                 y = "Percent of total selected variable",
                 # y = paste("Cumulative", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total hillslope area contributes\na large fraction of cumulative\n",
+                    "What percent of total hillslope area\ncontributes a large fraction of cumulative\n",
                     "",
                     input$Hill_variable ,
                     "?"
@@ -2113,7 +2131,7 @@ server <- function(input, output, session) {
                 y = "Percent of total selected variable",
                 # y = paste("Cumulative", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total channel length contributes\na large fraction of cumulative\n",
+                    "What percent of total channel length \ncontributes a large fraction of cumulative\n",
                     "",
                     input$Hill_variable ,
                     "?"
@@ -2611,10 +2629,30 @@ server <- function(input, output, session) {
                     theme(
                         axis.text.x = element_text(angle = 90, colour = "Black"),
                         axis.text.y = element_text(colour = "Black"),
-                        axis.title = element_blank()
-                        
-                    )
-                ggplotly(a)
+                        axis.title = element_blank(),
+                        legend.position='none')
+                        # plot.margin=unit(c(2,0.5,1,0.5),"cm"),
+                        # plot.title = element_text(
+                        #     size = 12,
+                        #     color = "#000000",
+                        #     face = "bold",
+                        #     family="Bauhaus 93",
+                        #     vjust = 1,
+                        #     hjust = 0.5
+                        #     
+                        # )
+                    # )+ 
+                    # ggtitle("How does a watershed respond to various\nmanagement and fire scenarios?"
+                    #             )
+                
+                
+                ggplotly(a) %>%
+                    layout(title = list(text = paste0('<b>How does a watershed respond to various\nmanagement and fire scenarios? </b>',
+                                                      '<br>',
+                                                      '<sup>',
+                                                      '<i>Plot displays a given variable centered and scaled across all scenarios</i>',
+                                                      '</sup>')),
+                           margin = list(l=10, r=20, b=5, t=150, pad=0))
                 
             } else
                 if (input$ScenVvar == "Bar Chart") {
@@ -2646,6 +2684,7 @@ server <- function(input, output, session) {
                             stat = "identity",
                             position = "dodge"
                         ) +
+                        theme_bw(base_rect_size = 0.1)+
                         theme(
                             axis.text.x = element_text(
                                 angle = 45,
@@ -2656,10 +2695,17 @@ server <- function(input, output, session) {
                             axis.title.x = element_blank(),
                             axis.title.y = element_blank(),
                             legend.title = element_blank()
-                        ) + coord_flip() + labs(y = "Percent of total across all scenarios") + 
+                        ) + coord_flip() + 
                         scale_fill_brewer(palette = "RdYlGn") + 
-                        theme(legend.position ="none")
-                    ggplotly(b)
+                        scale_y_continuous(labels = function(x) paste0(x*1, "%"))+ 
+                        theme(legend.position ="none") 
+      ggplotly(b) %>%
+          layout(title = list(text = paste0('<b>How does a watershed respond to various\nmanagement and fire scenarios? </b>',
+                                            '<br>',
+                                            '<sup>',
+                                            '<i>Plot displays percent of total of a given variable across all scenarios</i>',
+                                            '</sup>')),
+                 margin = list(l=10, r=20, b=5, t=150, pad=0))
                     
                     
                 }
@@ -2682,10 +2728,17 @@ server <- function(input, output, session) {
                         theme(
                             axis.text.x = element_text(angle = 90, colour = "Black"),
                             axis.text.y = element_text(colour = "Black"),
-                            axis.title = element_blank()
+                            axis.title = element_blank(),
+                            legend.position='none'
                             
                         )
-                    ggplotly(a)
+                    ggplotly(a) %>%
+                        layout(title = list(text = paste0('<b>How do different watersheds respond to a\nmanagement/fire scenario? </b>',
+                                                          '<br>',
+                                                          '<sup>',
+                                                          '<i>Plot displays a given variable centered and scaled across all watersheds</i>',
+                                                          '</sup>')),
+                               margin = list(l=10, r=20, b=5, t=150, pad=0))
                     
                 } else
                     if (input$ScenVvar == "Bar Chart") {
@@ -2729,7 +2782,13 @@ server <- function(input, output, session) {
                                 legend.title = element_blank()
                             ) + coord_flip() + labs(y = "Percent of total across all Watersheds") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
                                                                                                                                                       "none")
-                        ggplotly(b)
+                        ggplotly(b)  %>%
+                            layout(title = list(text = paste0('<b>How do different watersheds respond to a\nmanagement/fire scenario? </b>',
+                                                              '<br>',
+                                                              '<sup>',
+                                                              '<i>Plot displays percent of total of a given variable across all watersheds</i>',
+                                                              '</sup>')),
+                                   margin = list(l=10, r=20, b=5, t=150, pad=0))
                         
                         
                     }
