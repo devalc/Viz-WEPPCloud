@@ -9,7 +9,7 @@ At present it has the capability to get WEPPCloud generated hillslope, channel a
 
 https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
-## Test demo
+## Test UI demo
 
 ![Alt Text](https://github.com/devalc/Viz-WEPPCloud/blob/master/gifs/test.gif)
 
