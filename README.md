@@ -11,7 +11,7 @@ https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
 ## Test demo
 
-
+![Alt Text](https://github.com/devalc/Viz-WEPPCloud/blob/master/gifs/test.gif)
 
 
 ### Caution: 
