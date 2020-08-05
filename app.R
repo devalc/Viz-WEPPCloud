@@ -275,6 +275,8 @@ ui <- navbarPage(
             uiOutput("Hill_selectfile"),
             uiOutput("Hill_wshed"),
             uiOutput("Hill_var"),
+            uiOutput("Hill_scen_base"),
+            uiOutput("Hill_scen_comp"),
             
             sliderInput(
                 "thresh_H",
@@ -629,6 +631,81 @@ server <- function(input, output, session) {
         
     })
     
+    output$Hill_scen_base <- renderUI({
+        if (input$DefOrUserUpload_S == 'Upload data') {
+            req(Spatial_data())
+            selectInput(
+                "Hill_scen_base",
+                "Select the baseline scenario",
+                unique(Spatial_data()$Scenario),
+                unique(Spatial_data()$Scenario)[1],
+                multiple = F
+            )
+        } else
+            if (input$DefOrUserUpload_S == 'Default Data') {
+                selectInput(
+                    inputId = "Hill_scen_base",
+                    label = "Select the baseline scenario",
+                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                                 
+                    ),
+                    unique(Spatial_data()$Scenario)[1],
+                    multiple = F
+                )
+                
+            }
+        
+    })
+    
+    
+    output$Hill_scen_comp <- renderUI({
+        if (input$DefOrUserUpload_S == 'Upload data') {
+            req(Spatial_data())
+            selectInput(
+                "Hill_scen_comp",
+                "Select the scenario to compare",
+                unique(Spatial_data()$Scenario),
+                unique(Spatial_data()$Scenario)[2],
+                multiple = T
+            )
+        } else
+            if (input$DefOrUserUpload_S == 'Default Data') {
+                selectInput(
+                    inputId = "Hill_scen_comp",
+                    label = "Select the baseline scenario",
+                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                                 
+                    ),
+                    unique(Spatial_data()$Scenario)[2],
+                    multiple = T
+                )
+                
+            }
+        
+    })
+    
+    
+    
     output$Hill_scen <- renderUI({
         if (input$DefOrUserUpload_H == 'Upload data') {
             req(Hill_data())
@@ -687,127 +764,127 @@ server <- function(input, output, session) {
     ## -----------------------------------------------------------------------------------------------------------##
     ##  Generate plot descriptions ##
     ## -----------------------------------------------------------------------------------------------------------##
-    output$Exp1 <- renderText({
-        paste(
-            "What percent of total hillslope area contributes a large fraction of total",
-            " ",
-            input$Hill_variable ,
-            " ",
-            "?"
-        )
-    })
-    
-    output$Exp2 <- renderText({
-        paste(
-            "What percent of total hillslope area contributes a large fraction of cumulative",
-            " ",
-            input$Hill_variable ,
-            " ",
-            "?"
-        )
-    })
-    
-    output$Exp3 <- renderText({
-        paste(
-            "What percent of total channel length contributes a large fraction of total",
-            " ",
-            input$Hill_variable ,
-            " ",
-            "?"
-        )
-    })
-    
-    output$Exp4 <- renderText({
-        paste(
-            "What percent of total channel length contributes a large fraction of cumulative",
-            " ",
-            input$Hill_variable ,
-            " ",
-            "?"
-        )
-    })
+    # output$Exp1 <- renderText({
+    #     paste(
+    #         "What percent of total hillslope area contributes a large fraction of total",
+    #         " ",
+    #         input$Hill_variable ,
+    #         " ",
+    #         "?"
+    #     )
+    # })
+    # 
+    # output$Exp2 <- renderText({
+    #     paste(
+    #         "What percent of total hillslope area contributes a large fraction of cumulative",
+    #         " ",
+    #         input$Hill_variable ,
+    #         " ",
+    #         "?"
+    #     )
+    # })
+    # 
+    # output$Exp3 <- renderText({
+    #     paste(
+    #         "What percent of total channel length contributes a large fraction of total",
+    #         " ",
+    #         input$Hill_variable ,
+    #         " ",
+    #         "?"
+    #     )
+    # })
+    # 
+    # output$Exp4 <- renderText({
+    #     paste(
+    #         "What percent of total channel length contributes a large fraction of cumulative",
+    #         " ",
+    #         input$Hill_variable ,
+    #         " ",
+    #         "?"
+    #     )
+    # })
     #
     
     
-    output$Exp1_Exp2 <- renderUI({
-        req(hill_arr_by_var_HA())
-        req(hill_arr_by_var_HA_abs())
-        
-        fluidRow(
-            column(
-                6,
-                style = "height:60px;background-color:#F5F5F5;padding-left:0px;",
-                offset = 0,
-                textOutput("Exp1")
-            ),
-            tags$head(
-                tags$style(
-                    "#Exp1{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }"
-                )
-            ),
-            column(
-                5,
-                style = "height:60px;background-color:#F5F5F5;padding-left:0px;",
-                offset = 1,
-                textOutput("Exp2")
-            ),
-            tags$head(
-                tags$style(
-                    "#Exp2{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }"
-                )
-            )
-        )
-    })
+    # output$Exp1_Exp2 <- renderUI({
+    #     req(hill_arr_by_var_HA())
+    #     req(hill_arr_by_var_HA_abs())
+    #     
+    #     fluidRow(
+    #         column(
+    #             6,
+    #             style = "height:60px;background-color:#F5F5F5;padding-left:0px;",
+    #             offset = 0,
+    #             textOutput("Exp1")
+    #         ),
+    #         tags$head(
+    #             tags$style(
+    #                 "#Exp1{color: black;
+    #                               font-size: 16px;
+    #                               font-style: normal;
+    #                               font-family: Helvetica;
+    #                               text-align: center;
+    #                               }"
+    #             )
+    #         ),
+    #         column(
+    #             5,
+    #             style = "height:60px;background-color:#F5F5F5;padding-left:0px;",
+    #             offset = 1,
+    #             textOutput("Exp2")
+    #         ),
+    #         tags$head(
+    #             tags$style(
+    #                 "#Exp2{color: black;
+    #                               font-size: 16px;
+    #                               font-style: normal;
+    #                               font-family: Helvetica;
+    #                               text-align: center;
+    #                               }"
+    #             )
+    #         )
+    #     )
+    # })
     
     
-    output$Exp3_Exp4 <- renderUI({
-        req(hill_arr_by_var_CL())
-        req(hill_arr_by_var_CL_abs())
-        fluidRow(
-            column(
-                6,
-                style = "height:60px;background-color:#F5F5F5;padding-left:10px;",
-                offset = 0,
-                textOutput("Exp3")
-            ),
-            tags$head(
-                tags$style(
-                    "#Exp1{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }"
-                )
-            ),
-            column(
-                5,
-                style = "height:60px;background-color:#F5F5F5;padding-left:10px;",
-                offset = 1,
-                textOutput("Exp4")
-            ),
-            tags$head(
-                tags$style(
-                    "#Exp2{color: black;
-                                  font-size: 16px;
-                                  font-style: normal;
-                                  font-family: Helvetica;
-                                  text-align: center;
-                                  }"
-                )
-            )
-        )
-    })
+    # output$Exp3_Exp4 <- renderUI({
+    #     req(hill_arr_by_var_CL())
+    #     req(hill_arr_by_var_CL_abs())
+    #     fluidRow(
+    #         column(
+    #             6,
+    #             style = "height:60px;background-color:#F5F5F5;padding-left:10px;",
+    #             offset = 0,
+    #             textOutput("Exp3")
+    #         ),
+    #         tags$head(
+    #             tags$style(
+    #                 "#Exp1{color: black;
+    #                               font-size: 16px;
+    #                               font-style: normal;
+    #                               font-family: Helvetica;
+    #                               text-align: center;
+    #                               }"
+    #             )
+    #         ),
+    #         column(
+    #             5,
+    #             style = "height:60px;background-color:#F5F5F5;padding-left:10px;",
+    #             offset = 1,
+    #             textOutput("Exp4")
+    #         ),
+    #         tags$head(
+    #             tags$style(
+    #                 "#Exp2{color: black;
+    #                               font-size: 16px;
+    #                               font-style: normal;
+    #                               font-family: Helvetica;
+    #                               text-align: center;
+    #                               }"
+    #             )
+    #         )
+    #     )
+    # })
     
     ## ----------------------------------Channel server logic------------------------------------------##
     
@@ -1285,7 +1362,7 @@ server <- function(input, output, session) {
                     sum(Particle.Fraction.Under.0.016.mm) * 100,
                 cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) /
                     sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) * 100
-            ) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
+            ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
             ungroup()
     })
     
@@ -1340,7 +1417,7 @@ server <- function(input, output, session) {
                     sum(Particle.Fraction.Under.0.016.mm) * 100,
                 cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) /
                     sum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.) * 100
-            ) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
+            )%>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
             ungroup()
     })
     
@@ -1370,7 +1447,7 @@ server <- function(input, output, session) {
                 cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction),
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm),
                 cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
-            ) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
+            ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp))%>% dplyr::filter(cumPercArea < input$thresh_H) %>%
             ungroup()
     })
     
@@ -1398,7 +1475,7 @@ server <- function(input, output, session) {
                 cumParticle.Class.5.Fraction = cumsum(Particle.Class.5.Fraction),
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle.Fraction.Under.0.016.mm),
                 cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.)
-            ) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
+            )%>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
             ungroup()
     })
     
