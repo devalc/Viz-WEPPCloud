@@ -34,7 +34,7 @@ library(DT, quietly = TRUE)
 library(scrollrevealR, quietly = TRUE)
 library(shinyhelper, quietly = TRUE)
 # library(shinydisconnect)
-# library(shinyalert, quietly = TRUE)
+library(shinyalert, quietly = TRUE)
 source("global.R")
 
 ## ----------------------------------Init Options---------------------------------------##
@@ -175,6 +175,8 @@ ui <- navbarPage(
             "google-analytics.html"
         ))),
         
+        useShinyalert(),  # Set up shinyalert
+        
         sidebarPanel(
             style = "position:fixed;width:inherit;",
             width = 3,
@@ -220,7 +222,9 @@ ui <- navbarPage(
                                 "Bar Chart"),
                 selected = "Heatmap",
                 status = 'success'
-            )
+            ),
+            
+            uiOutput("wshed_var"),
             
             
         ),
@@ -253,6 +257,9 @@ ui <- navbarPage(
         ))),
         
         tags$style(type = "text/css", "body {padding-top: 70px;}"),
+        
+        useShinyalert(),  # Set up shinyalert
+        
         sidebarPanel(
             style = "position:fixed;width:inherit;",
             width = 3,
@@ -389,6 +396,9 @@ ui <- navbarPage(
         ))),
         
         tags$style(type = "text/css", "body {padding-top: 80px;}"),
+        
+        useShinyalert(),  # Set up shinyalert
+        
         sidebarPanel(
             style = "position:fixed;width:inherit;",
             width = 3,
@@ -520,6 +530,28 @@ ui <- navbarPage(
 
 
 server <- function(input, output, session) {
+    
+        
+    observe({
+        if (input$DefOrUserUpload_W == 'Upload data') {
+            shinyalert("", "Please provide the URL pointing to the WEPPCloud watershed file in the Input box", type = "success")
+        }
+    })
+    
+    observe({
+        if (input$DefOrUserUpload_H == 'Upload data') {
+            shinyalert("", "Please provide the URL pointing to the WEPPCloud hillslope file in the Input box", type = "success")
+        }
+    })
+    
+    observe({
+        if (input$DefOrUserUpload_S == 'Upload data') {
+            shinyalert("", "Please provide the URL pointing to the WEPPCloud spaial file in the Input box", type = "success")
+        }
+    })
+    
+
+    
     observeEvent(input$Wbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
@@ -1108,6 +1140,35 @@ server <- function(input, output, session) {
             }
         
     })
+    
+    
+    output$wshed_var <- renderUI({
+        if (input$DefOrUserUpload_W == 'Upload data') {
+            req(Hill_data())
+            pickerInput(
+                inputId = "wshed_var",
+                label = "Select the variables of interest",
+                options = list(`actions-box` = TRUE),
+                colnames(Wshed_data())[7:20],
+                selected = colnames(Wshed_data()[7:10]),
+                multiple = T
+            )
+        } else
+            if (input$DefOrUserUpload_W == 'Default Data') {
+                pickerInput(
+                    inputId = "wshed_var",
+                    label = "Select the variables of interest",
+                    options = list(`actions-box` = TRUE),
+                    choices =   colnames(Wshed_data())[7:20],
+                    selected = colnames(Wshed_data()[7:10]),
+                    multiple = T
+                )
+                
+            }
+        
+    })
+    
+    
     
     ## ----------------------------------Spatial-Viz tab server logic------------------------------------------##
     ######## Server logic for UI generation for spatial-Viz tab ##########
