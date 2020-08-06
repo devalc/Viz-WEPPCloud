@@ -20,7 +20,7 @@
 ## ----------------------------------Load packages---------------------------------------##
 
 library(shiny)
-library(tidyverse)
+library(tidyverse, quietly = TRUE)
 library(shinythemes)
 library(shinycssloaders)
 library(shinyWidgets)
@@ -31,6 +31,10 @@ library(ggthemes)
 library(shinyBS, quietly = TRUE)
 library(shinyLP, quietly = TRUE)
 library(DT, quietly = TRUE)
+library(scrollrevealR, quietly = TRUE)
+library(shinyhelper, quietly = TRUE)
+# library(shinydisconnect)
+# library(shinyalert, quietly = TRUE)
 source("global.R")
 
 ## ----------------------------------Init Options---------------------------------------##
@@ -191,8 +195,6 @@ ui <- navbarPage(
             
             uiOutput("W_FileInput"),
             
-            uiOutput("Wshed_wshed"),
-            
             awesomeRadio(
                 inputId = "AreaVsScen",
                 label = "How do you want to compare?",
@@ -203,8 +205,13 @@ ui <- navbarPage(
                 ),
                 selected = "allscen",
                 status = 'success'
-            ),
+            ) %>% 
+                helper(icon = "question-circle", colour = "#DC143C",
+                        content = "W_compare",
+                        type = "markdown", size = "l",
+                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
             
+            uiOutput("Wshed_wshed"),
             
             awesomeRadio(
                 inputId = "ScenVvar",
@@ -291,7 +298,7 @@ ui <- navbarPage(
             ),
             
             
-            uiOutput("Hill_scen"),
+            # uiOutput("Hill_scen"),
             
             awesomeRadio(
                 inputId = "summary_DT_by_var_H",
@@ -413,19 +420,29 @@ ui <- navbarPage(
                 round = TRUE,
                 ticks = TRUE,
                 animate = FALSE
-            ),
+            )%>% 
+                helper(icon = "question-circle", colour = "#DC143C",
+                       content = "S_plot_thresh",
+                       type = "markdown", size = "l",
+                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
+            
+            
             
             sliderInput(
                 "thresh_slope_S",
-                "Slope Threshold (%):",
+                "Slope Threshold:",
                 min = 0,
                 max = 1,
-                value = 1,
+                value = c(0,1),
                 step = NULL,
                 round = TRUE,
                 ticks = TRUE,
                 animate = FALSE
-            )
+            )%>% 
+                helper(icon = "question-circle", colour = "#DC143C",
+                       content = "S_slope_thresh",
+                       type = "markdown", size = "l",
+                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
             
             # awesomeRadio(inputId = "showchan_S",label = "Display Channels?",
             #              choices = c("Yes"="Yes","No"="No"), selected = "No")
@@ -452,7 +469,7 @@ ui <- navbarPage(
         
         
         )
-    )
+    ),
     
     ## --------------------------------------------------------------------------------------##
     # tabPanel("Channel",
@@ -490,7 +507,12 @@ ui <- navbarPage(
     #              )
     #          )),
     
+    # scroll_reveal(target = c("#Plot_vs_cumPercArea", "#Plot_vs_cumPercArea_abs", 
+    #                          "#Plot_vs_cumPercLen","#Plot_vs_cumPercLen_abs"), duration = 2000),
     
+    use_reveal(),
+    
+    br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
     
 )
 
@@ -616,7 +638,11 @@ server <- function(input, output, session) {
             selectInput(
                 "Hill_wshed",
                 "Select the watershed of interest",
-                unique(Hill_data()$Watershed)
+                unique(Hill_data()$Watershed) %>% 
+                    helper(icon = "question-circle", colour = "#DC143C",
+                           content = "H_upload",
+                           type = "markdown", size = "l",
+                           buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
@@ -671,18 +697,19 @@ server <- function(input, output, session) {
     output$Hill_scen_comp <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
             req(Spatial_data())
-            selectInput(
-                "Hill_scen_comp",
-                "Select the scenario to compare",
-                unique(Spatial_data()$Scenario),
-                unique(Spatial_data()$Scenario)[2],
+            pickerInput(
+                inputId = "Hill_scen_comp",
+                label = "Select the scenario to compare",
+                choices = unique(Spatial_data()$Scenario),
+                options = list(`actions-box` = TRUE),
+                selected = unique(Spatial_data()$Scenario)[2],
                 multiple = T
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Hill_scen_comp",
-                    label = "Select the baseline scenario",
+                    label = "Select the scenario to compare",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
                                  "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
                                  "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
@@ -696,7 +723,8 @@ server <- function(input, output, session) {
                                  "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
                                  
                     ),
-                    unique(Spatial_data()$Scenario)[2],
+                    options = list(`actions-box` = TRUE),
+                    selected = "LowSevS.2020.ki5krcs.chn_12",
                     multiple = T
                 )
                 
@@ -706,41 +734,41 @@ server <- function(input, output, session) {
     
     
     
-    output$Hill_scen <- renderUI({
-        if (input$DefOrUserUpload_H == 'Upload data') {
-            req(Hill_data())
-            selectInput(
-                "Hill_scen",
-                "Select Scenario do display data summary",
-                unique(Hill_data()$Scenario),
-                unique(Hill_data()$Scenario)[1],
-                multiple = F
-            )
-        } else
-            if (input$DefOrUserUpload_H == 'Default Data') {
-                selectInput(
-                    inputId = "Hill_scen",
-                    label = "Select Scenario do display data summary",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccs fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                                 
-                    ),
-                    unique(Hill_data()$Scenario)[1],
-                    multiple = F
-                )
-                
-            }
-        
-    })
+    # output$Hill_scen <- renderUI({
+    #     if (input$DefOrUserUpload_H == 'Upload data') {
+    #         req(Hill_data())
+    #         selectInput(
+    #             "Hill_scen",
+    #             "Select Scenario do display data summary",
+    #             unique(Hill_data()$Scenario),
+    #             unique(Hill_data()$Scenario)[1],
+    #             multiple = F
+    #         )
+    #     } else
+    #         if (input$DefOrUserUpload_H == 'Default Data') {
+    #             selectInput(
+    #                 inputId = "Hill_scen",
+    #                 label = "Select Scenario do display data summary",
+    #                 choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+    #                              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+    #                              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+    #                              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+    #                              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+    #                              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+    #                              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+    #                              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+    #                              "Simulated fire-fccs fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+    #                              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+    #                              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+    #                              
+    #                 ),
+    #                 unique(Hill_data()$Scenario)[1],
+    #                 multiple = F
+    #             )
+    #             
+    #         }
+    #     
+    # })
     
     
     output$tab_H <- renderUI({
@@ -1000,7 +1028,11 @@ server <- function(input, output, session) {
                 multiple = F,
                 placeholder = "No file selected",
                 accept = ".csv"
-            )
+            ) %>% 
+                helper(icon = "question-circle", colour = "#DC143C",
+                       content = "W_upload",
+                       type = "markdown", size = "l",
+                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
         } else
             if (input$DefOrUserUpload_W == 'Default Data') {
             }
@@ -1089,26 +1121,34 @@ server <- function(input, output, session) {
                 multiple = F,
                 placeholder = "No file selected",
                 accept = c(".JSON", ".geojson", ".RDS")
-            )
+            )%>% 
+        helper(icon = "question-circle", colour = "#DC143C",
+               content = "S_upload",
+               type = "markdown", size = "l",
+               buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
             }
     })
     
-    output$S_FileInput_Chan <- renderUI({
-        if (input$DefOrUserUpload_S == 'Upload data') {
-            message = 'max. file size is 32MB'
-            fileInput(
-                "Spatial_file_chan",
-                label = "Uplaod Channels JSON/geojson/RDS file",
-                multiple = F,
-                placeholder = "No file selected",
-                accept = c(".JSON", ".geojson", ".RDS")
-            )
-        } else
-            if (input$DefOrUserUpload_S == 'Default Data') {
-            }
-    })
+    # output$S_FileInput_Chan <- renderUI({
+    #     if (input$DefOrUserUpload_S == 'Upload data') {
+    #         message = 'max. file size is 32MB'
+    #         fileInput(
+    #             "Spatial_file_chan",
+    #             label = "Uplaod Channels JSON/geojson/RDS file",
+    #             multiple = F,
+    #             placeholder = "No file selected",
+    #             accept = c(".JSON", ".geojson", ".RDS")
+    #         )%>% 
+    #             helper(icon = "question-circle", colour = "#DC143C",
+    #                    content = "S_upload",
+    #                    type = "markdown", size = "l",
+    #                    buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
+    #     } else
+    #         if (input$DefOrUserUpload_S == 'Default Data') {
+    #         }
+    # })
     
     Spatial_data <- reactive({
         req(input$DefOrUserUpload_S)
@@ -1150,7 +1190,7 @@ server <- function(input, output, session) {
             pickerInput(
                 "S_wshed",
                 "Select the watershed of interest",
-                unique(Spatial_data()$Watershed),
+                choices = unique(Spatial_data()$Watershed),
                 options = list(`actions-box` = TRUE),
                 selected = unique(Spatial_data()$Watershed)[1],
                 multiple = T
@@ -1303,7 +1343,8 @@ server <- function(input, output, session) {
                               Scenario %in% input$S_scen)%>% 
             arrange_at(.vars = input$S_variable, desc) %>%
             mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
-                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% dplyr::filter(cumPercArea < input$thresh_S & slope < input$thresh_slope_S) 
+                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
+            dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
     })
     
     
@@ -2911,7 +2952,7 @@ server <- function(input, output, session) {
     
     sed_stats_df <- reactive({
         if (input$summary_DT_by_var_H == "Landuse") {
-            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen_base) %>%
                 dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                   sum(Hillslope.Area..ha.) * 100) %>%
@@ -2922,7 +2963,7 @@ server <- function(input, output, session) {
                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
         } else
             if (input$summary_DT_by_var_H == "Soiltype") {
-                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen_base) %>%
                     dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                     dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                       sum(Hillslope.Area..ha.) * 100) %>%
@@ -2934,7 +2975,7 @@ server <- function(input, output, session) {
                 
             } else
                 if (input$summary_DT_by_var_H == "Both") {
-                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen_base) %>%
                         dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                         dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                           sum(Hillslope.Area..ha.) * 100) %>%
@@ -3063,6 +3104,8 @@ server <- function(input, output, session) {
         )
     )
     
+    
+    observe_helpers()
     
 }
 
