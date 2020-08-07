@@ -175,6 +175,8 @@ ui <- navbarPage(
             "google-analytics.html"
         ))),
         
+        tags$style(type = "text/css", "body {padding-top: 100px;}"),
+        
         useShinyalert(),  # Set up shinyalert
         
         sidebarPanel(
@@ -215,6 +217,8 @@ ui <- navbarPage(
             
             uiOutput("Wshed_wshed"),
             
+            uiOutput("wshed_var"),
+            
             awesomeRadio(
                 inputId = "ScenVvar",
                 label = "Select visualization type",
@@ -224,7 +228,7 @@ ui <- navbarPage(
                 status = 'success'
             ),
             
-            uiOutput("wshed_var"),
+
             
             
         ),
@@ -2787,13 +2791,13 @@ server <- function(input, output, session) {
     ## -----------------------------------------------------------------------------------------------------------##
     
     output$Plot9 <- renderPlotly({
-        # req(input$Wshed_wshed)
+        req(input$wshed_var)
         
         Wshed_subset <- Wshed_subset()
         if (input$AreaVsScen == 'allscen') {
             if (input$ScenVvar == "Heatmap") {
                 d <-
-                    Wshed_subset[, c(2, 7:20)] %>% dplyr::mutate_if(is.numeric, scale)
+                    Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
                 d.m <- reshape2::melt(d)
                 
                 
@@ -2810,20 +2814,6 @@ server <- function(input, output, session) {
                         axis.text.y = element_text(colour = "Black"),
                         axis.title = element_blank(),
                         legend.position='none')
-                        # plot.margin=unit(c(2,0.5,1,0.5),"cm"),
-                        # plot.title = element_text(
-                        #     size = 12,
-                        #     color = "#000000",
-                        #     face = "bold",
-                        #     family="Bauhaus 93",
-                        #     vjust = 1,
-                        #     hjust = 0.5
-                        #     
-                        # )
-                    # )+ 
-                    # ggtitle("How does a watershed respond to various\nmanagement and fire scenarios?"
-                    #             )
-                
                 
                 ggplotly(a) %>%
                     layout(title = list(text = paste0('<b>How does a watershed respond to various\nmanagement and fire scenarios? </b>',
@@ -2835,7 +2825,7 @@ server <- function(input, output, session) {
                 
             } else
                 if (input$ScenVvar == "Bar Chart") {
-                    d <-  Wshed_subset[, c(2, 7:20)]
+                    d <-  Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var)
                     
                     d.m <- reshape2::melt(d)
                     
@@ -2892,7 +2882,7 @@ server <- function(input, output, session) {
             if (input$AreaVsScen == 'allwat') {
                 if (input$ScenVvar == "Heatmap") {
                     d <-
-                        Wshed_subset[, c(3, 7:20)] %>% dplyr::mutate_if(is.numeric, scale)
+                        Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
                     d.m <- reshape2::melt(d)
                     
                     
@@ -2921,7 +2911,7 @@ server <- function(input, output, session) {
                     
                 } else
                     if (input$ScenVvar == "Bar Chart") {
-                        d <-  Wshed_subset[, c(3, 7:20)]
+                        d <-  Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) 
                         
                         d.m <- reshape2::melt(d)
                         
