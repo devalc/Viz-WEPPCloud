@@ -19,7 +19,7 @@
 ## --------------------------------------------------------------------------------------##
 ## ----------------------------------Load packages---------------------------------------##
 
-library(shiny)
+library(shiny, quietly = TRUE)
 library(tidyverse, quietly = TRUE)
 library(shinythemes)
 library(shinycssloaders)
@@ -35,6 +35,7 @@ library(scrollrevealR, quietly = TRUE)
 library(shinyhelper, quietly = TRUE)
 # library(shinydisconnect)
 library(shinyalert, quietly = TRUE)
+library(crosstalk)
 source("global.R")
 
 ## ----------------------------------Init Options---------------------------------------##
@@ -1413,6 +1414,9 @@ server <- function(input, output, session) {
     })
     
     
+    # spatial_shared <-  reactive({ SharedData$new(Spatial_subset())
+    
+
     ################# Filtering logic for spatial channel DF #################
     
     Spatial_subset_chan <- reactive({
