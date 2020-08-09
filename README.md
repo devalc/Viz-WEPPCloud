@@ -1,15 +1,15 @@
 # Viz-WEPPCloud
 
-This repo contains an R shiny application that can, for now, visualize WEPPCloud summary outputs but is being developed to 
+This repository contains an R Shiny application that can, for now, visualize WEPPCloud summary outputs but is being developed to 
 eventually work as a decision support tool.  
 
-At present it has the capability to get WEPPCloud generated hillslope, channel and watershed output files and preprocesses them in the back end and perform visualizations both (spatial and non spatial plots) based on the user selected variables 
+At present it has the capability to get WEPPCloud generated hillslope, channel and watershed output files and post-processes them in the back end and perform visualizations both (spatial and non spatial plots) based on the user selected variables. 
 
-## Find this applicaiton in action here:
+## Find this application in action here:
 
 https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
-## Test UI demo
+## UI demo
 
 ![Alt Text](https://github.com/devalc/Viz-WEPPCloud/blob/master/gifs/test.gif)
 
