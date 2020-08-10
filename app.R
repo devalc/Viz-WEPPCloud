@@ -49,7 +49,7 @@ options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 
 ui <-navbarPage(title = div("viz-WEPPcloud",
                             div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 130px;top: 5px;padding-bottom:10px;", height = 60)),
-                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI.jpg',style="position:fixed;right: 185px;top: 5px;padding-bottom:10px;", height = 60)),
+                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI_removebg.png',style="position:fixed;right: 185px;top: 5px;padding-bottom:10px;", height = 60)),
                                 tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 70px;top: 5px;padding-bottom:10px;", height = 60)),
                                 tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 60))
                             )),
@@ -86,7 +86,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         
         
         mainPanel(
-            fluidPage(HTML("<br style = “line-height:30;”><br>"),
+            fluidPage(#HTML("<br style = “line-height:10;”><br>"),
                       
                       fluidRow(
                           column(
@@ -95,69 +95,72 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                               align  = "center",
                               
                               HTML(
-                                  '<div class="jumbotron" style="background-color:#ffffff;">
-                                                      <h1>viz-WEPPcloud</h1>
-                                                      <h4>Informing targeted management using outputs of a process based model!</h4>
+                                  '<div class="jumbotron" style="background-color:	#f2f2f2;">
+                                                      <h1  style="color:black;">viz-WEPPcloud </h1>
+                                                      <h4  style="color:black;">A post-processing tool for identifying and examining impacts of management on pollutant 
+                                                      source areas in large spatially explicit watershed output files.</h4>
                                                       </div>'
                               ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
                               
                           )
                       )),
             
-            fluidPage(HTML("<br style = “line-height:20;”><br>"),
+            fluidPage(#HTML("<br style = “line-height:10;”><br>"),
                       fluidRow(
                           column(
                               12,
                               offset = 3,
                               align  = "center",
-                              column(
-                                  4,
+                              column(4,
                                   align  = "center",
                                   thumbnail_label1(
                                       image = 'background.png',
-                                      label = 'Watershed',
-                                      content = "Compare impacts of land management and fire scenarios on water yield and water quality
-                                                                       in a particular watershed in one glance."
+                                      label = 'Watershed Analysis',
+                                      content = "Inter-watershed comparison of impacts of management on annual water yield and 
+                                      water quality at the watershed outlet"
                                   ),
-                                  actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"))
+                                  actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"),style = "pill",
+                                             color = "success", size = "lg")
                               ),
                               column(
                                   4,
                                   align  = "center",
                                   thumbnail_label1(
                                       image = 'hillslope_img.png',
-                                      label = 'Hillslope',
-                                      content = 'Identify hillslopes that can be targeted for management to minimize impact on the
-                                                                       water quality in a particular watershed'
+                                      label = 'Hillslope Analysis',
+                                      content = 'Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
+                                      and management on the detachment and delivery of pollutants from these hotspots'
                                   ),
-                                  actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"))
+                                  actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"),style = "pill",
+                                             color = "success", size = "lg")
                               ),
                               column(
                                   4,
                                   align  = "center",
                                   thumbnail_label1(
                                       image = 'spatial_imp.PNG',
-                                      label = 'Spatial',
-                                      content = 'Visualize hillslopes that can be targeted for management to minimize impact on the
-                                                                       water quality in a particular watershed'
+                                      label = 'Spatial Visualization',
+                                      content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
                                   ),
-                                  actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("line-chart"))
+                                  actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("line-chart"),style = "pill",
+                                             color = "success", size = "lg")
                               )
                           )
                       )),
             
             
             HTML("<br style = “line-height:30;”><br>"),
-            fluidPage(fluidRow(
+            fluidPage(
+                fluidRow(
                 column(
                     12,
                     offset = 3,
                     align  = "center",
-                    style = "height:120px;background-color:#ffffff;padding-left:20px;padding-top:20px;padding-bottom:20px;",
-                    
+                    style = "height:100px;background-color:#f2f2f2;padding-left:20px;padding-top:20px;padding-bottom:20px;",
+
                     tags$div(
                         tags$p(
-                            "viz-WEPPcloud uses simulation outputs generated by WEPPCloud.",
+                            "viz-WEPPcloud is currently designed to analyze output from WEPPCloud and provides an option for users to upload their own output data files.",
                             align = "center"
                         ),
                         tags$p(
@@ -168,71 +171,108 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                             .noWS = c("after-begin", "before-end"),
                             align = "center"
                         ),
-                        
+
                     )
-                    
+
                 )
             ),
-            HTML("<br style = “line-height:30;”><br>"))
+            # HTML("<br style = “line-height:30;”><br>")
+            )
+            
+            
             
         ),
         
-        # fluidPage(fluidRow(
-        #     column(
-        #         12,
-        #         offset = 3,
-        #         align  = "center",
-        #         style = "height:120px;background-color:#ffffff;padding-left:20px;padding-top:20px;padding-bottom:20px;",
-        #         tags$footer(HTML(
-        #         tags$div(
-        #             tags$p(
-        #                 "viz-WEPPcloud uses simulation outputs generated by WEPPCloud.",
-        #                 align = "center"
-        #             ),
-        #             tags$p(
-        #                 a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
-        #                 ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP"), 'model. It estimates
-        #                                                   hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
-        #                                                   post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
-        #                 .noWS = c("after-begin", "before-end"),
-        #                 align = "center"
-        #             ),
-        #             
-        #         )
-        #         
-        #     )
-        #         )
-        # ),
-        # HTML("<br style = “line-height:30;”><br>")
-        # )
-        # )
-        
-        column(12,
-               align = "center",
-               offset = 0,
-               tags$footer(HTML("
-                    <!-- Footer -->
-                           <footer class='page-footer font-large indigo'>
-                           <!-- Copyright -->
-                           <div class='footer-copyright text-center py-3'>© 2020 Copyright:
-                           <a href='https://github.com/devalc/Viz-WEPPCloud'> This is footer</a>
-
-                           </div>
-                           <!-- Copyright -->
-
-                           </footer>
-                           <!-- Footer -->"),
-                           style = "position:fixed;
-    bottom:0;
-    float: left;
-    width:100%;
-    height:20px; /* Height of the footer */
-    color: #ECF0F1;
-    padding:0px;
-    background-color: #ECF0F1;
-    text-align: left;
-    z-index: 1000;"))
+    #     fluidPage(fluidRow(
+    #         column(width = 12,
+    #         tags$footer(
+    #             tags$div(
+    #                 tags$p(
+    #                     "viz-WEPPcloud is currently designed to analyze output from WEPPCloud and provides an option for users to upload their own output data files.",
+    #                     align = "center"
+    #                 ),
+    #                 tags$p(
+    #                     a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
+    #                     ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP"), 'model. It estimates
+    #                                                       hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
+    #                                                       post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
+    #                     .noWS = c("after-begin", "before-end"),
+    #                     align = "center"
+    #                 ),
+    #                 
+    #             ),style = "position:absolute;;
+    # bottom:0;
+    # float: left;
+    # width:100%;
+    # height:100px;
+    # color: #292929;
+    # padding:0px;
+    # background-color: #ECF0F1;
+    # text-align: left;
+    # z-index: 1000;"
+    #         ))
+    #     ),
+    #     # HTML("<br style = “line-height:30;”><br>")
+    #     )
+    
+    # column(12,
+    #        align = "center",
+    #        offset = 0,
+    #        tags$footer(HTML("<footer class='page-footer font-large indigo'>
+    #                        <!-- Copyright -->
+    #                        <div class='footer-copyright text-center py-3'>© 2020 Copyright:
+    #                        <a href='https://github.com/devalc/Viz-WEPPCloud'> This is footer</a>
+    #                        <p>Author: Hege Refsnes<br>
+    #                        <a href='mailto:hege@example.com'>hege@example.com</a></p>
+    # 
+    #                        </div>
+    #                        
+    #                        <!-- Copyright -->
+    #                        
+    #                        
+    # 
+    #                        </footer>"),
+    #                    style = "position:fixed;
+    # bottom:0;
+    # float: left;
+    # width:100%;
+    # height:50px; /* Height of the footer */
+    # color: #292929;
+    # padding:0px;
+    # background-color: #ECF0F1;
+    # text-align: left;
+    # z-index: 1000;"))
+    
     ),
+
+        
+        
+    #     column(12,
+    #            align = "center",
+    #            offset = 0,
+    #            tags$footer(HTML("
+    #                 <!-- Footer -->
+    #                        <footer class='page-footer font-large indigo'>
+    #                        <!-- Copyright -->
+    #                        <div class='footer-copyright text-center py-3'>© 2020 Copyright:
+    #                        <a href='https://github.com/devalc/Viz-WEPPCloud'> This is footer</a>
+    # 
+    #                        </div>
+    #                        <!-- Copyright -->
+    # 
+    #                        </footer>
+    #                        <!-- Footer -->"),
+    #                        style = "position:fixed;
+    # bottom:0;
+    # float: left;
+    # width:100%;
+    # height:50px; /* Height of the footer */
+    # color: #292929;
+    # padding:0px;
+    # background-color: #ECF0F1;
+    # text-align: left;
+    # z-index: 1000;"))
+    
     
     ## -----------------------------------------Watershed Tab---------------------------------------------##
     tabPanel(
@@ -255,7 +295,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "DefOrUserUpload_W",
-                label = "What data shall I use?",
+                label = "Data Import Options:",
                 choices = c(
                     "Use default data (Lake Tahoe simulations)" = "Default Data",
                     "Upload your own data" =
@@ -272,7 +312,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "AreaVsScen",
-                label = "How do you want to compare?",
+                label = "Management/watershed Options: ",
                 choices = c(
                     "One Watershed, All Scenarios" = "allscen",
                     "One Scenario, All Watersheds" =
@@ -292,7 +332,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "ScenVvar",
-                label = "Select visualization type",
+                label = "Visualization type:",
                 choices = c("Heatmap" = "Heatmap", "Bar Chart" =
                                 "Bar Chart"),
                 selected = "Heatmap",
@@ -342,7 +382,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "DefOrUserUpload_H",
-                label = "What data shall I use?",
+                label = "Data Import Options:",
                 choices = c(
                     "Use default data (Lake Tahoe simulations)" = "Default Data",
                     "Upload your own data" =
@@ -482,7 +522,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "DefOrUserUpload_S",
-                label = "What data shall I use?",
+                label = "Data Import Options:",
                 choices = c(
                     "Use default data (Lake Tahoe simulations)" = "Default Data",
                     "Upload your own data" = "Upload data"
@@ -566,7 +606,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     #          sidebarPanel(
     #
     #
-    #              awesomeRadio(inputId = "DefOrUserUpload_C",label = "What data shall I use?",
+    #              awesomeRadio(inputId = "DefOrUserUpload_C",label = "Data Import Options:",
     #                           choices = c("Use default data (Lake Tahoe simulations)"="Default Data","Upload your own data"="Upload data"), selected = "Default Data"),
     #
     #
@@ -602,17 +642,13 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     
     use_reveal(),
     
+
+    
     br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
     
     # header = column(12, "this is a header"),
     
-    
-    # footer = column(12,
-    #                 align = "center",
-    #                         offset = 0,
-    #                         style = "position:fixed;bottom:0;width:100%;height:50px;color: white;padding: 10px;background-color:#2C3E50;",
-    #                list(tags$h5("This is footer"),
-    #                     tags$img(src="logos1.png")))
+
     
 )
 ## ----------------------------------define server logic------------------------------------------##
@@ -2901,13 +2937,14 @@ server <- function(input, output, session) {
                         axis.text.x = element_text(angle = 90, colour = "Black"),
                         axis.text.y = element_text(colour = "Black"),
                         axis.title = element_blank(),
-                        legend.position='none')
+                        legend.position='right')
                 
                 ggplotly(a) %>%
-                    layout(title = list(text = paste0('<b>How does a watershed respond to various\nmanagement and fire scenarios? </b>',
+                    layout(title = list(text = paste0('<b>Relative impacts of management and disturbance on the watershed</b>',
                                                       '<br>',
                                                       '<sup>',
-                                                      '<i>Plot displays a given variable centered and scaled across all scenarios</i>',
+                                                      '<i>Plot displays the relative impact of the all disturbances on the delivered\nwater quantity/quality metric at the watershed outlet.</i>',
+                                                      '<br><br>',
                                                       '</sup>')),
                            margin = list(l=10, r=20, b=5, t=150, pad=0))
                 
@@ -2957,10 +2994,11 @@ server <- function(input, output, session) {
                         scale_y_continuous(labels = function(x) paste0(x*1, "%"))+ 
                         theme(legend.position ="none") 
       ggplotly(b) %>%
-          layout(title = list(text = paste0('<b>How does a watershed respond to various\nmanagement and fire scenarios? </b>',
+          layout(title = list(text = paste0('<b>Relative impacts of management and disturbance on the watershed</b>',
                                             '<br>',
                                             '<sup>',
-                                            '<i>Plot displays percent of total of a given variable across all scenarios</i>',
+                                            '<i>Plot displays the relative impact of the all disturbances on the delivered\nwater quantity/quality metric at the watershed outlet.</i>',
+                                            '<br><br>',
                                             '</sup>')),
                  margin = list(l=10, r=20, b=5, t=150, pad=0))
                     
@@ -2986,14 +3024,14 @@ server <- function(input, output, session) {
                             axis.text.x = element_text(angle = 90, colour = "Black"),
                             axis.text.y = element_text(colour = "Black"),
                             axis.title = element_blank(),
-                            legend.position='none'
+                            legend.position='right'
                             
                         )
                     ggplotly(a) %>%
-                        layout(title = list(text = paste0('<b>How do different watersheds respond to a\nmanagement/fire scenario? </b>',
+                        layout(title = list(text = paste0('<b>Relative impacts of the disturbance scenario across all watersheds </b>',
                                                           '<br>',
                                                           '<sup>',
-                                                          '<i>Plot displays a given variable centered and scaled across all watersheds</i>',
+                                                          '<i>Plot displays the relative impact of the disturbance on the delivered particular\nwater quantity/quality metric at each of the watersheds</i>',
                                                           '</sup>')),
                                margin = list(l=10, r=20, b=5, t=150, pad=0))
                     
@@ -3040,10 +3078,10 @@ server <- function(input, output, session) {
                             ) + coord_flip() + labs(y = "Percent of total across all Watersheds") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
                                                                                                                                                       "none")
                         ggplotly(b)  %>%
-                            layout(title = list(text = paste0('<b>How do different watersheds respond to a\nmanagement/fire scenario? </b>',
+                            layout(title = list(text = paste0('<b>Relative impacts of the disturbance scenario across all watersheds </b>',
                                                               '<br>',
                                                               '<sup>',
-                                                              '<i>Plot displays percent of total of a given variable across all watersheds</i>',
+                                                              '<i>Plot displays the relative impact of the disturbance on the delivered particular\nwater quantity/quality metric at each of the watersheds</i>',
                                                               '</sup>')),
                                    margin = list(l=10, r=20, b=5, t=150, pad=0))
                         
