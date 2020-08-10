@@ -12,7 +12,7 @@
 thumbnail_label1 <- function(image, label, content){
     div(class = "row",
         div(class = "col-sm-14 col-md-12",
-            div(class = "thumbnail",
+            div(class = "thumbnail",style="height:400px;background-color:#f2f2f2;",
                 img(src = image, alt = "...",
                     div(class = "caption", h3(label), p(content)
                     )))))
