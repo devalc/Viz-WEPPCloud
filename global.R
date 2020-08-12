@@ -12,9 +12,9 @@
 thumbnail_label1 <- function(image, label, content){
     div(class = "row",
         div(class = "col-sm-14 col-md-12",
-            div(class = "thumbnail",style="height:400px;background-color:#f2f2f2;",
+            div(class = "thumbnail",style="height:360px;background-color:#f2f2f2;",
                 img(src = image, alt = "...",
-                    div(class = "caption", h3(label), p(content)
+                    div(class = "caption",style="color:#000000;", h3(label), p(content)
                     )))))
 }
 
@@ -33,7 +33,7 @@ setBackgroundImage1 <- function(src = NULL, shinydashboard = FALSE) {
            -moz-background-size: cover;
            -o-background-size: cover;
            background-size: cover;
-        backdrop-filter: blur(5px);}"
+        backdrop-filter: blur(50px);}"
     )
     tags$head(tags$style(HTML(css)))
 }
