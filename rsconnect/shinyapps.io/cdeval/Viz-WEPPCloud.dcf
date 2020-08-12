@@ -5,9 +5,9 @@ account: cdeval
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1766872
-bundleId: 3397708
+bundleId: 3504730
 url: https://cdeval.shinyapps.io/Viz-WEPPCloud/
-when: 1594862149.19697
+when: 1597208357.53938
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .RData
+ignoredFiles: .RData|create_theme.R|gifs/test.gif
