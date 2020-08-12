@@ -37,3 +37,9 @@ setBackgroundImage1 <- function(src = NULL, shinydashboard = FALSE) {
     )
     tags$head(tags$style(HTML(css)))
 }
+
+disconnected <- tagList(
+    h1("Whoah there..."),
+    p("Something went terribly wrong!"),
+    reload_button("REFRESH", class = "warning")
+)
