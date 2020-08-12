@@ -25,18 +25,20 @@ library(shinythemes)
 library(shinycssloaders)
 library(shinyWidgets)
 library(plotly, quietly = TRUE)
+library(stringr)
 library(leaflet)
 library(tmap)
 library(ggthemes)
-library(shinyBS, quietly = TRUE)
-library(shinyLP, quietly = TRUE)
+# library(shinyBS, quietly = TRUE)
+# library(shinyLP, quietly = TRUE)
 library(DT, quietly = TRUE)
-library(scrollrevealR, quietly = TRUE)
 library(shinyhelper, quietly = TRUE)
 # library(shinydisconnect)
 library(shinyalert, quietly = TRUE)
 library(crosstalk)
+library(sever)
 source("global.R")
+
 
 ## ----------------------------------Init Options---------------------------------------##
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
@@ -61,12 +63,13 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     id = 'tabs',
     
     
-    
     ## ----------------------------------Set Theme------------------------------------------##
     ## set the theme
-    # theme = shinytheme(theme = "united"),
+
     theme = "mytheme.css",
-    # shinythemes::themeSelector(),
+    
+    
+
     ## ----------------------------------Start defining Tabs------------------------------------------##
     
     
@@ -83,15 +86,12 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         
         setBackgroundImage(src = "bg_pixabay.jpg", shinydashboard = FALSE),
         
-        # setBackgroundColor(
-        #     color = c("#F7FBFF", "#01262e"),
-        #     gradient = "linear",
-        #     direction = "bottom"
-        # ),
+        use_sever(),
+        #h1("sever" )
         
         mainPanel(
             fluidPage(#HTML("<br style = “line-height:10;”><br>"),
-                      
+                HTML("<br>"),
                       fluidRow(
                           column(
                               12,
@@ -109,7 +109,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                           )
                       )),
             
-            fluidPage(#HTML("<br style = “line-height:10;”><br>"),
+            fluidPage(#HTML("<br>"),
                       fluidRow(
                           column(
                               12,
@@ -298,7 +298,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 selected = "allscen",
                 status = 'warning'
             ) %>% 
-                helper(icon = "question-circle", colour = "#DC143C",
+                helper(icon = "question-circle", colour = "#FF0000",
                         content = "W_compare",
                         type = "markdown", size = "l",
                         buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
@@ -333,8 +333,9 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 fluidRow(
                     column(
                         12,
+                        offset = 1,
                         plotlyOutput("Plot9", height = "700px", width =
-                                         "800px") %>% withSpinner(color = "#0dc5c1")
+                                         "800px") %>% withSpinner(type = 6 ,color = "#ffffff")
                     )
                 ))
         )
@@ -400,7 +401,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 ticks = TRUE,
                 animate = FALSE
             )%>% 
-                helper(icon = "question-circle", colour = "#DC143C",
+                helper(icon = "question-circle", colour = "#FF0000",
                        content = "H_plot_thresh",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
@@ -443,12 +444,12 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 column(
                     6,
                     align = "center",
-                    plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(color = "#0dc5c1")
+                    plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(type = 6 ,color = "#ffffff")
                 ),
                 column(
                     6,
                     align = "center",
-                    plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(color = "#0dc5c1")
+                    plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(type = 6 ,color = "#ffffff")
                 )
             ),
             # HTML("<br style = “line-height:5;”><br>"),
@@ -459,12 +460,12 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 column(
                     6,
                     align = "center",
-                    plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(color = "#0dc5c1")
+                    plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(type = 6 ,color = "#ffffff")
                 ),
                 column(
                     6,
                     align = "center",
-                    plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(color = "#0dc5c1")
+                    plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 6 ,color = "#ffffff")
                 )
             ),
             HTML("<br style = “line-height:5;”><br>"),
@@ -479,7 +480,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             #         offset = 0,
             #         style = "background-color:#ECF0F1;",
             #         DT::dataTableOutput("Sed_stats_by_category") %>%
-            #             withSpinner(color = "#0dc5c1")
+            #             withSpinner(type = 6 ,color = "#ffffff")
             #     )
             # )
             # HTML("<br><br><br>"),
@@ -538,7 +539,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 ticks = TRUE,
                 animate = FALSE
             )%>% 
-                helper(icon = "question-circle", colour = "#DC143C",
+                helper(icon = "question-circle", colour = "#FF0000",
                        content = "S_plot_thresh",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
@@ -556,7 +557,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 ticks = TRUE,
                 animate = FALSE
             )%>% 
-                helper(icon = "question-circle", colour = "#DC143C",
+                helper(icon = "question-circle", colour = "#FF0000",
                        content = "S_slope_thresh",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
@@ -577,14 +578,14 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             fluidRow(column(12,
                             # align = "center",
                             # offset = 0,
-            leaflet::leafletOutput("Plot11")) %>%
-                withSpinner(color = "#0dc5c1")
-            
-            
+            leaflet::leafletOutput("Plot11")%>%
+                withSpinner(type = 6 ,color = "#ffffff")
+            ) 
         ),
         HTML("<br style = “line-height:5;”><br>"),
         
-        uiOutput("tab_sp")
+        uiOutput("tab_sp") %>%
+            withSpinner(type = 6 ,color = "#ffffff")
         
         )
         
@@ -626,12 +627,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     #                  # column(6, plotlyOutput("Plot8"))
     #              )
     #          )),
-    
-    # scroll_reveal(target = c("#Plot_vs_cumPercArea", "#Plot_vs_cumPercArea_abs", 
-    #                          "#Plot_vs_cumPercLen","#Plot_vs_cumPercLen_abs"), duration = 2000),
-    
-    use_reveal(),
-    
+
+       
 
     
     br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br(), br()
@@ -646,6 +643,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
 
 server <- function(input, output, session) {
     
+    sever(html = disconnected, bg_color = "#000")
         
     observe({
         if (input$DefOrUserUpload_W == 'Upload data') {
@@ -786,7 +784,7 @@ server <- function(input, output, session) {
                 "Hill_wshed",
                 "Select the watershed of interest",
                 unique(Hill_data()$Watershed) %>% 
-                    helper(icon = "question-circle", colour = "#DC143C",
+                    helper(icon = "question-circle", colour = "#FF0000",
                            content = "H_upload",
                            type = "markdown", size = "l",
                            buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -928,7 +926,7 @@ server <- function(input, output, session) {
                 offset = 0,
                 style = "background-color:#ECF0F1;",
                 DT::dataTableOutput("Sed_stats_by_category") %>%
-                    withSpinner(color = "#0dc5c1")
+                    withSpinner(type = 6 ,color = "#ffffff")
             )
         )
         
@@ -1176,7 +1174,7 @@ server <- function(input, output, session) {
                 placeholder = "No file selected",
                 accept = ".csv"
             ) %>% 
-                helper(icon = "question-circle", colour = "#DC143C",
+                helper(icon = "question-circle", colour = "#FF0000",
                        content = "W_upload",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -1276,7 +1274,10 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE),
                     choices =   colnames(Wshed_data())[7:20],
                     selected = colnames(Wshed_data()[7:10]),
-                    multiple = T
+                    multiple = T,
+                    # choicesOpt = list(
+                    #     content = stringr::str_trunc(colnames(Wshed_data())[7:20], width = 60)
+                    # )
                 )
                 
             }
@@ -1298,7 +1299,7 @@ server <- function(input, output, session) {
                 placeholder = "No file selected",
                 accept = c(".JSON", ".geojson", ".RDS")
             )%>% 
-        helper(icon = "question-circle", colour = "#DC143C",
+        helper(icon = "question-circle", colour = "#FF0000",
                content = "S_upload",
                type = "markdown", size = "l",
                buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -1317,7 +1318,7 @@ server <- function(input, output, session) {
     #             placeholder = "No file selected",
     #             accept = c(".JSON", ".geojson", ".RDS")
     #         )%>% 
-    #             helper(icon = "question-circle", colour = "#DC143C",
+    #             helper(icon = "question-circle", colour = "#FF0000",
     #                    content = "S_upload",
     #                    type = "markdown", size = "l",
     #                    buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -1467,8 +1468,7 @@ server <- function(input, output, session) {
                 align = "center",
                 offset = 0,
                 style = "background-color:#ECF0F1;",
-                DT::dataTableOutput("spatial_table") %>%
-                    withSpinner(color = "#0dc5c1")
+                DT::dataTableOutput("spatial_table")
             )
         )
     })
