@@ -48,10 +48,10 @@ options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 # 
 
 ui <-navbarPage(title = div("viz-WEPPcloud",
-                            div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 130px;top: 5px;padding-bottom:10px;", height = 60)),
-                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI_removebg.png',style="position:fixed;right: 185px;top: 5px;padding-bottom:10px;", height = 60)),
-                                tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 70px;top: 5px;padding-bottom:10px;", height = 60)),
-                                tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 60))
+                            div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 70px;top: 5px;padding-bottom:10px;", height = 50)),
+                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI.jpg',style="position:fixed;right: 115px;top: 5px;padding-bottom:10px;", height = 50)),
+                                tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50)),
+                                # tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50))
                             )),
                  
                 windowTitle = "viz-WEPPcloud",
@@ -64,10 +64,9 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     
     ## ----------------------------------Set Theme------------------------------------------##
     ## set the theme
-    ###I like on of these themes: readable, flatly, journal,united, sandstone
-    theme = shinytheme(theme = "flatly"),
-    
-    
+    # theme = shinytheme(theme = "united"),
+    theme = "mytheme.css",
+    # shinythemes::themeSelector(),
     ## ----------------------------------Start defining Tabs------------------------------------------##
     
     
@@ -82,8 +81,13 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         ))),
         
         
-        setBackgroundImage(src = "background1.png", shinydashboard = FALSE),
+        setBackgroundImage(src = "bg_pixabay.jpg", shinydashboard = FALSE),
         
+        # setBackgroundColor(
+        #     color = c("#F7FBFF", "#01262e"),
+        #     gradient = "linear",
+        #     direction = "bottom"
+        # ),
         
         mainPanel(
             fluidPage(#HTML("<br style = “line-height:10;”><br>"),
@@ -114,25 +118,25 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                               column(4,
                                   align  = "center",
                                   thumbnail_label1(
-                                      image = 'background.png',
+                                      image = 'background.jpg',
                                       label = 'Watershed Analysis',
                                       content = "Inter-watershed comparison of impacts of management on annual water yield and 
                                       water quality at the watershed outlet"
                                   ),
                                   actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"),style = "pill",
-                                             color = "success", size = "lg")
+                                             color = "warning")
                               ),
                               column(
                                   4,
                                   align  = "center",
                                   thumbnail_label1(
-                                      image = 'hillslope_img.png',
+                                      image = 'hillslope_img.jpg',
                                       label = 'Hillslope Analysis',
                                       content = 'Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
                                       and management on the detachment and delivery of pollutants from these hotspots'
                                   ),
                                   actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"),style = "pill",
-                                             color = "success", size = "lg")
+                                             color = "warning")
                               ),
                               column(
                                   4,
@@ -143,7 +147,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                                       content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
                                   ),
                                   actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("line-chart"),style = "pill",
-                                             color = "success", size = "lg")
+                                             color = "warning")
                               )
                           )
                       )),
@@ -156,7 +160,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     12,
                     offset = 3,
                     align  = "center",
-                    style = "height:100px;background-color:#f2f2f2;padding-left:20px;padding-top:20px;padding-bottom:20px;",
+                    style = "height:140px;background-color:#f2f2f2;padding-left:20px;padding-top:20px;padding-bottom:20px;color:#000000",
 
                     tags$div(
                         tags$p(
@@ -164,8 +168,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                             align = "center"
                         ),
                         tags$p(
-                            a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
-                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP"), 'model. It estimates
+                            a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside", style = "color:#FFAE42"),
+                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP",  style = "color:#FFAE42"), 'model. It estimates
                                                           hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
                                                           post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
                             .noWS = c("after-begin", "before-end"),
@@ -176,7 +180,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
 
                 )
             ),
-            # HTML("<br style = “line-height:30;”><br>")
+            HTML("<br style = “line-height:10;”><br>")
             )
             
             
@@ -245,33 +249,6 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     
     ),
 
-        
-        
-    #     column(12,
-    #            align = "center",
-    #            offset = 0,
-    #            tags$footer(HTML("
-    #                 <!-- Footer -->
-    #                        <footer class='page-footer font-large indigo'>
-    #                        <!-- Copyright -->
-    #                        <div class='footer-copyright text-center py-3'>© 2020 Copyright:
-    #                        <a href='https://github.com/devalc/Viz-WEPPCloud'> This is footer</a>
-    # 
-    #                        </div>
-    #                        <!-- Copyright -->
-    # 
-    #                        </footer>
-    #                        <!-- Footer -->"),
-    #                        style = "position:fixed;
-    # bottom:0;
-    # float: left;
-    # width:100%;
-    # height:50px; /* Height of the footer */
-    # color: #292929;
-    # padding:0px;
-    # background-color: #ECF0F1;
-    # text-align: left;
-    # z-index: 1000;"))
     
     
     ## -----------------------------------------Watershed Tab---------------------------------------------##
@@ -302,7 +279,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                         "Upload data"
                 ),
                 selected = "Default Data",
-                status = 'success'
+                status = 'warning'
             ),
             
             
@@ -319,7 +296,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                         "allwat"
                 ),
                 selected = "allscen",
-                status = 'success'
+                status = 'warning'
             ) %>% 
                 helper(icon = "question-circle", colour = "#DC143C",
                         content = "W_compare",
@@ -336,7 +313,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 choices = c("Heatmap" = "Heatmap", "Bar Chart" =
                                 "Bar Chart"),
                 selected = "Heatmap",
-                status = 'success'
+                status = 'warning'
             ),
             
             # img(src="vizweppcloud_hex_wsj.png",width="100%")
@@ -372,12 +349,15 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             "google-analytics.html"
         ))),
         
-        tags$style(type = "text/css", "body {padding-top: 70px;}"),
+        tags$style(type = "text/css", "body {padding-top: 80px; }"),
         
         useShinyalert(),  # Set up shinyalert
-        
+        fluidPage(
+            fluidRow(
+    
         sidebarPanel(
-            style = "position:fixed;width:inherit;",
+            # style = "position:fixed;width:inherit;",
+            style = "position:fixed;width:inherit;overflow-y:scroll;max-height: 640px;  ",
             width = 3,
             
             awesomeRadio(
@@ -388,7 +368,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     "Upload your own data" =
                         "Upload data"
                 ),
-                selected = "Default Data"
+                selected = "Default Data",
+                status = 'warning'
             ),
             
             # prettyRadioButtons(inputId = "analysis_method",
@@ -418,7 +399,11 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 round = TRUE,
                 ticks = TRUE,
                 animate = FALSE
-            ),
+            )%>% 
+                helper(icon = "question-circle", colour = "#DC143C",
+                       content = "H_plot_thresh",
+                       type = "markdown", size = "l",
+                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
             
             
             uiOutput("Hill_scen"),
@@ -432,7 +417,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     "Both" = "Both"
                 ),
                 selected = "Landuse",
-                status = 'success'
+                status = 'warning'
             ),
             
             # img(src="vizweppcloud_hex_wsj.png",width="100%")
@@ -449,7 +434,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         
         mainPanel(
             width = 9,
-            style = 'padding:50px;',
+            style = 'padding:80px;',
+            # style = "flex-grow:1; resize:vertical; overflow: hidden; position:relative; margin-left: 400px",
             # uiOutput("Exp1_Exp2") %>% withSpinner(color =
             #                                           "#0dc5c1"),
             # HTML("<br style = “line-height:5;”><br>"),
@@ -483,6 +469,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             ),
             HTML("<br style = “line-height:5;”><br>"),
             
+            
             uiOutput("tab_H")
             
             # fluidRow(
@@ -501,6 +488,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             #
             # )
         )
+        )
+    )
     ),
     
     ## -----------------------------------------Spatial-Viz Tab---------------------------------------------##
@@ -527,7 +516,8 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     "Use default data (Lake Tahoe simulations)" = "Default Data",
                     "Upload your own data" = "Upload data"
                 ),
-                selected = "Default Data"
+                selected = "Default Data",
+                status = 'warning'
             ),
             
             
@@ -751,7 +741,7 @@ server <- function(input, output, session) {
     output$Hill_var <- renderUI({
         if (input$DefOrUserUpload_H == 'Upload data') {
             req(Hill_data())
-            selectInput(
+            pickerInput(
                 "Hill_variable",
                 "Select the variable of interest",
                 colnames(Hill_data()[10:29]),
@@ -759,7 +749,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Hill_variable",
                     label = "Select the variable of interest",
                     choices =   c( "Runoff (mm)" = "Runoff..mm.",
@@ -792,7 +782,7 @@ server <- function(input, output, session) {
     output$Hill_wshed <- renderUI({
         if (input$DefOrUserUpload_H == 'Upload data') {
             req(Hill_data())
-            selectInput(
+            pickerInput(
                 "Hill_wshed",
                 "Select the watershed of interest",
                 unique(Hill_data()$Watershed) %>% 
@@ -803,7 +793,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Hill_wshed",
                     label = "Select the watershed of interest",
                     choices =   unique(Hill_data()$Watershed),
@@ -817,7 +807,7 @@ server <- function(input, output, session) {
     output$Hill_scen_base <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
             req(Spatial_data())
-            selectInput(
+            pickerInput(
                 "Hill_scen_base",
                 "Select the baseline scenario",
                 unique(Spatial_data()$Scenario),
@@ -826,7 +816,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Hill_scen_base",
                     label = "Select the baseline scenario",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
@@ -894,7 +884,7 @@ server <- function(input, output, session) {
     output$Hill_scen <- renderUI({
         if (input$DefOrUserUpload_H == 'Upload data') {
             req(Hill_data())
-            selectInput(
+            pickerInput(
                 "Hill_scen",
                 "Select Scenario do display data summary",
                 unique(Hill_data()$Scenario),
@@ -903,7 +893,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Hill_scen",
                     label = "Select Scenario do display data summary",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
@@ -1127,7 +1117,7 @@ server <- function(input, output, session) {
     output$Chan_var <- renderUI({
         if (input$DefOrUserUpload_C == 'Upload data') {
             req(Chan_data())
-            selectInput(
+            pickerInput(
                 "Chan_variable",
                 "Select the variable of interest",
                 colnames(Chan_data()[7:25]),
@@ -1135,7 +1125,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_C == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Chan_variable",
                     label = "Select the variable of interest",
                     choices =  as.character(unique(colnames(
@@ -1155,14 +1145,14 @@ server <- function(input, output, session) {
     output$Chan_wshed <- renderUI({
         if (input$DefOrUserUpload_C == 'Upload data') {
             req(Chan_data())
-            selectInput(
+            pickerInput(
                 "Chan_wshed",
                 "Select the variable of interest",
                 unique(Chan_data()$Watershed)
             )
         } else
             if (input$DefOrUserUpload_C == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "Chan_wshed",
                     label = "Select the variable of interest",
                     choices =   unique(Chan_data()$Watershed),
@@ -1231,14 +1221,14 @@ server <- function(input, output, session) {
         if (input$DefOrUserUpload_W == 'Upload data') {
             req(Wshed_data())
             if (input$AreaVsScen == 'allscen') {
-                selectInput(
+                pickerInput(
                     "Wshed_wshed",
                     "Select the watershed of interest",
                     unique(Wshed_data()$Watershed)
                 )
             } else
                 if (input$AreaVsScen == 'allwat') {
-                    selectInput(
+                    pickerInput(
                         "Wshed_wshed",
                         "Select the scenario of interest",
                         unique(Wshed_data()$Scenario)
@@ -1247,7 +1237,7 @@ server <- function(input, output, session) {
         } else
             if (input$DefOrUserUpload_W == 'Default Data') {
                 if (input$AreaVsScen == 'allscen') {
-                    selectInput(
+                    pickerInput(
                         inputId = "Wshed_wshed",
                         label = "Select the watershed of interest",
                         choices =   unique(Wshed_data()$Watershed),
@@ -1255,7 +1245,7 @@ server <- function(input, output, session) {
                     )
                 } else
                     if (input$AreaVsScen == 'allwat') {
-                        selectInput(
+                        pickerInput(
                             "Wshed_wshed",
                             "Select the scenario of interest",
                             unique(Wshed_data()$Scenario)
@@ -1400,7 +1390,7 @@ server <- function(input, output, session) {
     output$Spatial_scen <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
             req(Spatial_data())
-            selectInput(
+            pickerInput(
                 "S_scen",
                 "Select the scenario of interest",
                 unique(Spatial_data()$Scenario),
@@ -1409,7 +1399,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "S_scen",
                     label = "Select the scenario of interest",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
@@ -1437,7 +1427,7 @@ server <- function(input, output, session) {
     output$S_var <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
             req(Spatial_data())
-            selectInput(
+            pickerInput(
                 "S_variable",
                 "Select the variable of interest",
                 colnames(Spatial_data()),
@@ -1446,7 +1436,7 @@ server <- function(input, output, session) {
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
-                selectInput(
+                pickerInput(
                     inputId = "S_variable",
                     label = "Select the variable of interest",
                     choices = c (
