@@ -19,24 +19,30 @@
 ## --------------------------------------------------------------------------------------##
 ## ----------------------------------Load packages---------------------------------------##
 
-library(shiny, quietly = TRUE)
-library(tidyverse, quietly = TRUE)
-library(shinythemes)
-library(shinycssloaders)
-library(shinyWidgets)
-library(plotly, quietly = TRUE)
-library(stringr)
-library(leaflet)
-library(tmap)
-library(ggthemes)
-# library(shinyBS, quietly = TRUE)
-# library(shinyLP, quietly = TRUE)
-library(DT, quietly = TRUE)
-library(shinyhelper, quietly = TRUE)
-# library(shinydisconnect)
-library(shinyalert, quietly = TRUE)
-library(crosstalk)
-library(sever)
+library(pacman)
+
+pacman::p_load(shiny,tidyverse,shinythemes,shinycssloaders,shinyWidgets,
+               plotly, stringr,leaflet, tmap,ggthemes, DT,shinyhelper, shinyalert,
+               crosstalk, sever)
+
+# library(shiny, quietly = TRUE)
+# library(tidyverse, quietly = TRUE)
+# library(shinythemes)
+# library(shinycssloaders)
+# library(shinyWidgets)
+# library(plotly, quietly = TRUE)
+# library(stringr)
+# library(leaflet)
+# library(tmap)
+# library(ggthemes)
+# # library(shinyBS, quietly = TRUE)
+# # library(shinyLP, quietly = TRUE)
+# library(DT, quietly = TRUE)
+# library(shinyhelper, quietly = TRUE)
+# # library(shinydisconnect)
+# library(shinyalert, quietly = TRUE)
+# library(crosstalk)
+# library(sever)
 source("global.R")
 
 
