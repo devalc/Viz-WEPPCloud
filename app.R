@@ -381,12 +381,12 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             # prettyRadioButtons(inputId = "analysis_method",
             #         label = "Show analysis:",
-            #         choices = c("Relative to current conditions", "Independent scenarios"),
+            #         choices = c("Relative to the baseline scenario", "Individual scenarios"),
             #         icon = icon("check"),
             #         bigger = TRUE,
-            #         status = "info",
+            #         status = "warning",
             #         animation = "jelly",
-            #         selected = "Independent scenarios"
+            #         selected = "Individual scenarios"
             # ),
             
             uiOutput("H_FileInput"),
@@ -1599,11 +1599,11 @@ server <- function(input, output, session) {
     #     reshape2::melt(id.vars = c("ProjectName", "Scenario", "Watershed",
     #                                "Soil", "LanduseDesc", "SoilDesc",
     #                                "WeppID", "TopazID", "Landuse", "cumPercArea")) %>%
-    #     group_by(variable) %>% 
+    #     group_by(variable) %>%
     #     mutate(diffValue = value[Scenario == "CurCond.2020.ki5krcs.chn_cs12"]-value)
     # 
     # })
-    
+    # 
     ## this is the dataframe for plot 3 on the hillslopes tab (the channel length plot)
     hill_arr_by_var_CL <- reactive({
         hill_subset() %>% group_by(Scenario) %>% arrange_at(.vars = input$Hill_variable, desc) %>%
