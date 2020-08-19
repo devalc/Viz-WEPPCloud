@@ -56,10 +56,10 @@ options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 # 
 
 ui <-navbarPage(title = div("viz-WEPPcloud",
-                            div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 70px;top: 5px;padding-bottom:10px;", height = 50)),
-                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI.jpg',style="position:fixed;right: 115px;top: 5px;padding-bottom:10px;", height = 50)),
-                                tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50)),
-                                # tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50))
+                            div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 105px;top: 5px;padding-bottom:10px;", height = 50)),
+                                tags$a(href="https://www.uidaho.edu/", tags$img(src='UI.jpg',style="position:fixed;right: 150px;top: 5px;padding-bottom:10px;", height = 50)),
+                                tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 60px;top: 5px;padding-bottom:10px;", height = 50)),
+                                tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub-Mark.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50))
                             )),
                  
                 windowTitle = "viz-WEPPcloud",
