@@ -531,8 +531,11 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             uiOutput("S_FileInput"),
             uiOutput("S_FileInput_Chan"),
             uiOutput("Spatial_wshed"),
-            uiOutput("Spatial_scen"),
             uiOutput("S_var"),
+            uiOutput("Spatial_scen_base"),
+            uiOutput("Spatial_scen_comp"),
+            # uiOutput("Spatial_scen"),
+            
             
             sliderInput(
                 "thresh_S",
@@ -581,12 +584,19 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             width = 9,
             style = 'padding:80px;',
             
-            fluidRow(column(12,
+            fluidRow(column(6,
                             # align = "center",
                             # offset = 0,
             leaflet::leafletOutput("Plot11")%>%
                 withSpinner(type = 6 ,color = "#ffffff")
-            ) 
+            ),
+            column(6,
+                   # align = "center",
+                   # offset = 0,
+                   leaflet::leafletOutput("Plot12")%>%
+                       withSpinner(type = 6 ,color = "#ffffff")
+            )
+            
         ),
         HTML("<br style = “line-height:5;”><br>"),
         
@@ -1431,6 +1441,80 @@ server <- function(input, output, session) {
     })
     
     
+    output$Spatial_scen_base <- renderUI({
+        if (input$DefOrUserUpload_S == 'Upload data') {
+            req(Spatial_data())
+            pickerInput(
+                "S_scen_base",
+                "Select the baseline scenario",
+                unique(Spatial_data()$Scenario),
+                unique(Spatial_data()$Scenario)[1],
+                multiple = F
+            )
+        } else
+            if (input$DefOrUserUpload_S == 'Default Data') {
+                pickerInput(
+                    inputId = "S_scen_base",
+                    label = "Select the baseline scenario",
+                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                                 
+                    ),
+                    unique(Spatial_data()$Scenario)[1],
+                    multiple = F
+                )
+                
+            }
+        
+    })
+    
+    
+    output$Spatial_scen_comp <- renderUI({
+        if (input$DefOrUserUpload_S == 'Upload data') {
+            req(Spatial_data())
+            pickerInput(
+                "S_scen_comp",
+                "Select the scenario to compare",
+                unique(Spatial_data()$Scenario),
+                unique(Spatial_data()$Scenario)[1],
+                multiple = F
+            )
+        } else
+            if (input$DefOrUserUpload_S == 'Default Data') {
+                pickerInput(
+                    inputId = "S_scen_comp",
+                    label = "Select the scenario to compare",
+                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                                 
+                    ),
+                    unique(Spatial_data()$Scenario)[1],
+                    multiple = F
+                )
+                
+            }
+        
+    })
+    
+    
     output$S_var <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
             req(Spatial_data())
@@ -1523,6 +1607,30 @@ server <- function(input, output, session) {
         Spatial_data() %>%
             dplyr::filter(Watershed %in% input$S_wshed &
                               Scenario %in% input$S_scen)%>% 
+            arrange_at(.vars = input$S_variable, desc) %>%
+            mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
+                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
+            dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
+    })
+    
+    Spatial_subset_base <- reactive({
+        req(Spatial_data())
+        req(input$S_wshed)
+        Spatial_data() %>%
+            dplyr::filter(Watershed %in% input$S_wshed &
+                              Scenario %in% input$S_scen_base)%>% 
+            arrange_at(.vars = input$S_variable, desc) %>%
+            mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
+                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
+            dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
+    })
+    
+    Spatial_subset_comp <- reactive({
+        req(Spatial_data())
+        req(input$S_wshed)
+        Spatial_data() %>%
+            dplyr::filter(Watershed %in% input$S_wshed &
+                              Scenario %in% input$S_scen_comp)%>% 
             arrange_at(.vars = input$S_variable, desc) %>%
             mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
                        100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
@@ -3099,10 +3207,29 @@ server <- function(input, output, session) {
     # })
     
     output$Plot11 <- leaflet::renderLeaflet({
-        req(Spatial_subset())
-        req(input$S_scen)
+        req(Spatial_subset_base())
+        req(input$S_scen_base)
         req(input$S_variable)
-        tm <- tm_shape(Spatial_subset()) +
+        tm <- tm_shape(Spatial_subset_base()) +
+            # tm_borders(lwd = 0, alpha=0.0) +
+            tmap::tm_polygons(
+                input$S_variable,
+                id = "watershed",
+                palette = "viridis",
+                legend.hist = TRUE,
+                style = "log10_pretty"
+            )
+        
+        
+        tmap_leaflet(tm)
+    })
+    
+    
+    output$Plot12 <- leaflet::renderLeaflet({
+        req(Spatial_subset_comp())
+        req(input$S_scen_comp)
+        req(input$S_variable)
+        tm <- tm_shape(Spatial_subset_comp()) +
             tmap::tm_polygons(
                 input$S_variable,
                 id = "watershed",
@@ -3249,17 +3376,20 @@ server <- function(input, output, session) {
     
 
     spdftab <- reactive({
-        req(Spatial_subset())
-        Spatial_subset() %>% as.data.frame() %>% select(WeppID,TopazID, landuse, soil, 
-                                                          slope, aspect, input$S_variable ) %>% dplyr::filter(slope < input$thresh_slope_S)
+        req(Spatial_subset_comp())
+        Spatial_subset_comp() %>% as.data.frame() %>% select(WeppID,TopazID, landuse, soil, 
+                                                          slope, aspect, input$S_variable ) %>% 
+            dplyr::filter(slope < input$thresh_slope_S)
     })
     
+   
+
     output$spatial_table <- DT::renderDataTable(
         spdftab(),
         extensions = list("Buttons" = NULL),
         options = list(
             dom = 'Bfrtip',
-            buttons = 
+            buttons =
                 list('copy', 'print', list(
                     extend = 'collection',
                     buttons = c('csv', 'excel', 'pdf'),
@@ -3273,7 +3403,7 @@ server <- function(input, output, session) {
             fillContainer = F,
             class = "display",
             columnDefs = list(list(className = 'dt-left'))
-            
+
         )
     )
     
