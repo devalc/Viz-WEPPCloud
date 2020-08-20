@@ -267,13 +267,15 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         
         
         
-        tags$style(type = "text/css", "body {padding-top: 100px;}"),
+        # tags$style(type = "text/css", "body {padding-top: 10px;}"),
         
+        column(width = 12,
+               style = 'padding-top:0px;',
         
         useShinyalert(),  # Set up shinyalert
         
         sidebarPanel(
-            style = "position:fixed;width:inherit;",
+            style = "position:fixed;width:inherit;margin-top: 0px;",
             width = 3,
             
             awesomeRadio(
@@ -331,19 +333,22 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         # Main panel for displaying outputs ----
         mainPanel(
             width = 9,
-            style = 'padding:80px;',
+            # style = "position:fixed;width:inherit;padding-left:180px;",
+            offset= 1,
+            style = 'padding-top:0px;padding-bottom:10px;',
             # setBackgroundColor("#ffffff",shinydashboard = FALSE),
             uiOutput("Wshed_Exp"),
-            fluidPage(# plotlyOutput("Plot5" ,height = "800px", width ="1200px")
+            # fluidPage(# plotlyOutput("Plot5" ,height = "800px", width ="1200px")
                 # column(12, tableOutput("tab1"))
                 fluidRow(
                     column(
-                        12,
-                        offset = 1,
+                        9,
+                        offset = 2,
                         plotlyOutput("Plot9", height = "700px", width =
                                          "800px") %>% withSpinner(type = 6 ,color = "#ffffff")
-                    )
+                    
                 ))
+        )
         )
     ),
     
@@ -1655,6 +1660,30 @@ server <- function(input, output, session) {
     ## ---------------------------------Dataframe Calculations for hillslopes-------------------------------------------------------##
     ## -----------------------------------------------------------------------------------------------------------##
     
+    ############## Takes in df filtered by input watershed and creates column for each variable with values   ##############
+    ##############            relative to the chosen baseline scenario   ##############
+    
+    hill_subset_rel <- reactive({
+        hill_subset() %>% dplyr::group_by(WeppID)  %>%
+        dplyr::mutate(RelRunoff..mm. = Runoff..mm.- Runoff..mm.[Scenario==input$S_scen_base],
+               RelLateralflow.mm = Lateral.Flow..mm.- Lateral.Flow..mm.[Scenario==input$S_scen_base],
+               RelBaseflow.mm  = Baseflow..mm.- Baseflow..mm.[Scenario==input$S_scen_base],
+               RelSoilLoss.kg.ha = Soil.Loss..kg.ha.- Soil.Loss..kg.ha.[Scenario==input$S_scen_base],
+               RelSedDep.kg.ha = Sediment.Deposition..kg.ha.- Sediment.Deposition..kg.ha.[Scenario==input$S_scen_base],
+               RelSedYield.kg.ha = Sediment.Yield..kg.ha.- Sediment.Yield..kg.ha.[Scenario==input$S_scen_base],
+               RelSRP.kg.ha.3 = Solub..React..P..kg.ha.3.- Solub..React..P..kg.ha.3.[Scenario==input$S_scen_base],
+               RelParticulateP.kg.ha.3 = Particulate.P..kg.ha.3.- Particulate.P..kg.ha.3.[Scenario==input$S_scen_base],
+               RelTotalP.kg.ha.3 = Total.P..kg.ha.3.- Total.P..kg.ha.3.[Scenario==input$S_scen_base],
+               RelParticle.Class.1.Fraction = Particle.Class.1.Fraction- Particle.Class.1.Fraction[Scenario==input$S_scen_base],
+               RelParticle.Class.2.Fraction = Particle.Class.2.Fraction- Particle.Class.2.Fraction[Scenario==input$S_scen_base],
+               RelParticle.Class.3.Fraction = Particle.Class.3.Fraction- Particle.Class.3.Fraction[Scenario==input$S_scen_base],
+               RelParticle.Class.4.Fraction = Particle.Class.4.Fraction- Particle.Class.4.Fraction[Scenario==input$S_scen_base],
+               RelParticle.Class.5.Fraction = Particle.Class.5.Fraction- Particle.Class.5.Fraction[Scenario==input$S_scen_base],
+               RelParticle.Fraction.Under.0.016.mm = Particle.Fraction.Under.0.016.mm- Particle.Fraction.Under.0.016.mm[Scenario==input$S_scen_base],
+               RelSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.- Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.[Scenario==input$S_scen_base]
+        )%>% dplyr::ungroup()
+    })
+                
     
     ############## Dataframe calculating cumulative percent of total variable: Hillslope   ##############
     ### this is the DF for plot 1 on hillslopes tab
@@ -1701,16 +1730,7 @@ server <- function(input, output, session) {
     })
     
     
-    ####### Datafrme calculating relative cumulative percent of total variable relative to current conditions
     
-    # hill_arr_by_var_HA_rel <- reactive({hill_arr_by_var_HA() %>%
-    #     reshape2::melt(id.vars = c("ProjectName", "Scenario", "Watershed",
-    #                                "Soil", "LanduseDesc", "SoilDesc",
-    #                                "WeppID", "TopazID", "Landuse", "cumPercArea")) %>%
-    #     group_by(variable) %>%
-    #     mutate(diffValue = value[Scenario == "CurCond.2020.ki5krcs.chn_cs12"]-value)
-    # 
-    # })
     # 
     ## this is the dataframe for plot 3 on the hillslopes tab (the channel length plot)
     hill_arr_by_var_CL <- reactive({
@@ -3249,6 +3269,10 @@ server <- function(input, output, session) {
     ## -----------------------------------------------------------------------------------------------------------##
     
     ##### DF for summary datatables on the hillslopes tab
+    
+    
+    
+    
     
     sed_stats_df <- reactive({
         if (input$summary_DT_by_var_H == "Landuse") {
