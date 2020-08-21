@@ -3272,48 +3272,66 @@ server <- function(input, output, session) {
     
     
     
-    
-    
-    sed_stats_df <- reactive({
+    sed_stats_df <-reactive({
         if (input$summary_DT_by_var_H == "Landuse") {
-            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
+            hill_subset_rel() %>% dplyr::filter(Scenario %in% "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli") %>%
+                dplyr::arrange_at(.vars = "Sediment.Yield..kg.ha.", desc) %>%
                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
-                                  sum(Hillslope.Area..ha.) * 100) %>%
-                dplyr::filter(cumPercArea < input$thresh_H) %>%
-                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.) %>%
+                          sum(Hillslope.Area..ha.) * 100) %>%
+                dplyr::filter(cumPercArea < 50) %>%
+                dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha. , RelSedYield.kg.ha) %>%
                 group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
-                                                                                   mean)) %>%
+                                                                           mean)) %>%
                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
-        } else
-            if (input$summary_DT_by_var_H == "Soiltype") {
-                hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                    dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
-                    dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
-                                      sum(Hillslope.Area..ha.) * 100) %>%
-                    dplyr::filter(cumPercArea < input$thresh_H) %>%
-                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.) %>%
-                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
-                                                                                    mean)) %>%
-                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
-                
-            } else
-                if (input$summary_DT_by_var_H == "Both") {
-                    hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
-                        dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
-                        dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
-                                          sum(Hillslope.Area..ha.) * 100) %>%
-                        dplyr::filter(cumPercArea < input$thresh_H) %>%
-                        dplyr::select(SoilDesc,
-                                      LanduseDesc,
-                                      Slope,
-                                      Sediment.Yield..kg.ha.) %>%
-                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
-                                                                                                     mean)) %>%
-                        dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
-                    
-                }
-    })
+        }else
+            if (input$summary_DT_by_var_H == "Soiltype") {}
+        else
+            if (input$summary_DT_by_var_H == "Both") {}
+        })
+    
+    
+   
+    
+    # sed_stats_df <- reactive({
+    #     if (input$summary_DT_by_var_H == "Landuse") {
+    #         hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #             dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
+    #             dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
+    #                               sum(Hillslope.Area..ha.) * 100) %>%
+    #             dplyr::filter(cumPercArea < input$thresh_H) %>%
+    #             dplyr::select(LanduseDesc, Slope, Sediment.Yield..kg.ha.) %>%
+    #             group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
+    #                                                                                mean)) %>%
+    #             dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
+    #     } else
+    #         if (input$summary_DT_by_var_H == "Soiltype") {
+    #             hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                 dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
+    #                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
+    #                                   sum(Hillslope.Area..ha.) * 100) %>%
+    #                 dplyr::filter(cumPercArea < input$thresh_H) %>%
+    #                 dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha.) %>%
+    #                 group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
+    #                                                                                 mean)) %>%
+    #                 dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
+    # 
+    #         } else
+    #             if (input$summary_DT_by_var_H == "Both") {
+    #                 hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+    #                     dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
+    #                     dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
+    #                                       sum(Hillslope.Area..ha.) * 100) %>%
+    #                     dplyr::filter(cumPercArea < input$thresh_H) %>%
+    #                     dplyr::select(SoilDesc,
+    #                                   LanduseDesc,
+    #                                   Slope,
+    #                                   Sediment.Yield..kg.ha.) %>%
+    #                     group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
+    #                                                                                                  mean)) %>%
+    #                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
+    # 
+    #             }
+    # })
     
     ### WEst Shore summary stats df
     
