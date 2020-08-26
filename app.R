@@ -1663,27 +1663,35 @@ server <- function(input, output, session) {
     ############## Takes in df filtered by input watershed and creates column for each variable with values   ##############
     ##############            relative to the chosen baseline scenario   ##############
     
+    # hill_subset_rel <- reactive({
+    #     hill_subset() %>% dplyr::group_by(WeppID)  %>%
+    #     dplyr::mutate(RelRunoff..mm. = Runoff..mm.- Runoff..mm.[Scenario==input$S_scen_base],
+    #            RelLateralflow.mm = Lateral.Flow..mm.- Lateral.Flow..mm.[Scenario==input$S_scen_base],
+    #            RelBaseflow.mm  = Baseflow..mm.- Baseflow..mm.[Scenario==input$S_scen_base],
+    #            RelSoilLoss.kg.ha = Soil.Loss..kg.ha.- Soil.Loss..kg.ha.[Scenario==input$S_scen_base],
+    #            RelSedDep.kg.ha = Sediment.Deposition..kg.ha.- Sediment.Deposition..kg.ha.[Scenario==input$S_scen_base],
+    #            RelSedYield.kg.ha = Sediment.Yield..kg.ha.- Sediment.Yield..kg.ha.[Scenario==input$S_scen_base],
+    #            RelSRP.kg.ha.3 = Solub..React..P..kg.ha.3.- Solub..React..P..kg.ha.3.[Scenario==input$S_scen_base],
+    #            RelParticulateP.kg.ha.3 = Particulate.P..kg.ha.3.- Particulate.P..kg.ha.3.[Scenario==input$S_scen_base],
+    #            RelTotalP.kg.ha.3 = Total.P..kg.ha.3.- Total.P..kg.ha.3.[Scenario==input$S_scen_base],
+    #            RelParticle.Class.1.Fraction = Particle.Class.1.Fraction- Particle.Class.1.Fraction[Scenario==input$S_scen_base],
+    #            RelParticle.Class.2.Fraction = Particle.Class.2.Fraction- Particle.Class.2.Fraction[Scenario==input$S_scen_base],
+    #            RelParticle.Class.3.Fraction = Particle.Class.3.Fraction- Particle.Class.3.Fraction[Scenario==input$S_scen_base],
+    #            RelParticle.Class.4.Fraction = Particle.Class.4.Fraction- Particle.Class.4.Fraction[Scenario==input$S_scen_base],
+    #            RelParticle.Class.5.Fraction = Particle.Class.5.Fraction- Particle.Class.5.Fraction[Scenario==input$S_scen_base],
+    #            RelParticle.Fraction.Under.0.016.mm = Particle.Fraction.Under.0.016.mm- Particle.Fraction.Under.0.016.mm[Scenario==input$S_scen_base],
+    #            RelSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.- Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.[Scenario==input$S_scen_base]
+    #     )%>% dplyr::ungroup()
+    # })
+    
+    
     hill_subset_rel <- reactive({
-        hill_subset() %>% dplyr::group_by(WeppID)  %>%
-        dplyr::mutate(RelRunoff..mm. = Runoff..mm.- Runoff..mm.[Scenario==input$S_scen_base],
-               RelLateralflow.mm = Lateral.Flow..mm.- Lateral.Flow..mm.[Scenario==input$S_scen_base],
-               RelBaseflow.mm  = Baseflow..mm.- Baseflow..mm.[Scenario==input$S_scen_base],
-               RelSoilLoss.kg.ha = Soil.Loss..kg.ha.- Soil.Loss..kg.ha.[Scenario==input$S_scen_base],
-               RelSedDep.kg.ha = Sediment.Deposition..kg.ha.- Sediment.Deposition..kg.ha.[Scenario==input$S_scen_base],
-               RelSedYield.kg.ha = Sediment.Yield..kg.ha.- Sediment.Yield..kg.ha.[Scenario==input$S_scen_base],
-               RelSRP.kg.ha.3 = Solub..React..P..kg.ha.3.- Solub..React..P..kg.ha.3.[Scenario==input$S_scen_base],
-               RelParticulateP.kg.ha.3 = Particulate.P..kg.ha.3.- Particulate.P..kg.ha.3.[Scenario==input$S_scen_base],
-               RelTotalP.kg.ha.3 = Total.P..kg.ha.3.- Total.P..kg.ha.3.[Scenario==input$S_scen_base],
-               RelParticle.Class.1.Fraction = Particle.Class.1.Fraction- Particle.Class.1.Fraction[Scenario==input$S_scen_base],
-               RelParticle.Class.2.Fraction = Particle.Class.2.Fraction- Particle.Class.2.Fraction[Scenario==input$S_scen_base],
-               RelParticle.Class.3.Fraction = Particle.Class.3.Fraction- Particle.Class.3.Fraction[Scenario==input$S_scen_base],
-               RelParticle.Class.4.Fraction = Particle.Class.4.Fraction- Particle.Class.4.Fraction[Scenario==input$S_scen_base],
-               RelParticle.Class.5.Fraction = Particle.Class.5.Fraction- Particle.Class.5.Fraction[Scenario==input$S_scen_base],
-               RelParticle.Fraction.Under.0.016.mm = Particle.Fraction.Under.0.016.mm- Particle.Fraction.Under.0.016.mm[Scenario==input$S_scen_base],
-               RelSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.- Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.[Scenario==input$S_scen_base]
-        )%>% dplyr::ungroup()
+        hill_subset() %>%
+            dplyr::filter(.data[["Scenario"]] != .data[[!!input$S_scen_base]]  )
+        # %>%
+        #     mutate(RelSedYield.kg.ha = Sediment.Yield..kg.ha.- hill_subset()$Sediment.Yield..kg.ha.[hill_subset()$Scenario=="CurCond.2020.ki5krcs.chn_cs12"])
     })
-                
+
     
     ############## Dataframe calculating cumulative percent of total variable: Hillslope   ##############
     ### this is the DF for plot 1 on hillslopes tab
@@ -3308,7 +3316,7 @@ server <- function(input, output, session) {
     
     sed_stats_df <- reactive({
         if (input$summary_DT_by_var_H == "Landuse") {
-            hill_subset() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+            hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
                 dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                   sum(Hillslope.Area..ha.) * 100) %>%
