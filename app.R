@@ -330,7 +330,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
             
             
-            uiOutput("Hill_scen"),
+            # uiOutput("Hill_scen"),
             
             awesomeRadio(
                 inputId = "summary_DT_by_var_H",
@@ -2373,7 +2373,7 @@ server <- function(input, output, session) {
     
     sed_stats_df <- reactive({
         if (input$summary_DT_by_var_H == "Landuse") {
-            hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+            hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen_comp) %>%
                 dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                 dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                   sum(Hillslope.Area..ha.) * 100) %>%
@@ -2384,19 +2384,19 @@ server <- function(input, output, session) {
                 dplyr::arrange(desc(paste0(input$Hill_variable, "_mean"))) %>% dplyr::mutate_if(is.numeric, round, 2)
         } else
             if (input$summary_DT_by_var_H == "Soiltype") {
-                hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen_comp) %>%
                     dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                     dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                       sum(Hillslope.Area..ha.) * 100) %>%
                     dplyr::filter(cumPercArea < input$thresh_H) %>%
-                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha. ,AbsChange_SedYield.kg.ha ) %>%
+                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha. ,AbsChange_Sediment.Yield..kg.ha. ) %>%
                     group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
                                                                                     mean)) %>%
                     dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
 
             } else
                 if (input$summary_DT_by_var_H == "Both") {
-                    hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen) %>%
+                    hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen_comp) %>%
                         dplyr::arrange_at(.vars = input$Hill_variable, desc) %>%
                         dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                           sum(Hillslope.Area..ha.) * 100) %>%
@@ -2405,7 +2405,7 @@ server <- function(input, output, session) {
                                       LanduseDesc,
                                       Slope,
                                       Sediment.Yield..kg.ha.,
-                                      AbsChange_SedYield.kg.ha ) %>%
+                                      AbsChange_Sediment.Yield..kg.ha. ) %>%
                         group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
                                                                                                      mean)) %>%
                         dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
