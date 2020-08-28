@@ -477,15 +477,16 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             width = 9,
             style = 'padding:80px;',
             
-            fluidRow(column(6,
-                            # align = "center",
-                            # offset = 0,
-            leaflet::leafletOutput("Plot11")%>%
-                withSpinner(type = 6 ,color = "#ffffff")
-            ),
-            column(6,
+            fluidRow(
+            #     column(6,
+            #                 # align = "center",
+            #                 # offset = 0,
+            # leaflet::leafletOutput("Plot11")%>%
+            #     withSpinner(type = 6 ,color = "#ffffff")
+            # ),
+            column(12,
                    # align = "center",
-                   # offset = 0,
+                   offset = 0,
                    leaflet::leafletOutput("Plot12")%>%
                        withSpinner(type = 6 ,color = "#ffffff")
             )
@@ -1214,16 +1215,44 @@ server <- function(input, output, session) {
             dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
     })
     
+    
+    ############## Creates column in spatial df for each variable with values  relative to the chosen baseline scenario   ##############
+    Spatial_data_rel<- reactive({ Spatial_data() %>%
+            dplyr::filter(Watershed %in% input$S_wshed) %>%
+            dplyr::filter(Scenario != input$S_scen_base) %>%
+            dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha- Spatial_data()$SoLs_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_SdDp_kg_ha = SdDp_kg_ha- Spatial_data()$SdDp_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_SdYd_kg_ha = SdYd_kg_ha- Spatial_data()$SdYd_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_SRP_kg_ha_ = SRP_kg_ha_- Spatial_data()$SRP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_PP_kg_ha_ = PP_kg_ha_- Spatial_data()$PP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_TP_kg_ha_ = TP_kg_ha_- Spatial_data()$TP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_Runoff_mm_ = Runoff_mm_- Spatial_data()$Runoff_mm_[Spatial_data()$Scenario==input$S_scen_base],
+                          AbsChange_DepLos_kg_ = DepLos_kg_- Spatial_data()$DepLos_kg_[Spatial_data()$Scenario==input$S_scen_base],
+                          )
+    })
+    
+    
+    # Spatial_subset_comp <- reactive({
+    #     req(Spatial_data_rel())
+    #     #req(input$S_wshed)
+    #     Spatial_data_rel() %>%
+    #         dplyr::filter(Scenario %in% input$S_scen_comp)%>% 
+    #         arrange_at(.vars = input$S_variable, desc) %>%
+    #         mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
+    #                    100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
+    #         dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
+    # })
+    
     Spatial_subset_comp <- reactive({
         req(Spatial_data())
         req(input$S_wshed)
         Spatial_data() %>%
             dplyr::filter(Watershed %in% input$S_wshed &
-                              Scenario %in% input$S_scen_comp)%>% 
+                              Scenario %in% input$S_scen_comp)%>%
             arrange_at(.vars = input$S_variable, desc) %>%
             mutate(cumPercArea = cumsum(area_ha_) / sum(area_ha_) *
-                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>% 
-            dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S) )
+                       100) %>% dplyr::mutate_if(is.numeric, round, 2) %>%
+            dplyr::filter(cumPercArea < input$thresh_S  & slope > min(input$thresh_slope_S) & slope < max(input$thresh_slope_S))
     })
     
     
@@ -1247,28 +1276,7 @@ server <- function(input, output, session) {
     ############## Takes in df filtered by input watershed and creates column for each variable with values   ##############
     ##############            relative to the chosen baseline scenario   ##############
     
-    # hill_subset_rel <- reactive({
-    #     hill_subset() %>% dplyr::group_by(WeppID)  %>%
-    #     dplyr::mutate(RelRunoff..mm. = Runoff..mm.- Runoff..mm.[Scenario==input$S_scen_base],
-    #            RelLateralflow.mm = Lateral.Flow..mm.- Lateral.Flow..mm.[Scenario==input$S_scen_base],
-    #            RelBaseflow.mm  = Baseflow..mm.- Baseflow..mm.[Scenario==input$S_scen_base],
-    #            RelSoilLoss.kg.ha = Soil.Loss..kg.ha.- Soil.Loss..kg.ha.[Scenario==input$S_scen_base],
-    #            RelSedDep.kg.ha = Sediment.Deposition..kg.ha.- Sediment.Deposition..kg.ha.[Scenario==input$S_scen_base],
-    #            RelSedYield.kg.ha = Sediment.Yield..kg.ha.- Sediment.Yield..kg.ha.[Scenario==input$S_scen_base],
-    #            RelSRP.kg.ha.3 = Solub..React..P..kg.ha.3.- Solub..React..P..kg.ha.3.[Scenario==input$S_scen_base],
-    #            RelParticulateP.kg.ha.3 = Particulate.P..kg.ha.3.- Particulate.P..kg.ha.3.[Scenario==input$S_scen_base],
-    #            RelTotalP.kg.ha.3 = Total.P..kg.ha.3.- Total.P..kg.ha.3.[Scenario==input$S_scen_base],
-    #            RelParticle.Class.1.Fraction = Particle.Class.1.Fraction- Particle.Class.1.Fraction[Scenario==input$S_scen_base],
-    #            RelParticle.Class.2.Fraction = Particle.Class.2.Fraction- Particle.Class.2.Fraction[Scenario==input$S_scen_base],
-    #            RelParticle.Class.3.Fraction = Particle.Class.3.Fraction- Particle.Class.3.Fraction[Scenario==input$S_scen_base],
-    #            RelParticle.Class.4.Fraction = Particle.Class.4.Fraction- Particle.Class.4.Fraction[Scenario==input$S_scen_base],
-    #            RelParticle.Class.5.Fraction = Particle.Class.5.Fraction- Particle.Class.5.Fraction[Scenario==input$S_scen_base],
-    #            RelParticle.Fraction.Under.0.016.mm = Particle.Fraction.Under.0.016.mm- Particle.Fraction.Under.0.016.mm[Scenario==input$S_scen_base],
-    #            RelSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.- Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.[Scenario==input$S_scen_base]
-    #     )%>% dplyr::ungroup()
-    # })
-    
-    #### Df calculates 
+    ####  
     
     hill_subset_rel<- reactive({ hill_subset() %>% 
             dplyr::filter(Scenario != input$Hill_scen_base) %>%
@@ -1288,8 +1296,7 @@ server <- function(input, output, session) {
                                      AbsChange_Particle.Class.5.Fraction = Particle.Class.5.Fraction- hill_subset()$Sediment.Yield..kg.ha.[hill_subset()$Scenario==input$Hill_scen_base],
                                      AbsChange_Particle.Fraction.Under.0.016.mm = Particle.Fraction.Under.0.016.mm- hill_subset()$Particle.Fraction.Under.0.016.mm[hill_subset()$Scenario==input$Hill_scen_base],
                                      AbsChange_Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.- hill_subset()$Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha.[hill_subset()$Scenario==input$Hill_scen_base]
-                              # AbsChange_SedYield.kg.ha = Sediment.Yield..kg.ha.- hill_subset()$Sediment.Yield..kg.ha.[hill_subset()$Scenario==input$Hill_scen_base]
-                          )
+                              )
     })
     
     
@@ -2291,54 +2298,92 @@ server <- function(input, output, session) {
     #     
     # })
     
-    output$Plot11 <- leaflet::renderLeaflet({
-        req(Spatial_subset_base())
-        req(input$S_scen_base)
-        req(input$S_variable)
-        tm1 <- tm_shape(Spatial_subset_base()) +
-            # tm_borders(lwd = 0, alpha=0.0) +
-            tmap::tm_polygons(
-                input$S_variable,
-                id = "watershed",
-                palette = "YlGnBu",
-                # style = "log10_pretty"
-                style = "fixed",
-                breaks = c(0, 1, 10, 100, 1000,
-                           5000, 10000, 15000,20000,Inf),
-                title = input$S_scen_base
-            )+ tmap::tm_layout(main.title= input$S_scen_base,
-                               scale = 0.1,
-                               aes.color = "#0000000"
-                               ) 
-        
-        
-        tmap_leaflet(tm1, in.shiny = TRUE)
-    })
     
+    
+   
+    # output$Plot11 <- leaflet::renderLeaflet({
+    #     req(Spatial_subset_base())
+    #     req(input$S_scen_base)
+    #     req(input$S_variable)
+    #     tm1 <- tm_shape(Spatial_subset_base()) +
+    #         # tm_borders(lwd = 0, alpha=0.0) +
+    #         tmap::tm_polygons(
+    #             input$S_variable,
+    #             id = "watershed",
+    #             palette = "YlGnBu",
+    #             # style = "log10_pretty"
+    #             style = "fixed",
+    #             breaks = c(0, 1, 10, 100, 1000,
+    #                        5000, 10000, 15000,20000,Inf),
+    #             title = input$S_scen_base
+    #         )+ tmap::tm_layout(main.title= input$S_scen_base,
+    #                            scale = 0.1,
+    #                            aes.color = "#0000000"
+    #         ) 
+    #     
+    #     
+    #     tmap_leaflet(tm1, in.shiny = TRUE)
+    # })
+    
+    # output$Plot12 <- leaflet::renderLeaflet({
+    #     req(Spatial_subset_comp())
+    #     req(input$S_scen_comp)
+    #     req(input$S_variable)
+    #     tm2 <- tm_shape(Spatial_subset_comp()) +
+    #         tmap::tm_polygons(
+    #             input$S_variable,
+    #             id = "watershed",
+    #             palette = "YlGnBu",
+    #             legend.hist = TRUE,
+    #             # style = "log10_pretty",
+    #             style = "fixed",
+    #             breaks = c(0, 1, 10, 100, 1000,
+    #                        5000, 10000, 15000,20000,Inf),
+    #             title = input$S_scen_comp
+    #         ) + tmap::tm_layout(main.title = input$S_scen_comp,
+    #                             scale = 0.1,
+    #                             title.size = 10,
+    #                             aes.color = "#0000000"
+    #         )
+    # 
+    # 
+    #     tmap_leaflet(tm2,in.shiny = TRUE)
+    # })
     
     output$Plot12 <- leaflet::renderLeaflet({
-        req(Spatial_subset_comp())
-        req(input$S_scen_comp)
-        req(input$S_variable)
-        tm2 <- tm_shape(Spatial_subset_comp()) +
-            tmap::tm_polygons(
-                input$S_variable,
-                id = "watershed",
-                palette = "YlGnBu",
-                legend.hist = TRUE,
-                # style = "log10_pretty",
-                style = "fixed",
-                breaks = c(0, 1, 10, 100, 1000,
-                           5000, 10000, 15000,20000,Inf),
-                title = input$S_scen_comp
-            ) + tmap::tm_layout(main.title = input$S_scen_comp,
-                                scale = 0.1,
-                                title.size = 10,
-                                aes.color = "#0000000"
-            ) 
-        
-        
-        tmap_leaflet(tm2,in.shiny = TRUE)
+            req(Spatial_subset_comp())
+            req(input$S_scen_comp)
+            req(input$S_variable)
+            req(Spatial_subset_base())
+            req(input$S_scen_base)
+            tm2 <- tm_shape(Spatial_subset_base(), name = "Baseline Scenario") +
+                # tm_borders(lwd = 0, alpha=0.0) +
+                tmap::tm_polygons(
+                    input$S_variable,
+                    id = "watershed",
+                    palette = "-inferno",
+                    # style = "log10_pretty"
+                    style = "fixed",
+                    breaks = c(0, 1, 10, 100, 1000,
+                               5000, 10000, 15000,20000,Inf),
+                    title = " "
+                )+
+                tm_shape(Spatial_subset_comp(), name = "Comparison Scenario") +
+                tmap::tm_polygons(
+                    input$S_variable,
+                    id = "watershed",
+                    palette = "-inferno",
+                    legend.hist = TRUE,
+                    # style = "log10_pretty",
+                    style = "fixed",
+                    breaks = c(0, 1, 10, 100, 1000,
+                               5000, 10000, 15000,20000,Inf),
+                    legend.show = FALSE,
+                ) + 
+                tmap::tm_layout(scale = 0.1)
+
+
+            tmap_leaflet(tm2,in.shiny = TRUE)
     })
     
     
@@ -2446,7 +2491,7 @@ server <- function(input, output, session) {
     spdftab <- reactive({
         req(Spatial_subset_comp())
         Spatial_subset_comp() %>% as.data.frame() %>% select(WeppID,TopazID, landuse, soil, 
-                                                          slope, input$S_variable ) %>% 
+                                                          slope, input$S_variable ) %>%  #, paste0("AbsChange_",input$S_variable)
             dplyr::filter(slope < input$thresh_slope_S)
     })
     
