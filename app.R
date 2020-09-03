@@ -2271,7 +2271,7 @@ server <- function(input, output, session) {
                                 axis.title.x = element_blank(),
                                 axis.title.y = element_blank(),
                                 legend.title = element_blank()
-                            ) + coord_flip() + labs(y = "Percent of total across all Watersheds") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
+                            ) + coord_polar(start = 0) + labs(y = "Percent of total across all Watersheds") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
                                                                                                                                                       "none")
                         ggplotly(b)  %>%
                             layout(title = list(text = paste0('<b>Relative impacts of the disturbance scenario across all watersheds </b>',
