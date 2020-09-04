@@ -152,12 +152,14 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
 
                     tags$div(
                         tags$p(
-                            "viz-WEPPcloud is currently designed to analyze output from WEPPCloud and provides an option for users to upload their own output data files.",
+                            "viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
                             align = "center"
                         ),
                         tags$p(
                             a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside", style = "color:#FFAE42"),
-                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project', tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project", "WEPP",  style = "color:#FFAE42"), 'model. It estimates
+                            ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project',
+                            tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project",
+                            "WEPP",  style = "color:#FFAE42"), 'model. It estimates
                                                           hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
                                                           post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
                             .noWS = c("after-begin", "before-end"),
@@ -291,7 +293,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     
         sidebarPanel(
             # style = "position:fixed;width:inherit;",
-            style = "position:fixed;width:inherit;overflow-y:scroll;max-height: 640px;  ",
+            style = "position:fixed;width:inherit;overflow-y:visible;",
             width = 3,
             
             awesomeRadio(
@@ -486,7 +488,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             # ),
             column(12,
                    # align = "center",
-                   offset = 0,
+                   offset = 0, 
                    leaflet::leafletOutput("Plot12")%>%
                        withSpinner(type = 6 ,color = "#ffffff")
             )
@@ -740,7 +742,8 @@ server <- function(input, output, session) {
                                  "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
                                  
                     ),
-                    options = list(`actions-box` = TRUE),
+                    options = list(`actions-box` = TRUE,
+                                   `width` = " css-width "),
                     selected = unique(Spatial_data()$Scenario)[5],
                     multiple = T
                 )
@@ -904,7 +907,8 @@ server <- function(input, output, session) {
             pickerInput(
                 inputId = "wshed_var",
                 label = "Select the variables of interest",
-                options = list(`actions-box` = TRUE),
+                options = list(`actions-box` = TRUE,
+                               `width` = " css-width "),
                 colnames(Wshed_data())[7:20],
                 selected = colnames(Wshed_data()[7:10]),
                 multiple = T
@@ -914,7 +918,8 @@ server <- function(input, output, session) {
                 pickerInput(
                     inputId = "wshed_var",
                     label = "Select the variables of interest",
-                    options = list(`actions-box` = TRUE),
+                    options = list(`actions-box` = TRUE,
+                                   `width` = " css-width "),
                     choices =   colnames(Wshed_data())[c(8:10,12,14,15,17,20)],
                     selected = colnames(Wshed_data()[c(10,12,17,20)]),
                     multiple = T,
@@ -973,8 +978,11 @@ server <- function(input, output, session) {
             pickerInput(
                 "S_wshed",
                 "Select the watershed of interest",
-                choices = unique(Spatial_data()$Watershed),
-                options = list(`actions-box` = TRUE),
+                choices = unique(as.character(Spatial_data()$Watershed)),
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select Watershed",
+                               `windowPadding` = 1,
+                               `width` = " css-width "),
                 selected = unique(Spatial_data()$Watershed)[1],
                 multiple = T
             )
@@ -983,8 +991,11 @@ server <- function(input, output, session) {
                 pickerInput(
                     inputId = "S_wshed",
                     label = "Select the watershed of interest",
-                    choices =  unique(Spatial_data()$Watershed),
-                    options = list(`actions-box` = TRUE),
+                    choices =  unique(as.character(Spatial_data()$Watershed)),
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select Watershed",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width "),
                     selected = unique(Spatial_data()$Watershed)[19],
                     multiple = T
                 )
@@ -1217,17 +1228,21 @@ server <- function(input, output, session) {
     
     
     ############## Creates column in spatial df for each variable with values  relative to the chosen baseline scenario   ##############
-    Spatial_data_rel<- reactive({ Spatial_data() %>%
+    spsub <- reactive({ Spatial_data() %>%
+            dplyr::filter(Watershed %in% input$S_wshed) 
+    })
+    
+    Spatial_data_rel<- reactive({ spsub() %>%
             dplyr::filter(Watershed %in% input$S_wshed) %>%
             dplyr::filter(Scenario != input$S_scen_base) %>%
-            dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha- Spatial_data()$SoLs_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_SdDp_kg_ha = SdDp_kg_ha- Spatial_data()$SdDp_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_SdYd_kg_ha = SdYd_kg_ha- Spatial_data()$SdYd_kg_ha[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_SRP_kg_ha_ = SRP_kg_ha_- Spatial_data()$SRP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_PP_kg_ha_ = PP_kg_ha_- Spatial_data()$PP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_TP_kg_ha_ = TP_kg_ha_- Spatial_data()$TP_kg_ha_[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_Runoff_mm_ = Runoff_mm_- Spatial_data()$Runoff_mm_[Spatial_data()$Scenario==input$S_scen_base],
-                          AbsChange_DepLos_kg_ = DepLos_kg_- Spatial_data()$DepLos_kg_[Spatial_data()$Scenario==input$S_scen_base],
+            dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha- spsub()$SoLs_kg_ha[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_SdDp_kg_ha = SdDp_kg_ha- spsub()$SdDp_kg_ha[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_SdYd_kg_ha = SdYd_kg_ha- spsub()$SdYd_kg_ha[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_SRP_kg_ha_ = SRP_kg_ha_- spsub()$SRP_kg_ha_[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_PP_kg_ha_ = PP_kg_ha_- spsub()$PP_kg_ha_[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_TP_kg_ha_ = TP_kg_ha_- spsub()$TP_kg_ha_[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_Runoff_mm_ = Runoff_mm_- spsub()$Runoff_mm_[spsub()$Scenario==input$S_scen_base],
+                          AbsChange_DepLos_kg_ = DepLos_kg_- spsub()$DepLos_kg_[spsub()$Scenario==input$S_scen_base],
                           )
     })
     
@@ -1244,9 +1259,9 @@ server <- function(input, output, session) {
     # })
     
     Spatial_subset_comp <- reactive({
-        req(Spatial_data())
+        req(Spatial_data_rel())
         req(input$S_wshed)
-        Spatial_data() %>%
+        Spatial_data_rel() %>%
             dplyr::filter(Watershed %in% input$S_wshed &
                               Scenario %in% input$S_scen_comp)%>%
             arrange_at(.vars = input$S_variable, desc) %>%
@@ -2350,6 +2365,7 @@ server <- function(input, output, session) {
     #     tmap_leaflet(tm2,in.shiny = TRUE)
     # })
     
+    
     output$Plot12 <- leaflet::renderLeaflet({
             req(Spatial_subset_comp())
             req(input$S_scen_comp)
@@ -2379,11 +2395,14 @@ server <- function(input, output, session) {
                     breaks = c(0, 1, 10, 100, 1000,
                                5000, 10000, 15000,20000,Inf),
                     legend.show = FALSE,
-                ) + 
-                tmap::tm_layout(scale = 0.1)
-
-
-            tmap_leaflet(tm2,in.shiny = TRUE)
+                ) +
+                tmap::tm_layout(scale = 0.1,
+                                title = "") 
+            
+            tmap_leaflet(tm2,in.shiny = TRUE)  %>%
+                addMiniMap(tiles = providers$Esri.WorldStreetMap,
+                           toggleDisplay = TRUE,
+                           zoomAnimation = TRUE)
     })
     
     
@@ -2491,7 +2510,7 @@ server <- function(input, output, session) {
     spdftab <- reactive({
         req(Spatial_subset_comp())
         Spatial_subset_comp() %>% as.data.frame() %>% select(WeppID,TopazID, landuse, soil, 
-                                                          slope, input$S_variable ) %>%  #, paste0("AbsChange_",input$S_variable)
+                                                          slope, input$S_variable, paste0("AbsChange_",input$S_variable)  ) %>% #
             dplyr::filter(slope < input$thresh_slope_S)
     })
     
