@@ -19,11 +19,26 @@
 ## --------------------------------------------------------------------------------------##
 ## ----------------------------------Load packages---------------------------------------##
 
-library(pacman)
+# library(pacman)
+library(shiny)
+library(tidyverse,quietly = TRUE)
+library(shinythemes,quietly = TRUE)
+library(shinycssloaders,quietly = TRUE)
+library(shinyWidgets,quietly = TRUE)
+library(plotly,quietly = TRUE)
+library(stringr,quietly = TRUE)
+library(leaflet,quietly = TRUE)
+library(tmap,quietly = TRUE)
+library(ggthemes,quietly = TRUE)
+library(DT,quietly = TRUE)
+library(shinyhelper,quietly = TRUE)
+library(shinyalert,quietly = TRUE)
+library(crosstalk,quietly = TRUE)
+library(sever,quietly = TRUE)
 
-pacman::p_load(shiny,tidyverse,shinythemes,shinycssloaders,shinyWidgets,
-               plotly, stringr,leaflet, tmap,ggthemes, DT,shinyhelper, shinyalert,
-               crosstalk, sever)
+# pacman::p_load(shiny,tidyverse,shinythemes,shinycssloaders,shinyWidgets,
+#                plotly, stringr,leaflet, tmap,ggthemes, DT,shinyhelper, shinyalert,
+#                crosstalk, sever)
 
 source("global.R")
 
@@ -257,19 +272,14 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         # Main panel for displaying outputs ----
         mainPanel(
             width = 9,
-            # style = "position:fixed;width:inherit;padding-left:180px;",
-            offset= 1,
-            style = 'padding-top:0px;padding-bottom:10px;',
-            # setBackgroundColor("#ffffff",shinydashboard = FALSE),
-            uiOutput("Wshed_Exp"),
-            # fluidPage(# plotlyOutput("Plot5" ,height = "800px", width ="1200px")
-                # column(12, tableOutput("tab1"))
-                fluidRow(
+            style = 'padding-left:100px;padding-top:0px;padding-bottom:10px;',
+            fluidRow(
                     column(
                         9,
-                        offset = 2,
+                        offset = 0,
                         plotlyOutput("Plot9", height = "700px", width =
-                                         "800px") %>% withSpinner(type = 6 ,color = "#ffffff")
+                                         "800px") %>% 
+                            withSpinner(type = 6 ,color = "#ffffff")
                     
                 ))
         )
@@ -293,8 +303,9 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
     
         sidebarPanel(
             # style = "position:fixed;width:inherit;",
-            style = "position:fixed;width:inherit;overflow-y:visible;",
+            style = "position:fixed;width:inherit;overflow-y:scroll;height:600px",
             width = 3,
+            
             
             awesomeRadio(
                 inputId = "DefOrUserUpload_H",
@@ -342,7 +353,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     "Soil Type" = "Soiltype",
                     "Both" = "Both"
                 ),
-                selected = "Landuse",
+                selected = "Both",
                 status = 'warning'
             ),
             
@@ -351,10 +362,6 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         mainPanel(
             width = 9,
             style = 'padding:80px;',
-            # style = "flex-grow:1; resize:vertical; overflow: hidden; position:relative; margin-left: 400px",
-            # uiOutput("Exp1_Exp2") %>% withSpinner(color =
-            #                                           "#0dc5c1"),
-            # HTML("<br style = “line-height:5;”><br>"),
             fluidRow(
                 column(
                     6,
@@ -408,7 +415,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
         useShinyalert(),  # Set up shinyalert
         
         sidebarPanel(
-            style = "position:fixed;width:inherit;",
+            style = "position:fixed;width:inherit;overflow-y:scroll;height:600px",
             width = 3,
             
             awesomeRadio(
@@ -2477,29 +2484,55 @@ server <- function(input, output, session) {
                 }
     })
     
-    
     output$Sed_stats_by_category <- DT::renderDataTable(
         sed_stats_df(),
-        extensions = list("Buttons" = NULL),
+        extensions = list("Buttons" = NULL, 'Scroller'= NULL),
         options = list(
-            dom = 'Bfrtip',
-            buttons = 
+            deferRender = TRUE,
+            autoWidth = TRUE,
+            scrollY = 350,
+            scrollX = 200,
+            scroller = TRUE,
+            dom = 'BRSfrti',
+            buttons =
                 list('copy', 'print', list(
                     extend = 'collection',
                     buttons = c('csv', 'excel', 'pdf'),
                     text = 'Download'
                 )),
-            # scroller = TRUE,
-            scrollX = TRUE,
-            scrollY = FALSE,
-            pageLength = 5,
+            # pageLength = 5,
             fixedHeader = TRUE,
             fillContainer = F,
             class = "display",
             columnDefs = list(list(className = 'dt-left'))
-        )
+        ),
+        rownames= FALSE
     )
     
+    
+    
+    # output$Sed_stats_by_category <- DT::renderDataTable(
+    #     sed_stats_df(),
+    #     extensions = list("Buttons" = NULL),
+    #     options = list(
+    #         dom = 'Bfrtip',
+    #         buttons =
+    #             list('copy', 'print', list(
+    #                 extend = 'collection',
+    #                 buttons = c('csv', 'excel', 'pdf'),
+    #                 text = 'Download'
+    #             )),
+    #         # scroller = TRUE,
+    #         scrollX = TRUE,
+    #         scrollY = TRUE,
+    #         pageLength = 5,
+    #         fixedHeader = TRUE,
+    #         fillContainer = F,
+    #         class = "display",
+    #         columnDefs = list(list(className = 'dt-left'))
+    #     )
+    # )
+
    
     
     ## -----------------------------------------------------------------------------------------------------------##
@@ -2509,35 +2542,60 @@ server <- function(input, output, session) {
 
     spdftab <- reactive({
         req(Spatial_subset_comp())
-        Spatial_subset_comp() %>% as.data.frame() %>% select(WeppID,TopazID, landuse, soil, 
+        Spatial_subset_comp() %>% as.data.frame() %>% select(TopazID, landuse, soil, 
                                                           slope, input$S_variable, paste0("AbsChange_",input$S_variable)  ) %>% #
             dplyr::filter(slope < input$thresh_slope_S)
     })
     
-   
+    # output$Sed_stats_by_category <- DT::renderDataTable(
+    #     sed_stats_df(),
+    #     extensions = list("Buttons" = NULL, 'Scroller'= NULL),
+    #     options = list(
+    #         deferRender = TRUE,
+    #         autoWidth = TRUE,
+    #         scrollY = 350,
+    #         scrollX = 200,
+    #         scroller = TRUE,
+    #         dom = 'BRSfrtip',
+    #         buttons =
+    #             list('copy', 'print', list(
+    #                 extend = 'collection',
+    #                 buttons = c('csv', 'excel', 'pdf'),
+    #                 text = 'Download'
+    #             )),
+    #         # pageLength = 5,
+    #         fixedHeader = TRUE,
+    #         fillContainer = F,
+    #         class = "display",
+    #         columnDefs = list(list(className = 'dt-left'))
+    #     ),
+    #     rownames= FALSE
+    # )
 
     output$spatial_table <- DT::renderDataTable(
         spdftab(),
         # caption = htmltools::tags$caption( style = 'caption-side: top; text-align: center; color:black; font-size:200% ;','Table1: Iris Dataset Table'),
-        extensions = list("Buttons" = NULL),
+        extensions = list("Buttons" = NULL, 'Scroller'= NULL),
         options = list(
-            dom = 'Bfrtip',
+            deferRender = TRUE,
+            autoWidth = TRUE,
+            scrollY = 300,
+            scrollX = 200,
+            scroller = TRUE,
+            dom = 'BRSfrti',
             buttons =
                 list('copy', 'print', list(
                     extend = 'collection',
                     buttons = c('csv', 'excel', 'pdf'),
                     text = 'Download'
                 )),
-            # scroller = TRUE,
-            scrollX = TRUE,
-            scrollY = FALSE,
-            pageLength = 5,
             fixedHeader = TRUE,
             fillContainer = F,
             class = "display",
             columnDefs = list(list(className = 'dt-left'))
 
-        )
+        ),
+        rownames = F
     )
     
     
