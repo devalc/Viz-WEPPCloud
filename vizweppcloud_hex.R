@@ -67,5 +67,5 @@ s <- sticker(p1,
 
 s
 
-ggsave("C:/Users/Chinmay/Desktop/vizweppcloud_hex_dark1.png",bg = "transparent")
+ggsave("D:\\GitHub\\Viz-WEPPCloud\\www\\vizweppcloud_hex_dark1.png",bg = "transparent")
 
