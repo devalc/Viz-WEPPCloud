@@ -2282,7 +2282,8 @@ server <- function(input, output, session) {
                                 ),
                                 stat = "identity",
                                 position = "dodge"
-                            ) +
+                            )  +
+                            theme_bw(base_rect_size = 0.1)+
                             theme(
                                 axis.text.x = element_text(
                                     angle = 45,
@@ -2293,8 +2294,9 @@ server <- function(input, output, session) {
                                 axis.title.x = element_blank(),
                                 axis.title.y = element_blank(),
                                 legend.title = element_blank()
-                            ) + coord_polar(start = 0) + labs(y = "Percent of total across all Watersheds") + scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
-                                                                                                                                                      "none")
+                            ) + labs(y = "Percent of total across all Watersheds") + 
+                            coord_flip() +
+                            scale_fill_brewer(palette = "RdYlGn") + theme(legend.position ="none")
                         ggplotly(b)  %>%
                             layout(title = list(text = paste0('<b>Relative impacts of the disturbance scenario across all watersheds </b>',
                                                               '<br>',
