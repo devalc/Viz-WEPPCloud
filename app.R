@@ -102,9 +102,9 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                               align  = "center",
                               
                               HTML(
-                                  '<div class="jumbotron" style="background-color:	#f2f2f2;">
-                                                      <h1  style="color:black;">viz-WEPPcloud </h1>
-                                                      <h4  style="color:black;">A post-processing tool for identifying and examining impacts of management on pollutant 
+                                  '<div class="jumbotron" style="background-color:	#17141D;">
+                                                      <h1  style="color:white;">viz-WEPPcloud </h1>
+                                                      <h4  style="color:white;">A post-processing tool for identifying and examining impacts of management on pollutant 
                                                       source areas in large spatially explicit watershed output files.</h4>
                                                       </div>'
                               ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
@@ -163,7 +163,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                     12,
                     offset = 3,
                     align  = "center",
-                    style = "height:140px;background-color:#f2f2f2;padding-left:20px;padding-top:20px;padding-bottom:20px;color:#000000",
+                    style = "height:140px;background-color:#17141D;padding-left:20px;padding-top:20px;padding-bottom:20px;color:#ffffff",
 
                     tags$div(
                         tags$p(
@@ -221,7 +221,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 inputId = "DefOrUserUpload_W",
                 label = "Data Import Options:",
                 choices = c(
-                    "Use default data (Lake Tahoe simulations)" = "Default Data",
+                    "Default Data" = "Default Data",
                     "Upload your own data" =
                         "Upload data"
                 ),
@@ -311,7 +311,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 inputId = "DefOrUserUpload_H",
                 label = "Data Import Options:",
                 choices = c(
-                    "Use default data (Lake Tahoe simulations)" = "Default Data",
+                    "Default Data" = "Default Data",
                     "Upload your own data" =
                         "Upload data"
                 ),
@@ -328,7 +328,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             sliderInput(
                 "thresh_H",
-                "Plot Threshold (%):",
+                "Zoom Threshold (%):",
                 min = 0,
                 max = 100,
                 value = 100,
@@ -422,7 +422,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 inputId = "DefOrUserUpload_S",
                 label = "Data Import Options:",
                 choices = c(
-                    "Use default data (Lake Tahoe simulations)" = "Default Data",
+                    "Default Data" = "Default Data",
                     "Upload your own data" = "Upload data"
                 ),
                 selected = "Default Data",
@@ -441,7 +441,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             sliderInput(
                 "thresh_S",
-                "Plot Threshold (%):",
+                "Zoom Threshold (%):",
                 min = 0,
                 max = 100,
                 value = 100,
@@ -622,7 +622,7 @@ server <- function(input, output, session) {
             req(Hill_data())
             pickerInput(
                 "Hill_variable",
-                "Select the variable of interest",
+                "Select the Water quantity/quality metric of interest",
                 colnames(Hill_data()[10:29]),
                 selected = colnames(Hill_data()[10])
             )
@@ -630,7 +630,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_H == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_variable",
-                    label = "Select the variable of interest",
+                    label = "Select the Water quantity/quality metric of interest",
                     choices =   c( "Runoff (mm)" = "Runoff..mm.",
                                    "Lateral flow (mm)" = "Lateral.Flow..mm.",
                                    "Baseflow (mm)" = "Baseflow..mm.",
@@ -688,7 +688,7 @@ server <- function(input, output, session) {
             req(Spatial_data())
             pickerInput(
                 "Hill_scen_base",
-                "Select the baseline scenario",
+                "Select the baseline management scenario",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[1],
                 multiple = F
@@ -697,7 +697,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_scen_base",
-                    label = "Select the baseline scenario",
+                    label = "Select the baseline management scenario",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
                                  "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
                                  "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
@@ -725,7 +725,7 @@ server <- function(input, output, session) {
             req(Spatial_data())
             pickerInput(
                 inputId = "Hill_scen_comp",
-                label = "Select the scenario to compare",
+                label = "Select the management scenario to compare",
                 choices = unique(Spatial_data()$Scenario),
                 options = list(`actions-box` = TRUE),
                 selected = unique(Spatial_data()$Scenario)[2],
@@ -735,7 +735,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_scen_comp",
-                    label = "Select the scenario to compare",
+                    label = "Select the management scenario to compare",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
                                  "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
                                  "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
@@ -913,7 +913,7 @@ server <- function(input, output, session) {
             req(Hill_data())
             pickerInput(
                 inputId = "wshed_var",
-                label = "Select the variables of interest",
+                label = "Select the Water quantity/quality metric of interest",
                 options = list(`actions-box` = TRUE,
                                `width` = " css-width "),
                 colnames(Wshed_data())[7:20],
@@ -924,7 +924,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_W == 'Default Data') {
                 pickerInput(
                     inputId = "wshed_var",
-                    label = "Select the variables of interest",
+                    label = "Select the Water quantity/quality metric of interest",
                     options = list(`actions-box` = TRUE,
                                    `width` = " css-width "),
                     choices =   colnames(Wshed_data())[c(8:10,12,14,15,17,20)],
@@ -1054,7 +1054,7 @@ server <- function(input, output, session) {
             req(Spatial_data())
             pickerInput(
                 "S_scen_base",
-                "Select the baseline scenario",
+                "Select the baseline management scenario",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[1],
                 multiple = F
@@ -1063,7 +1063,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_scen_base",
-                    label = "Select the baseline scenario",
+                    label = "Select the baseline management scenario",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
                                  "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
                                  "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
@@ -1091,7 +1091,7 @@ server <- function(input, output, session) {
             req(Spatial_data())
             pickerInput(
                 "S_scen_comp",
-                "Select the scenario to compare",
+                "Select the management scenario to compare",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[2],
                 multiple = F
@@ -1100,7 +1100,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_scen_comp",
-                    label = "Select the scenario to compare",
+                    label = "Select the management scenario to compare",
                     choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
                                  "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
                                  "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
@@ -1128,7 +1128,7 @@ server <- function(input, output, session) {
             req(Spatial_data())
             pickerInput(
                 "S_variable",
-                "Select the variable of interest",
+                "Select the Water quantity/quality metric of interest",
                 colnames(Spatial_data()),
                 selected = colnames(Spatial_data())[1],
                 multiple = F
@@ -1137,7 +1137,7 @@ server <- function(input, output, session) {
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_variable",
-                    label = "Select the variable of interest",
+                    label = "Select the Water quantity/quality metric of interest",
                     choices = c (
                         "Sediment Yield (kg/ha)" = "SdYd_kg_ha",
                         "Sediment deposition (kg/ha)" = "SdDp_kg_ha",
@@ -1584,13 +1584,12 @@ server <- function(input, output, session) {
             ) +
             labs(
                 x = "Percent of total hillslope area",
-                y = "Percent of total selected variable",
+                y = "Cumulative Percent of Total selected variable",
                 # y = paste("Percent of total", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total hillslope area\ncontributes a large fraction of total\n",
-                    "",
+                    "Cumulative percent of total",
                     input$Hill_variable ,
-                    "?"
+                    "\ncontribution by percent hillslope area"
                 )
                 ,
                 colour = "Scenario"
@@ -1748,13 +1747,12 @@ server <- function(input, output, session) {
             ) +
             labs(
                 x = "Percent of total channel length",
-                y = "Percent of total selected variable",
+                y = "Cumulative Percent of Total selected variable",
                 # y = paste("Percent of total", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total channel length\ncontributes a large fraction of total\n",
-                    "",
+                    "Cumulative percent of total",
                     input$Hill_variable ,
-                    "?"
+                    "\ncontribution by percent channel length"
                 ),
                 colour = "Scenario"
             )
@@ -1915,13 +1913,12 @@ server <- function(input, output, session) {
             # scale_color_brewer(palette="RdYlGn") +
             labs(
                 x = "Percent of total hillslope area",
-                y = "Percent of total selected variable",
+                y = "Cumulative selected variable",
                 # y = paste("Cumulative", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total hillslope area\ncontributes a large fraction of cumulative\n",
-                    "",
+                    "Cumulative total",
                     input$Hill_variable ,
-                    "?"
+                    "\ncontribution by percent hillslope area"
                 ),
                 colour = "Scenario"
             )
@@ -2078,13 +2075,12 @@ server <- function(input, output, session) {
             ) +
             labs(
                 x = "Percent of total channel length",
-                y = "Percent of total selected variable",
+                y = "Cumulative selected variable",
                 # y = paste("Cumulative", input$Hill_variable, sep = " "),
                 title= paste(
-                    "What percent of total channel length \ncontributes a large fraction of cumulative\n",
-                    "",
+                    "Cumulative total",
                     input$Hill_variable ,
-                    "?"
+                    "\ncontribution by percent channel length"
                 ),
                 colour = "Scenario"
             )
