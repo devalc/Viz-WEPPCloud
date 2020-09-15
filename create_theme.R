@@ -6,8 +6,8 @@ create_theme(
     theme = "darkly",
     bs_vars_navbar(
         height = "50px",
-        default_bg = "#000000",
-        default_color = "#000000",
+        default_bg = "#17141D",
+        default_color = "#17141D",
         default_link_color = "#FFFFFF",
         default_link_active_color = "#FFAE42"
     ),
@@ -31,7 +31,7 @@ create_theme(
         danger_border = "#d175b8"
     ),
     bs_vars_wells(
-        bg = "#000000",
+        bg = "#17141D",
         border = "#ffffff"
     ),
     # bs_vars_table(
