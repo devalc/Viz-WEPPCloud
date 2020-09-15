@@ -949,7 +949,7 @@ server <- function(input, output, session) {
             message = 'max. file size is 32MB'
             fileInput(
                 "Spatial_file",
-                label = "Uplaod subcatchements JSON/geojson/RDS file",
+                label = "Uplaod subcatchements RDS file",
                 multiple = F,
                 placeholder = "No file selected",
                 accept = c(".JSON", ".geojson", ".RDS")
@@ -2376,6 +2376,7 @@ server <- function(input, output, session) {
     
     
     output$Plot12 <- leaflet::renderLeaflet({
+            req(Spatial_data())
             req(Spatial_subset_comp())
             req(input$S_scen_comp)
             req(input$S_variable)
@@ -2543,6 +2544,7 @@ server <- function(input, output, session) {
     
 
     spdftab <- reactive({
+        req(Spatial_data())
         req(Spatial_subset_comp())
         Spatial_subset_comp() %>% as.data.frame() %>% select(TopazID, landuse, soil, 
                                                           slope, input$S_variable, paste0("AbsChange_",input$S_variable)  ) %>% #
@@ -2598,8 +2600,7 @@ server <- function(input, output, session) {
 
         ),
         rownames = F
-    )
-    
+    ) 
     
     observe_helpers()
     
