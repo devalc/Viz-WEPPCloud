@@ -19,8 +19,9 @@
 ## --------------------------------------------------------------------------------------##
 ## ----------------------------------Load packages---------------------------------------##
 
-# library(pacman)
+
 library(shiny)
+library(sf)
 library(tidyverse,quietly = TRUE)
 library(shinythemes,quietly = TRUE)
 library(shinycssloaders,quietly = TRUE)
@@ -36,9 +37,6 @@ library(shinyalert,quietly = TRUE)
 library(crosstalk,quietly = TRUE)
 library(sever,quietly = TRUE)
 
-# pacman::p_load(shiny,tidyverse,shinythemes,shinycssloaders,shinyWidgets,
-#                plotly, stringr,leaflet, tmap,ggthemes, DT,shinyhelper, shinyalert,
-#                crosstalk, sever)
 
 source("global.R")
 
@@ -52,14 +50,14 @@ options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 ## ----------------------------------define UI------------------------------------------##
 # 
 
-ui <-navbarPage(title = div("viz-WEPPcloud",
+ui <-navbarPage(title = div("Viz-WEPPcloud",
                             div(tags$a(href="https://forest.moscowfsl.wsu.edu/fswepp/", tags$img(src='FS.png',style="position:fixed;right: 105px;top: 5px;padding-bottom:10px;", height = 50)),
                                 tags$a(href="https://www.uidaho.edu/", tags$img(src='UI.jpg',style="position:fixed;right: 150px;top: 5px;padding-bottom:10px;", height = 50)),
                                 tags$a(href="https://nifa.usda.gov/", tags$img(src='nifa.jpg',style="position:fixed;right: 60px;top: 5px;padding-bottom:10px;", height = 50)),
                                 tags$a(href= "https://github.com/devalc/Viz-WEPPCloud", tags$img(src="GitHub-Mark.png",style="position:fixed;right: 10px;top: 5px;padding-bottom:10px;", height = 50))
                             )),
                  
-                windowTitle = "viz-WEPPcloud",
+                windowTitle = "Viz-WEPPcloud",
     position = "fixed-top",
     # fluid = TRUE,
     collapsible = TRUE,
@@ -244,11 +242,12 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
                 ),
                 selected = "allscen",
                 status = 'warning'
-            ) %>% 
-                helper(icon = "question-circle", colour = "#FF0000",
-                        content = "W_compare",
-                        type = "markdown", size = "l",
-                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE),
+            ),
+            # %>% 
+            #     helper(icon = "question-circle", colour = "#FF0000",
+            #            content = "W_compare",
+            #            type = "markdown", size = "l",
+            #            buttonLabel = "Okay", easyClose = TRUE, fade = TRUE) ,
             
             uiOutput("Wshed_wshed"),
             
@@ -347,7 +346,7 @@ ui <-navbarPage(title = div("viz-WEPPcloud",
             
             awesomeRadio(
                 inputId = "summary_DT_by_var_H",
-                label = "Summarize Sediment by:",
+                label = "Summarize by:",
                 choices = c(
                     "Land Use" = "Landuse",
                     "Soil Type" = "Soiltype",
@@ -579,7 +578,11 @@ server <- function(input, output, session) {
                 multiple = F,
                 placeholder = "No file selected",
                 accept = ".csv"
-            )
+            )%>% 
+                helper(icon = "question-circle", colour = "#FF0000",
+                       content = "H_upload",
+                       type = "markdown", size = "l",
+                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
             }
@@ -589,8 +592,8 @@ server <- function(input, output, session) {
         req(input$DefOrUserUpload_H)
         if (input$DefOrUserUpload_H == 'Default Data') {
             # file1 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_hill_summary.csv")
-            file1 <-
-                "data/lt2020_6_hill_summary_with_all_scenarios_04_15_2020.csv"
+            file1 <- "data/portland202009_hill_summary_cd.csv"
+                #"data/lt2020_6_hill_summary_with_all_scenarios_04_15_2020.csv"
             read.table(file = file1,
                        header = TRUE,
                        sep = ",")
@@ -623,8 +626,32 @@ server <- function(input, output, session) {
             pickerInput(
                 "Hill_variable",
                 "Select the Water quantity/quality metric of interest",
-                colnames(Hill_data()[10:29]),
-                selected = colnames(Hill_data()[10])
+                # choices = colnames(Hill_data()),
+                # selected = colnames(Hill_data()[1]),
+                choices =   c( "Runoff (mm)" = "Runoff..mm.",
+                               "Lateral flow (mm)" = "Lateral.Flow..mm.",
+                               "Baseflow (mm)" = "Baseflow..mm.",
+                               "Soil loss (kg/ha)" = "Soil.Loss..kg.ha.",
+                               "Sediment deposition (kg/ha)" = "Sediment.Deposition..kg.ha.",
+                               "Sediment yield (kg/ha)" = "Sediment.Yield..kg.ha.",
+                               "Soluble reactive phosphorus (kg/ha)" = "Solub..React..P..kg.ha.3." ,
+                               "Particulate phosphorus (kg/ha)" = "Particulate.P..kg.ha.3.",
+                               "Total phoshorus (kg/ha)" = "Total.P..kg.ha.3.",
+                               "Particle Class 1 Fraction (kg/ha)" = "Particle.Class.1.Fraction",
+                               "Particle Class 2 Fraction (kg/ha)" = "Particle.Class.2.Fraction" ,
+                               "Particle Class 3 Fraction (kg/ha)" = "Particle.Class.3.Fraction",
+                               "Particle Class 4 Fraction (kg/ha)" = "Particle.Class.4.Fraction" ,
+                               "Particle Class 5 Fraction (kg/ha)" = "Particle.Class.5.Fraction" ,
+                               "Particle Fraction.Under.0.016.mm (kg/ha)" = "Particle.Fraction.Under.0.016.mm",
+                               "Sediment yield of particles under 0.016 mm (kg/ha)" = "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."
+
+                ),
+                selected = "Sediment.Yield..kg.ha.",
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select metric ",
+                               `windowPadding` = 2,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
@@ -649,8 +676,12 @@ server <- function(input, output, session) {
                                    "Sediment yield of particles under 0.016 mm (kg/ha)" = "Sediment.Yield.of.Particles.Under.0.016.mm..kg.ha."
                                    
                     ),
-                    selected = "Runoff..mm.",
-                    multiple = F
+                    selected = "Sediment.Yield..kg.ha.",
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select metric ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
                 
             }
@@ -662,57 +693,71 @@ server <- function(input, output, session) {
         if (input$DefOrUserUpload_H == 'Upload data') {
             req(Hill_data())
             pickerInput(
-                "Hill_wshed",
-                "Select the watershed of interest",
-                unique(Hill_data()$Watershed) %>% 
-                    helper(icon = "question-circle", colour = "#FF0000",
-                           content = "H_upload",
-                           type = "markdown", size = "l",
-                           buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
-            )
+                inputId = "Hill_wshed",
+                label = "Select the watershed of interest",
+                choices =   unique(Hill_data()$Watershed),
+                selected =   unique(Hill_data()$Watershed)[1],
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select watershed ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")) 
+            
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_wshed",
                     label = "Select the watershed of interest",
                     choices =   unique(Hill_data()$Watershed),
-                    selected =   unique(Hill_data()$Watershed)[11]
-                )
+                    selected =   unique(Hill_data()$Watershed)[1],
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select watershed ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
+                ) 
                 
             }
         
     })
     
     output$Hill_scen_base <- renderUI({
-        if (input$DefOrUserUpload_S == 'Upload data') {
+        if (input$DefOrUserUpload_H == 'Upload data') {
             req(Spatial_data())
             pickerInput(
                 "Hill_scen_base",
                 "Select the baseline management scenario",
-                unique(Spatial_data()$Scenario),
-                unique(Spatial_data()$Scenario)[1],
-                multiple = F
+                unique(Hill_data()$Scenario),
+                unique(Hill_data()$Scenario)[1],
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select baseline scenario ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
-            if (input$DefOrUserUpload_S == 'Default Data') {
+            if (input$DefOrUserUpload_H == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_scen_base",
                     label = "Select the baseline management scenario",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                                 
-                    ),
-                    unique(Spatial_data()$Scenario)[1],
-                    multiple = F
+                    choices = unique(Hill_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    #              
+                    # ),
+                    unique(Hill_data()$Scenario)[1],
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select baseline scenario ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
                 
             }
@@ -721,38 +766,46 @@ server <- function(input, output, session) {
     
     
     output$Hill_scen_comp <- renderUI({
-        if (input$DefOrUserUpload_S == 'Upload data') {
-            req(Spatial_data())
+        if (input$DefOrUserUpload_H == 'Upload data') {
+            req(Hill_data())
             pickerInput(
                 inputId = "Hill_scen_comp",
                 label = "Select the management scenario to compare",
-                choices = unique(Spatial_data()$Scenario),
+                choices = unique(Hill_data()$Scenario),
                 options = list(`actions-box` = TRUE),
-                selected = unique(Spatial_data()$Scenario)[2],
-                multiple = T
+                selected = unique(Hill_data()$Scenario)[2],
+                multiple = T,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select comparison scenario ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
-            if (input$DefOrUserUpload_S == 'Default Data') {
+            if (input$DefOrUserUpload_H == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_scen_comp",
                     label = "Select the management scenario to compare",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                                 
-                    ),
+                    choices = unique(Hill_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    #              
+                    # ),
+                    selected = unique(Hill_data()$Scenario)[7],
+                    multiple = T,
                     options = list(`actions-box` = TRUE,
-                                   `width` = " css-width "),
-                    selected = unique(Spatial_data()$Scenario)[5],
-                    multiple = T
+                                   `header` = "Select comparison scenario ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
+                    
                 )
                 
             }
@@ -769,28 +822,37 @@ server <- function(input, output, session) {
                 "Select Scenario do display data summary",
                 unique(Hill_data()$Scenario),
                 unique(Hill_data()$Scenario)[1],
-                multiple = F
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select scenario ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_H == 'Default Data') {
                 pickerInput(
                     inputId = "Hill_scen",
                     label = "Select Scenario do display data summary",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccs fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-
-                    ),
+                    unique(Hill_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccs fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    # 
+                    # ),
                     unique(Hill_data()$Scenario)[5],
-                    multiple = F
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select scenario ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
 
             }
@@ -826,11 +888,12 @@ server <- function(input, output, session) {
                 multiple = F,
                 placeholder = "No file selected",
                 accept = ".csv"
-            ) %>% 
-                helper(icon = "question-circle", colour = "#FF0000",
-                       content = "W_upload",
-                       type = "markdown", size = "l",
-                       buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
+            ) 
+            # %>% 
+            #     helper(icon = "question-circle", colour = "#FF0000",
+            #            content = "W_upload",
+            #            type = "markdown", size = "l",
+            #            buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
         } else
             if (input$DefOrUserUpload_W == 'Default Data') {
             }
@@ -841,8 +904,8 @@ server <- function(input, output, session) {
         req(input$DefOrUserUpload_W)
         if (input$DefOrUserUpload_W == 'Default Data') {
             # file3 <- url("https://wepp1.nkn.uidaho.edu/weppcloud/static/mods/lt/results/lt2020_6_out_summary.csv")
-            file3 <-
-                "data/lt2020_6_out_summary_with_all_scenarios_04_15_2020.csv"
+            file3 <-"data/portland202009_out_summary_cd.csv"
+                # "data/lt2020_6_out_summary_with_all_scenarios_04_15_2020.csv"
             read.table(file = file3,
                        header = TRUE,
                        sep = ",")
@@ -875,14 +938,22 @@ server <- function(input, output, session) {
                 pickerInput(
                     "Wshed_wshed",
                     "Select the watershed of interest",
-                    unique(Wshed_data()$Watershed)
+                    unique(Wshed_data()$Watershed),
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select watershed ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
             } else
                 if (input$AreaVsScen == 'allwat') {
                     pickerInput(
                         "Wshed_wshed",
                         "Select the scenario of interest",
-                        unique(Wshed_data()$Scenario)
+                        unique(Wshed_data()$Scenario),
+                        options = list(`actions-box` = TRUE,
+                                       `header` = "Select scenario ",
+                                       `windowPadding` = 1,
+                                       `width` = " css-width ")
                     )
                 }
         } else
@@ -892,14 +963,22 @@ server <- function(input, output, session) {
                         inputId = "Wshed_wshed",
                         label = "Select the watershed of interest",
                         choices =   unique(Wshed_data()$Watershed),
-                        selected =   unique(Hill_data()$Watershed)[11]
+                        selected =   unique(Wshed_data()$Watershed)[11],
+                        options = list(`actions-box` = TRUE,
+                                       `header` = "Select watershed ",
+                                       `windowPadding` = 1,
+                                       `width` = " css-width ")
                     )
                 } else
                     if (input$AreaVsScen == 'allwat') {
                         pickerInput(
                             "Wshed_wshed",
                             "Select the scenario of interest",
-                            unique(Wshed_data()$Scenario)
+                            unique(Wshed_data()$Scenario),
+                            options = list(`actions-box` = TRUE,
+                                           `header` = "Select scenario ",
+                                           `windowPadding` = 1,
+                                           `width` = " css-width ")
                         )
                     }
                 
@@ -910,15 +989,17 @@ server <- function(input, output, session) {
     
     output$wshed_var <- renderUI({
         if (input$DefOrUserUpload_W == 'Upload data') {
-            req(Hill_data())
+            req(Wshed_data())
             pickerInput(
                 inputId = "wshed_var",
                 label = "Select the Water quantity/quality metric of interest",
-                options = list(`actions-box` = TRUE,
-                               `width` = " css-width "),
                 colnames(Wshed_data())[7:20],
                 selected = colnames(Wshed_data()[7:10]),
-                multiple = T
+                multiple = T,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select metric ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_W == 'Default Data') {
@@ -926,9 +1007,13 @@ server <- function(input, output, session) {
                     inputId = "wshed_var",
                     label = "Select the Water quantity/quality metric of interest",
                     options = list(`actions-box` = TRUE,
+                                   `header` = "Select metric ",
+                                   `windowPadding` = 1,
                                    `width` = " css-width "),
-                    choices =   colnames(Wshed_data())[c(8:10,12,14,15,17,20)],
-                    selected = colnames(Wshed_data()[c(10,12,17,20)]),
+                    choices =   colnames(Wshed_data())[7:15],
+                    selected = colnames(Wshed_data()[c(8,10,12,15)]),
+                    # choices =   colnames(Wshed_data())[c(8:10,12,14,15,17,20)],
+                    # selected = colnames(Wshed_data()[c(10,12,17,20)]),
                     multiple = T,
                     # choicesOpt = list(
                     #     content = stringr::str_trunc(colnames(Wshed_data())[7:20], width = 60)
@@ -952,7 +1037,7 @@ server <- function(input, output, session) {
                 label = "Uplaod subcatchements RDS file",
                 multiple = F,
                 placeholder = "No file selected",
-                accept = c(".JSON", ".geojson", ".RDS")
+                accept = c(".RDS")
             )%>% 
         helper(icon = "question-circle", colour = "#FF0000",
                content = "S_upload",
@@ -963,21 +1048,28 @@ server <- function(input, output, session) {
             }
     })
     
-   Spatial_data <- reactive({
+   Spatial_data1 <- reactive({
         req(input$DefOrUserUpload_S)
         if (input$DefOrUserUpload_S == 'Default Data') {
             # sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
-            readRDS("data/lt2020_6_subcatchments_wgs84_split_wshed_and_scen.RDS")
+            # readRDS("data/lt2020_6_subcatchments_wgs84_split_wshed_and_scen.RDS")
+            readRDS("data/portland202009_shps_subcatchments_wgs84_split_wshed_and_scen.rds")
         } else
             if (input$DefOrUserUpload_S == 'Upload data') {
                 file4 <- input$Spatial_file
                 if (is.null(file4)) {
                     return()
                 }
-                sf::st_read(file4$datapath)
+                # sf::st_read(file4$datapath)
+                readRDS(file4$datapath)
             }
         
     })
+   
+   Spatial_data <- reactive({
+       req(Spatial_data1())
+       Spatial_data1() %>%sf::st_set_crs(value = 4326)
+   })
     
     output$Spatial_wshed <- renderUI({
         if (input$DefOrUserUpload_S == 'Upload data') {
@@ -1003,7 +1095,7 @@ server <- function(input, output, session) {
                                    `header` = "Select Watershed",
                                    `windowPadding` = 1,
                                    `width` = " css-width "),
-                    selected = unique(Spatial_data()$Watershed)[19],
+                    selected = unique(Spatial_data()$Watershed)[1],
                     multiple = T
                 )
                 
@@ -1020,28 +1112,34 @@ server <- function(input, output, session) {
                 "Select the scenario of interest",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[1],
-                multiple = F
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = " ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_scen",
                     label = "Select the scenario of interest",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                        
-                    ),
+                    choices = unique(Spatial_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    #     
+                    # ),
                     unique(Spatial_data()$Scenario)[1],
-                    multiple = F
+                    multiple = F,
+                    
                 )
                 
             }
@@ -1057,28 +1155,37 @@ server <- function(input, output, session) {
                 "Select the baseline management scenario",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[1],
-                multiple = F
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select baseline scenario ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_scen_base",
                     label = "Select the baseline management scenario",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                                 
-                    ),
+                    choices = unique(Spatial_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    #              
+                    # ),
                     unique(Spatial_data()$Scenario)[1],
-                    multiple = F
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select baseline scenario ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
                 
             }
@@ -1094,28 +1201,37 @@ server <- function(input, output, session) {
                 "Select the management scenario to compare",
                 unique(Spatial_data()$Scenario),
                 unique(Spatial_data()$Scenario)[2],
-                multiple = F
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select comparison scenario ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
                 pickerInput(
                     inputId = "S_scen_comp",
                     label = "Select the management scenario to compare",
-                    choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
-                                 "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
-                                 "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
-                                 "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
-                                 "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
-                                 "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
-                                 "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
-                                 "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
-                                 "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
-                                 "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
-                                 "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
-                                 
-                    ),
+                    choices = unique(Spatial_data()$Scenario),
+                    # choices =  c("Current conditions" = "CurCond.2020.ki5krcs.chn_cs12",
+                    #              "Thinning-85%" = "Thinn85.2020.ki5krcs.chn_12",
+                    #              "Thinning-93%" = "Thinn93.2020.ki5krcs.chn_12",
+                    #              "Thinning-96%" = "Thinn96.2020.ki5krcs.chn_12",
+                    #              "Low severity fire" = "LowSevS.2020.ki5krcs.chn_12",
+                    #              "Moderate severity fire" = "ModSevS.2020.ki5krcs.chn_12",
+                    #              "High severity fire" = "HighSevS.2020.ki5krcs.chn_12",
+                    #              "Prescribed fire" = "PrescFireS.2020.ki5krcs.chn_12",
+                    #              "Simulated fire-fccsFuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-observed climate" = "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli",
+                    #              "Simulated fire-landis fuels-future climate-A2" = "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2"
+                    #              
+                    # ),
                     unique(Spatial_data()$Scenario)[2],
-                    multiple = F
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select comparison scenario ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
                 
             }
@@ -1129,9 +1245,23 @@ server <- function(input, output, session) {
             pickerInput(
                 "S_variable",
                 "Select the Water quantity/quality metric of interest",
-                colnames(Spatial_data()),
-                selected = colnames(Spatial_data())[1],
-                multiple = F
+                choices = c (
+                    "Sediment Yield (kg/ha)" = "SdYd_kg_ha",
+                    "Sediment deposition (kg/ha)" = "SdDp_kg_ha",
+                    "Soil Loss (kg/ha)" = "SoLs_kg_ha",
+                    "Total Phosphorus (kg/ha)" = "TP_kg_ha_" ,
+                    "Soluble Reactive Phosphorus (kg/ha)" = "SRP_kg_ha_",
+                    "Particulate Phosphorus (kg/ha)" = "PP_kg_ha_",
+                    "Runoff (mm)" = "Runoff_mm_",
+                    # "Slope (%)" = "slope",
+                    "DepLos_kg_" = "DepLos_kg_"
+                ),
+                selected = "SdYd_kg_ha",
+                multiple = F,
+                options = list(`actions-box` = TRUE,
+                               `header` = "Select metric ",
+                               `windowPadding` = 1,
+                               `width` = " css-width ")
             )
         } else
             if (input$DefOrUserUpload_S == 'Default Data') {
@@ -1150,7 +1280,11 @@ server <- function(input, output, session) {
                         "DepLos_kg_" = "DepLos_kg_"
                     ),
                     selected = "SdYd_kg_ha",
-                    multiple = F
+                    multiple = F,
+                    options = list(`actions-box` = TRUE,
+                                   `header` = "Select metric ",
+                                   `windowPadding` = 1,
+                                   `width` = " css-width ")
                 )
                 
             }
@@ -1474,6 +1608,7 @@ server <- function(input, output, session) {
     
     output$Plot_vs_cumPercArea <- renderPlotly({
         req(input$Hill_variable)
+        req(hill_arr_by_var_HA())
         
         p1 <- hill_arr_by_var_HA()  %>% ggplot(aes(x = cumPercArea))
         if (input$Hill_variable == "Runoff..mm.") {
@@ -1598,27 +1733,48 @@ server <- function(input, output, session) {
             p1 <- p1 +
                 scale_color_manual(
                     values = c(
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                        "SimFireEagle_202009_cl532" =
                             "#B22222",
-                        "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
-                        "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
-                        "ModSevS.2020.ki5krcs.chn_12" =
+                        "SimFireNorse_202009_cl532" = "#FF0000",
+                        "HighSevS_202009" = "#DC143C",
+                        "ModSevS_202009" =
                             "#DC143C",
-                        "LowSevS.2020.ki5krcs.chn_12" =
+                        "LowSevS_202009" =
                             "#FF6347",
-                        "PrescFireS.2020.ki5krcs.chn_12" =
+                        "PrescFireS_202009" =
                             "#E9967A",
-                        "Thinn85.2020.ki5krcs.chn_12" =
-                            "#7CFC00",
-                        "Thinn93.2020.kikrcs.chn" =
+                        "CurCond_202009_cl532future" =
                             "#32CD32",
-                        "Thinn96.2020.kikrcs.chn" =
+                        "CurCond_202009_cl532gridmet" =
                             "#00FF00",
-                        "CurCond.2020.ki5krcs.chn_cs12" =
+                        "CurCond_202009_cl532" =
                             "#008000"
                     )
                 )
+                # Tahoe
+                # scale_color_manual(
+                #     values = c(
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                #             "#B22222",
+                #         "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                #         "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
+                #         "ModSevS.2020.ki5krcs.chn_12" =
+                #             "#DC143C",
+                #         "LowSevS.2020.ki5krcs.chn_12" =
+                #             "#FF6347",
+                #         "PrescFireS.2020.ki5krcs.chn_12" =
+                #             "#E9967A",
+                #         "Thinn85.2020.ki5krcs.chn_12" =
+                #             "#7CFC00",
+                #         "Thinn93.2020.kikrcs.chn" =
+                #             "#32CD32",
+                #         "Thinn96.2020.kikrcs.chn" =
+                #             "#00FF00",
+                #         "CurCond.2020.ki5krcs.chn_cs12" =
+                #             "#008000"
+                #     )
+                # )
         } else
             if (input$DefOrUserUpload_H == 'Upload Data') {
                 p1 <- p1 +
@@ -1637,6 +1793,7 @@ server <- function(input, output, session) {
     #
     output$Plot_vs_cumPercLen <- renderPlotly({
         req(input$Hill_variable)
+        req(hill_arr_by_var_CL())
         
         p3 <- hill_arr_by_var_CL()  %>% ggplot(aes(x = cumPercLen))
         if (input$Hill_variable == "Runoff..mm.") {
@@ -1761,27 +1918,48 @@ server <- function(input, output, session) {
             p3 <- p3 +
                 scale_color_manual(
                     values = c(
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                        "SimFireEagle_202009_cl532" =
                             "#B22222",
-                        "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
-                        "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
-                        "ModSevS.2020.ki5krcs.chn_12" =
+                        "SimFireNorse_202009_cl532" = "#FF0000",
+                        "HighSevS_202009" = "#DC143C",
+                        "ModSevS_202009" =
                             "#DC143C",
-                        "LowSevS.2020.ki5krcs.chn_12" =
+                        "LowSevS_202009" =
                             "#FF6347",
-                        "PrescFireS.2020.ki5krcs.chn_12" =
+                        "PrescFireS_202009" =
                             "#E9967A",
-                        "Thinn85.2020.ki5krcs.chn_12" =
-                            "#7CFC00",
-                        "Thinn93.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532future" =
                             "#32CD32",
-                        "Thinn96.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532gridmet" =
                             "#00FF00",
-                        "CurCond.2020.ki5krcs.chn_cs12" =
+                        "CurCond_202009_cl532" =
                             "#008000"
                     )
                 )
+            # Tahoe
+                # scale_color_manual(
+                #     values = c(
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                #             "#B22222",
+                #         "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                #         "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
+                #         "ModSevS.2020.ki5krcs.chn_12" =
+                #             "#DC143C",
+                #         "LowSevS.2020.ki5krcs.chn_12" =
+                #             "#FF6347",
+                #         "PrescFireS.2020.ki5krcs.chn_12" =
+                #             "#E9967A",
+                #         "Thinn85.2020.ki5krcs.chn_12" =
+                #             "#7CFC00",
+                #         "Thinn93.2020.kikrcs.chn_12" =
+                #             "#32CD32",
+                #         "Thinn96.2020.kikrcs.chn_12" =
+                #             "#00FF00",
+                #         "CurCond.2020.ki5krcs.chn_cs12" =
+                #             "#008000"
+                #     )
+                # )
         } else
             if (input$DefOrUserUpload_H == 'Upload Data') {
                 p3 <- p3 +
@@ -1801,6 +1979,7 @@ server <- function(input, output, session) {
     #
     output$Plot_vs_cumPercArea_abs <- renderPlotly({
         req(input$Hill_variable)
+        req(hill_arr_by_var_HA_abs())
         
         p2 <-
             hill_arr_by_var_HA_abs()  %>% ggplot(aes(x = cumPercArea))
@@ -1926,27 +2105,48 @@ server <- function(input, output, session) {
             p2 <- p2 +
                 scale_color_manual(
                     values = c(
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                        "SimFireEagle_202009_cl532" =
                             "#B22222",
-                        "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
-                        "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
-                        "ModSevS.2020.ki5krcs.chn_12" =
+                        "SimFireNorse_202009_cl532" = "#FF0000",
+                        "HighSevS_202009" = "#DC143C",
+                        "ModSevS_202009" =
                             "#DC143C",
-                        "LowSevS.2020.ki5krcs.chn_12" =
+                        "LowSevS_202009" =
                             "#FF6347",
-                        "PrescFireS.2020.ki5krcs.chn_12" =
+                        "PrescFireS_202009" =
                             "#E9967A",
-                        "Thinn85.2020.ki5krcs.chn_12" =
-                            "#7CFC00",
-                        "Thinn93.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532future" =
                             "#32CD32",
-                        "Thinn96.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532gridmet" =
                             "#00FF00",
-                        "CurCond.2020.ki5krcs.chn_cs12" =
+                        "CurCond_202009_cl532" =
                             "#008000"
                     )
                 )
+            # Tahoe
+                # scale_color_manual(
+                #     values = c(
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                #             "#B22222",
+                #         "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                #         "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
+                #         "ModSevS.2020.ki5krcs.chn_12" =
+                #             "#DC143C",
+                #         "LowSevS.2020.ki5krcs.chn_12" =
+                #             "#FF6347",
+                #         "PrescFireS.2020.ki5krcs.chn_12" =
+                #             "#E9967A",
+                #         "Thinn85.2020.ki5krcs.chn_12" =
+                #             "#7CFC00",
+                #         "Thinn93.2020.kikrcs.chn_12" =
+                #             "#32CD32",
+                #         "Thinn96.2020.kikrcs.chn_12" =
+                #             "#00FF00",
+                #         "CurCond.2020.ki5krcs.chn_cs12" =
+                #             "#008000"
+                #     )
+                # )
         } else
             if (input$DefOrUserUpload_H == 'Upload Data') {
                 p2 <- p2 +
@@ -1964,6 +2164,7 @@ server <- function(input, output, session) {
     #
     output$Plot_vs_cumPercLen_abs <- renderPlotly({
         req(input$Hill_variable)
+        req(hill_arr_by_var_CL_abs())
         
         p4 <-
             hill_arr_by_var_CL_abs()  %>% ggplot(aes(x = cumPercLen))
@@ -2088,27 +2289,48 @@ server <- function(input, output, session) {
             p4 <- p4 +
                 scale_color_manual(
                     values = c(
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
-                        "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                        "SimFireEagle_202009_cl532" =
                             "#B22222",
-                        "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
-                        "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
-                        "ModSevS.2020.ki5krcs.chn_12" =
+                        "SimFireNorse_202009_cl532" = "#FF0000",
+                        "HighSevS_202009" = "#DC143C",
+                        "ModSevS_202009" =
                             "#DC143C",
-                        "LowSevS.2020.ki5krcs.chn_12" =
+                        "LowSevS_202009" =
                             "#FF6347",
-                        "PrescFireS.2020.ki5krcs.chn_12" =
+                        "PrescFireS_202009" =
                             "#E9967A",
-                        "Thinn85.2020.ki5krcs.chn_12" =
-                            "#7CFC00",
-                        "Thinn93.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532future" =
                             "#32CD32",
-                        "Thinn96.2020.kikrcs.chn_12" =
+                        "CurCond_202009_cl532gridmet" =
                             "#00FF00",
-                        "CurCond.2020.ki5krcs.chn_cs12" =
+                        "CurCond_202009_cl532" =
                             "#008000"
                     )
                 )
+            # Tahoe
+                # scale_color_manual(
+                #     values = c(
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_fut_cli_A2" = "#FF0000",
+                #         "SimFire.2020.ki5krcs.chn_12_landisFuels_obs_cli" =
+                #             "#B22222",
+                #         "SimFire.2020.ki5krcs.chn_12_fccsFuels_obs_cli" = "#4d2525",
+                #         "HighSevS.2020.ki5krcs.chn_12" = "#DC143C",
+                #         "ModSevS.2020.ki5krcs.chn_12" =
+                #             "#DC143C",
+                #         "LowSevS.2020.ki5krcs.chn_12" =
+                #             "#FF6347",
+                #         "PrescFireS.2020.ki5krcs.chn_12" =
+                #             "#E9967A",
+                #         "Thinn85.2020.ki5krcs.chn_12" =
+                #             "#7CFC00",
+                #         "Thinn93.2020.kikrcs.chn_12" =
+                #             "#32CD32",
+                #         "Thinn96.2020.kikrcs.chn_12" =
+                #             "#00FF00",
+                #         "CurCond.2020.ki5krcs.chn_cs12" =
+                #             "#008000"
+                #     )
+                # )
         } else
             if (input$DefOrUserUpload_H == 'Upload Data') {
                 p4 <- p4 +
@@ -2130,6 +2352,7 @@ server <- function(input, output, session) {
     
     output$Plot9 <- renderPlotly({
         req(input$wshed_var)
+        
         
         Wshed_subset <- Wshed_subset()
         if (input$AreaVsScen == 'allscen') {
@@ -2310,67 +2533,6 @@ server <- function(input, output, session) {
     ## ---------------------------------Plots:Spatial DF-------------------------------------------------------##
     ## -----------------------------------------------------------------------------------------------------------##
     
-    #### from what I understand WGS84 latlon coord system needed to use with leaflet
-    
-    # Spatial_subset_shared <- reactive({
-    #     req(Spatial_subset())
-    #    df<- SharedData$new(Spatial_subset())
-    #     
-    # })
-    
-    
-    
-   
-    # output$Plot11 <- leaflet::renderLeaflet({
-    #     req(Spatial_subset_base())
-    #     req(input$S_scen_base)
-    #     req(input$S_variable)
-    #     tm1 <- tm_shape(Spatial_subset_base()) +
-    #         # tm_borders(lwd = 0, alpha=0.0) +
-    #         tmap::tm_polygons(
-    #             input$S_variable,
-    #             id = "watershed",
-    #             palette = "YlGnBu",
-    #             # style = "log10_pretty"
-    #             style = "fixed",
-    #             breaks = c(0, 1, 10, 100, 1000,
-    #                        5000, 10000, 15000,20000,Inf),
-    #             title = input$S_scen_base
-    #         )+ tmap::tm_layout(main.title= input$S_scen_base,
-    #                            scale = 0.1,
-    #                            aes.color = "#0000000"
-    #         ) 
-    #     
-    #     
-    #     tmap_leaflet(tm1, in.shiny = TRUE)
-    # })
-    
-    # output$Plot12 <- leaflet::renderLeaflet({
-    #     req(Spatial_subset_comp())
-    #     req(input$S_scen_comp)
-    #     req(input$S_variable)
-    #     tm2 <- tm_shape(Spatial_subset_comp()) +
-    #         tmap::tm_polygons(
-    #             input$S_variable,
-    #             id = "watershed",
-    #             palette = "YlGnBu",
-    #             legend.hist = TRUE,
-    #             # style = "log10_pretty",
-    #             style = "fixed",
-    #             breaks = c(0, 1, 10, 100, 1000,
-    #                        5000, 10000, 15000,20000,Inf),
-    #             title = input$S_scen_comp
-    #         ) + tmap::tm_layout(main.title = input$S_scen_comp,
-    #                             scale = 0.1,
-    #                             title.size = 10,
-    #                             aes.color = "#0000000"
-    #         )
-    # 
-    # 
-    #     tmap_leaflet(tm2,in.shiny = TRUE)
-    # })
-    
-    
     output$Plot12 <- leaflet::renderLeaflet({
             req(Spatial_data())
             req(Spatial_subset_comp())
@@ -2451,7 +2613,8 @@ server <- function(input, output, session) {
                 dplyr::select(LanduseDesc, Slope, input$Hill_variable , paste0("AbsChange_", input$Hill_variable)) %>%
                 group_by(LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
                                                                                    mean)) %>%
-                dplyr::arrange(desc(paste0(input$Hill_variable, "_mean"))) %>% dplyr::mutate_if(is.numeric, round, 2)
+                dplyr::arrange(desc(paste0(input$Hill_variable, "_mean"))) %>% 
+                dplyr::mutate_if(is.numeric, round, 2)
         } else
             if (input$summary_DT_by_var_H == "Soiltype") {
                 hill_subset_rel() %>% dplyr::filter(Scenario %in% input$Hill_scen_comp) %>%
@@ -2459,10 +2622,10 @@ server <- function(input, output, session) {
                     dplyr::mutate(cumPercArea = cumsum(Hillslope.Area..ha.) /
                                       sum(Hillslope.Area..ha.) * 100) %>%
                     dplyr::filter(cumPercArea < input$thresh_H) %>%
-                    dplyr::select(SoilDesc, Slope, Sediment.Yield..kg.ha. ,AbsChange_Sediment.Yield..kg.ha. ) %>%
-                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
-                                                                                    mean)) %>%
-                    dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
+                    dplyr::select(SoilDesc, Slope, input$Hill_variable , paste0("AbsChange_", input$Hill_variable)) %>%
+                    group_by(SoilDesc) %>% dplyr::summarise_if(is.numeric, list(mean =mean)) %>%
+                    dplyr::arrange(desc(paste0(input$Hill_variable, "_mean"))) %>%
+                    dplyr::mutate_if(is.numeric, round, 2)
 
             } else
                 if (input$summary_DT_by_var_H == "Both") {
@@ -2474,11 +2637,12 @@ server <- function(input, output, session) {
                         dplyr::select(SoilDesc,
                                       LanduseDesc,
                                       Slope,
-                                      Sediment.Yield..kg.ha.,
-                                      AbsChange_Sediment.Yield..kg.ha. ) %>%
-                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =
-                                                                                                     mean)) %>%
-                        dplyr::arrange(desc(Sediment.Yield..kg.ha._mean)) %>% dplyr::mutate_if(is.numeric, round, 2)
+                                      input$Hill_variable , 
+                                      paste0("AbsChange_", input$Hill_variable)
+                                      ) %>%
+                        group_by(SoilDesc, LanduseDesc) %>% dplyr::summarise_if(is.numeric, list(mean =mean)) %>%
+                        dplyr::arrange(desc(paste0(input$Hill_variable, "_mean"))) %>% 
+                        dplyr::mutate_if(is.numeric, round, 2)
 
                 }
     })
