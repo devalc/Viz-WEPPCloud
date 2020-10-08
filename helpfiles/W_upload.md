@@ -2,5 +2,5 @@
 
 ***
 
-Provide the url pointing to the WEPPCloud watershed file.
+Browse to/Provide the url pointing to the WEPPCloud watershed file.
 
