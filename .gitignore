@@ -34,7 +34,3 @@ data/lt_highsev_subcatchments_wgs84.geojson
 old_data/portland202009_shps_subcatchments_wgs84_split_wshed_and_scen.rds
 app.R
 app.R
-vizweppcloud_hex.R
-global.R
-create_theme.R
-app_untidy_comments.R
