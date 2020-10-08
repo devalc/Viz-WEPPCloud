@@ -1053,7 +1053,7 @@ server <- function(input, output, session) {
         if (input$DefOrUserUpload_S == 'Default Data') {
             # sf::st_read("data/lt_allcond_subcatchments_wgs84_split_wshed_and_scen.geojson")
             # readRDS("data/lt2020_6_subcatchments_wgs84_split_wshed_and_scen.RDS")
-            readRDS("data/portland202009_shps_subcatchments_wgs84_split_wshed_and_scen.rds")
+            readRDS("data/portland202009_shps_subcatchments_wgs84_split_wshed_and_scen.RDS")
         } else
             if (input$DefOrUserUpload_S == 'Upload data') {
                 file4 <- input$Spatial_file
