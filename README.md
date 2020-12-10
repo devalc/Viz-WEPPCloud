@@ -1,6 +1,5 @@
 # Viz-WEPPCloud
-<img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width="48">
-![<img src="[myLink]" width="250"/>](https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png){ width=50% }
+<img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50%>
 
 This repository contains an R Shiny application that can, for now, visualize WEPPCloud summary outputs but is being developed to 
 eventually work as a decision support tool.  
