@@ -2,4 +2,4 @@
 
 ***
 
-Provide the url pointing to the WEPPCloud spatial file(Accepted format JSON, geojson, RDS formats).
+Provide the url pointing to the WEPPCloud spatial file(Accepted format are qs and RDS).
