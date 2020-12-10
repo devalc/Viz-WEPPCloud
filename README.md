@@ -1,6 +1,6 @@
 # Viz-WEPPCloud
 
-![](www/vizweppcloud_hex_wsj.png)
+![Viz-WEPPcloud](https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png)
 
 This repository contains an R Shiny application that can, for now, visualize WEPPCloud summary outputs but is being developed to 
 eventually work as a decision support tool.  
@@ -13,7 +13,7 @@ https://cdeval.shinyapps.io/Viz-WEPPCloud/
 
 ## UI demo
 
-![Alt Text](https://github.com/devalc/Viz-WEPPCloud/blob/master/gifs/test.gif)
+![About Viz-WEPPcloud](https://github.com/devalc/Viz-WEPPCloud/blob/master/gifs/IntroToVizWeppcloud.gif)
 
 
 ### Caution: 
