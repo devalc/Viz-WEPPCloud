@@ -2,5 +2,5 @@
 
 ***
 
-Provide the url pointing to the WEPPCloud Hillslope file.
+Provide the url pointing to the WEPPCloud Hillslope CSV file.
 
