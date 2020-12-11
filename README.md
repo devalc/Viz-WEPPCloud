@@ -1,7 +1,5 @@
 # Viz-WEPPCloud
 
-<img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50% align="center">
-
 <p align="center">
   <img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50%/>
 </p>
