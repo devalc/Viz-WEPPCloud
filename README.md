@@ -1,5 +1,9 @@
 # Viz-WEPPCloud
 
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 img {
   display: block;
@@ -7,7 +11,14 @@ img {
   margin-right: auto;
 }
 </style>
-<img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" style="width:50%;">
+</head>
+<body>
+
+<h2>Center an Image</h2>
+<p>To center an image, set left and right margin to auto, and make it into a block element.</p>
+
+<img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" alt="Paris" style="width:50%;">
+
 
 
 This repository contains a Shiny application that is a post-processing, interactive tool based on the simulations from the WEPPcloud interface and can be used to identify erosion hotspots and hillslopes that are suitable for targeted management. 
