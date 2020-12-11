@@ -3,7 +3,7 @@
 <img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50% align="center">
 
 <p align="center">
-  <img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" />
+  <img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50%/>
 </p>
 
 This repository contains a Shiny application that is a post-processing, interactive tool based on the simulations from the WEPPcloud interface and can be used to identify erosion hotspots and hillslopes that are suitable for targeted management. 
