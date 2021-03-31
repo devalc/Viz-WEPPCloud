@@ -610,7 +610,7 @@ ui <- navbarPage(
                         label = "Data Import Options:",
                         choices = c(
                             "Default Data (WE38)" = "Default_Data_WE38",
-                            "Upload your own data" = "Upload data"
+                            "Upload data" = "Upload data"
                         ),
                         selected = "Default_Data_WE38",
                         status = 'warning'
@@ -2427,10 +2427,45 @@ server <- function(input, output, session) {
             )
         })
     
-    output$swat_tabpanels <- renderUI({
-        req(input$DefOrUserUpload_SWAT)
-        req(input$which_file)
+    output$SWAT_wshed_mgmt_optns <- renderUI({
+        
         if (input$DefOrUserUpload_SWAT == 'Upload data') {
+            req(SWAT_data())
+            req(input$which_file)
+            # req(input$swat_file)
+            if(input$which_file == 'Reach'){
+                awesomeRadio(
+                    inputId = "AreaVsScen_swat",
+                    label = "Management/Watershed Options: ",
+                    choices = c(
+                        "One Watershed, All Scenarios" = "allscen_swat",
+                        "One Scenario, Selected Watersheds" =
+                            "allwat_swat"
+                    ),
+                    selected = "allscen_swat",
+                    status = 'warning'
+                )
+            }}else
+            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+                req(input$which_file)
+                if(input$which_file == 'Reach'){
+                    awesomeRadio(
+                        inputId = "AreaVsScen_swat",
+                        label = "Management/Watershed Options: ",
+                        choices = c(
+                            "One Watershed, All Scenarios" = "allscen_swat",
+                            "One Scenario, Selected Watersheds" =
+                                "allwat_swat"
+                        ),
+                        selected = "allscen_swat",
+                        status = 'warning'
+                    )
+                }
+            }
+    })
+    
+    output$swat_tabpanels <- renderUI({
+        req(input$which_file)
         if(input$which_file == 'Subbasin'){
             tabsetPanel(
                 tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
@@ -2459,38 +2494,72 @@ server <- function(input, output, session) {
                                  tableOutput("tablehru")  %>% withSpinner(type = 8 ))
                     )
                 }
-        }else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                if(input$which_file == 'Subbasin'){
-                    tabsetPanel(
-                        tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-                                 plotlyOutput("Plotsub", height = "600px", width =
-                                                  "800px") %>% withSpinner(type = 8 )),
-                        tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                                 tableOutput("Plotsub")  %>% withSpinner(type = 8 ))
-                    )
-                }else
-                    if(input$which_file == 'Reach'){
-                        tabsetPanel(
-                            tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
-                                     plotlyOutput("Plotheatrch", height = "600px", width =
-                                                      "800px") %>% withSpinner(type = 8 )),
-                            tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
-                                     plotlyOutput("Plotbarrch", height = "600px", width =
-                                                      "800px")  %>% withSpinner(type = 8 ))
-                        )
-                    }else
-                        if(input$which_file == 'HRU'){
-                            tabsetPanel(
-                                tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-                                         plotlyOutput("Plothru", height = "600px", width =
-                                                          "800px") %>% withSpinner(type = 8 )),
-                                tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                                         tableOutput("tablehru")  %>% withSpinner(type = 8 ))
-                            )
-                        }
-            }
     })
+    
+    # output$swat_tabpanels <- renderUI({
+    #     req(input$DefOrUserUpload_SWAT)
+    #     req(input$which_file)
+    #     if (input$DefOrUserUpload_SWAT == 'Upload data') {
+    #         if(input$which_file == 'Subbasin'){
+    #             tabsetPanel(
+    #                 tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
+    #                          plotlyOutput("Plotsub", height = "600px", width =
+    #                                           "800px") %>% withSpinner(type = 8 )),
+    #                 tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+    #                          tableOutput("tablesub")  %>% withSpinner(type = 8 ))
+    #             )
+    #         }else
+    #             if(input$which_file == 'Reach'){
+    #                 tabsetPanel(
+    #                     tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
+    #                              plotlyOutput("Plotheatrch", height = "600px", width =
+    #                                               "800px") %>% withSpinner(type = 8 )),
+    #                     tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
+    #                              plotlyOutput("Plotbarrch", height = "600px", width =
+    #                                               "800px")  %>% withSpinner(type = 8 ))
+    #                 )
+    #             }else
+    #                 if(input$which_file == 'HRU'){
+    #                     tabsetPanel(
+    #                         tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
+    #                                  plotlyOutput("Plothru", height = "600px", width =
+    #                                                   "800px") %>% withSpinner(type = 8 )),
+    #                         tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+    #                                  tableOutput("tablehru")  %>% withSpinner(type = 8 ))
+    #                     )
+    #                 }
+    #     }else
+    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+    #             if(input$which_file == 'Subbasin'){
+    #                 tabsetPanel(
+    #                     tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
+    #                              plotlyOutput("Plotsub", height = "600px", width =
+    #                                               "800px") %>% withSpinner(type = 8 )),
+    #                     tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+    #                              tableOutput("Plotsub")  %>% withSpinner(type = 8 ))
+    #                 )
+    #             }else
+    #                 if(input$which_file == 'Reach'){
+    #                     tabsetPanel(
+    #                         tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
+    #                                  plotlyOutput("Plotheatrch", height = "600px", width =
+    #                                                   "800px") %>% withSpinner(type = 8 )),
+    #                         tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
+    #                                  plotlyOutput("Plotbarrch", height = "600px", width =
+    #                                                   "800px")  %>% withSpinner(type = 8 ))
+    #                     )
+    #                 }else
+    #                     if(input$which_file == 'HRU'){
+    #                         tabsetPanel(
+    #                             tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
+    #                                      plotlyOutput("Plothru", height = "600px", width =
+    #                                                       "800px") %>% withSpinner(type = 8 )),
+    #                             tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+    #                                      tableOutput("tablehru")  %>% withSpinner(type = 8 ))
+    #                         )
+    #                     }
+    #         }
+    # })
     
     output$SWAT_FileInput <- renderUI({
         req(input$DefOrUserUpload_SWAT)
@@ -2498,7 +2567,7 @@ server <- function(input, output, session) {
         if (input$DefOrUserUpload_SWAT == 'Upload data') {
             if(input$which_file == 'Subbasin'){
                 fileInput(
-                    "swat_file",
+                    "swat_file_sub",
                     label = "Uplaod subbasin RDS/qs file",
                     multiple = F,
                     placeholder = "No file selected",
@@ -2511,7 +2580,7 @@ server <- function(input, output, session) {
             }else
                 if(input$which_file == 'Reach'){
                     fileInput(
-                        "swat_file",
+                        "swat_file_rch",
                         label = "Uplaod reach RDS/qs/csv file",
                         multiple = F,
                         placeholder = "No file selected",
@@ -2524,7 +2593,7 @@ server <- function(input, output, session) {
                 }else
                     if(input$which_file == 'HRU'){
                         fileInput(
-                            "swat_file",
+                            "swat_file_hru",
                             label = "Uplaod hru RDS/qs file",
                             multiple = F,
                             placeholder = "No file selected",
@@ -2550,64 +2619,69 @@ server <- function(input, output, session) {
                 }
     })
     
-    SWAT_data1 <- reactive({
+    SWAT_data <- reactive({
         req(input$DefOrUserUpload_SWAT)
+        req(input$which_file)
         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-            req(input$which_file)
+            
             if(input$which_file == 'Reach'){
                 d<- qs::qread("data/summary_output_rch.qs")
             }else
                 if(input$which_file == 'Subbasin'){
-                    d<-qs::qread("data/summary_output_sub.qs")
+                    d<-qs::qread("data/summary_output_sub.qs")%>%sf::st_set_crs(value = 4326)
                 }else
                     if(input$which_file == 'HRU'){
-                        d<-qs::qread("data/summary_output_hru.qs")
+                        d<-qs::qread("data/summary_output_hru.qs")%>%sf::st_set_crs(value = 4326)
                     }
 
         }else
             if (input$DefOrUserUpload_SWAT == 'Upload data'){
                 req(input$which_file)
                 if(input$which_file == 'Reach'){
-                    req(input$swat_file)
-                    file <- input$swat_file
+                    req(input$swat_file_rch)
+                    file <- input$swat_file_rch
                     if (is.null(file)) {
                         return()
                     }
                     if (tools::file_ext(file$datapath) == "RDS") {
-                        readRDS(file$datapath)
+                        d<-readRDS(file$datapath)
                     }else
                         if (tools::file_ext(file$datapath) == "qs") {
-                            qs::qread(file$datapath)
+                            d<-qs::qread(file$datapath)
                         }else
                             if (tools::file_ext(file$datapath) == "csv") {
-                                read.csv(file$datapath)
+                                d<- read.csv(file$datapath)
                             }
                 }else
                     if(input$which_file == 'Subbasin'){
-                        req(input$swat_file)
-                        file <- input$swat_file
+                        req(input$swat_file_sub)
+                        file <- input$swat_file_sub
                         if (is.null(file)) {
                             return()
                         }
                         if (tools::file_ext(file$datapath) == "RDS") {
-                            readRDS(file$datapath)
+                            d<-readRDS(file$datapath)
+                            d<- d %>%sf::st_set_crs(value = 4326)
                         }else
                             if (tools::file_ext(file$datapath) == "qs") {
-                                qs::qread(file$datapath)
+                                d<- qs::qread(file$datapath)
+                                d<- d %>%sf::st_set_crs(value = 4326)
                             }
 
                     }else
                         if(input$which_file == 'HRU'){
-                            req(input$swat_file)
-                            file <- input$swat_file
+                            req(input$swat_file_hru)
+                            file <- input$swat_file_hru
                             if (is.null(file)) {
                                 return()
                             }
                             if (tools::file_ext(file$datapath) == "RDS") {
-                                readRDS(file$datapath)
+                                d<- readRDS(file$datapath)
+                                d<- d%>%sf::st_set_crs(value = 4326)
                             }else
                                 if (tools::file_ext(file$datapath) == "qs") {
-                                    qs::qread(file$datapath)
+                                    d<- qs::qread(file$datapath)
+                                    d<- d%>%sf::st_set_crs(value = 4326)
                                 }
 
                         }
@@ -2615,36 +2689,51 @@ server <- function(input, output, session) {
     })
     
     
-    SWAT_data <- reactive({
-            req(SWAT_data1())
-            req(input$DefOrUserUpload_SWAT)
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    SWAT_data1() %>%sf::st_set_crs(value = 4326)
-                }else
-                    if(input$which_file == 'Reach'){
-                        SWAT_data1()
-                    }else
-                        if(input$which_file == 'HRU'){
-                            SWAT_data1() %>%sf::st_set_crs(value = 4326)
-                        }
-
-            }else
-                if (input$DefOrUserUpload_SWAT == 'Upload data'){
-                    req(input$which_file)
-                    if(input$which_file == 'Subbasin'){
-                        SWAT_data1() %>%sf::st_set_crs(value = 4326)
-                    }else
-                        if(input$which_file_up == 'HRU'){
-                            SWAT_data1() %>%sf::st_set_crs(value = 4326)
-                        }else
-                            if(input$which_file == 'Reach'){
-                                SWAT_data1()
-
-                            }
-                }
-        })
+    
+    # SWAT_data <- reactive({
+    #         req(SWAT_data1())
+    #         req(input$which_file)
+    #             if(input$which_file == 'Subbasin'){
+    #                 SWAT_data1()%>%sf::st_set_crs(value = 4326)
+    #             }else
+    #                 if(input$which_file == 'Reach'){
+    #                     SWAT_data1()
+    #                 }else
+    #                     if(input$which_file == 'HRU'){
+    #                         SWAT_data1()%>%sf::st_set_crs(value = 4326)
+    #                     }
+    #         })
+    
+    # SWAT_data <- reactive({
+    #         req(SWAT_data1())
+    #         req(input$DefOrUserUpload_SWAT)
+    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+    #             req(input$which_file)
+    #             if(input$which_file == 'Subbasin'){
+    #                 SWAT_data1() 
+    #             }else
+    #                 if(input$which_file == 'Reach'){
+    #                     SWAT_data1()
+    #                 }else
+    #                     if(input$which_file == 'HRU'){
+    #                         SWAT_data1() 
+    #                     }
+    # 
+    #         }else
+    #             if (input$DefOrUserUpload_SWAT == 'Upload data'){
+    #                 req(input$which_file)
+    #                 if(input$which_file == 'Subbasin'){
+    #                     SWAT_data1() %>%sf::st_set_crs(value = 4326)
+    #                 }else
+    #                     if(input$which_file_up == 'HRU'){
+    #                         SWAT_data1() %>%sf::st_set_crs(value = 4326)
+    #                     }else
+    #                         if(input$which_file == 'Reach'){
+    #                             SWAT_data1()
+    # 
+    #                         }
+    #             }
+    #     })
     
     
     
@@ -2835,6 +2924,7 @@ server <- function(input, output, session) {
                     )
                 }else
                     if(input$which_file == 'Reach'){
+                        req(input$AreaVsScen_swat)
                         if(input$AreaVsScen_swat == "allscen_swat"){
                         }else
                             if(input$AreaVsScen_swat == "allwat_swat"){
@@ -2867,53 +2957,53 @@ server <- function(input, output, session) {
             }
     })
     
-    output$SWAT_wshed_mgmt_optns <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Reach'){
-                awesomeRadio(
-                    inputId = "AreaVsScen_swat",
-                    label = "Management/Watershed Options: ",
-                    choices = c(
-                        "One Watershed, All Scenarios" = "allscen_swat",
-                        "One Scenario, Selected Watersheds" =
-                            "allwat_swat"
-                    ),
-                    selected = "allscen_swat",
-                    status = 'warning'
-                )
-            }else
-                if(input$which_file == 'HRU'){
-                    return()
-                }else
-                    if(input$which_file == 'Subbasin'){
-                        return()  
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Reach'){
-                    awesomeRadio(
-                        inputId = "AreaVsScen_swat",
-                        label = "Management/Watershed Options: ",
-                        choices = c(
-                            "One Watershed, All Scenarios" = "allscen_swat",
-                            "One Scenario, Selected Watersheds" =
-                                "allwat_swat"
-                        ),
-                        selected = "allscen_swat",
-                        status = 'warning'
-                    )
-                }else
-                    if(input$which_file == 'HRU'){
-                        return()
-                    }else
-                        if(input$which_file == 'Subbasin'){
-                            return()
-                        }
-            }
-    })
+    # output$SWAT_wshed_mgmt_optns <- renderUI({
+    #     if (input$DefOrUserUpload_SWAT == 'Upload data') {
+    #         req(SWAT_data())
+    #         req(input$which_file)
+    #         if(input$which_file == 'Reach'){
+    #             awesomeRadio(
+    #                 inputId = "AreaVsScen_swat",
+    #                 label = "Management/Watershed Options: ",
+    #                 choices = c(
+    #                     "One Watershed, All Scenarios" = "allscen_swat",
+    #                     "One Scenario, Selected Watersheds" =
+    #                         "allwat_swat"
+    #                 ),
+    #                 selected = "allscen_swat",
+    #                 status = 'warning'
+    #             )
+    #         }else
+    #             if(input$which_file == 'HRU'){
+    #                 return()
+    #             }else
+    #                 if(input$which_file == 'Subbasin'){
+    #                     return()  
+    #                 }
+    #     } else
+    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+    #             req(input$which_file)
+    #             if(input$which_file == 'Reach'){
+    #                 awesomeRadio(
+    #                     inputId = "AreaVsScen_swat",
+    #                     label = "Management/Watershed Options: ",
+    #                     choices = c(
+    #                         "One Watershed, All Scenarios" = "allscen_swat",
+    #                         "One Scenario, Selected Watersheds" =
+    #                             "allwat_swat"
+    #                     ),
+    #                     selected = "allscen_swat",
+    #                     status = 'warning'
+    #                 )
+    #             }else
+    #                 if(input$which_file == 'HRU'){
+    #                     return()
+    #                 }else
+    #                     if(input$which_file == 'Subbasin'){
+    #                         return()
+    #                     }
+    #         }
+    # })
     
     
     output$SWAT_reachno <- renderUI({
@@ -2969,7 +3059,7 @@ server <- function(input, output, session) {
         req(SWAT_data())
         req(input$which_file)
         if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            
+
             if(input$which_file == 'Subbasin'){
                 pickerInput(
                     inputId = "swat_var_sub",
@@ -2978,7 +3068,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select metric ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size` = 8
                     ),
                     choices =   c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
                                   "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt/ha","ORGNkg/ha",
@@ -3004,7 +3095,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select metric ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size` = 8
                         ),
                         choices =   c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
                                                                                         "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
@@ -3021,7 +3113,7 @@ server <- function(input, output, session) {
                                                                                    "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
                                                                                    "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"), width = 35
                         ))
-                        
+
                     )
                 }else
                     if(input$which_file == 'HRU'){
@@ -3032,7 +3124,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size` = 8
                             ),
                             choices =   c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
                                           "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
@@ -3069,9 +3162,9 @@ server <- function(input, output, session) {
                                                                              "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
                                                                              "AREA","SUBBASIN","LU_CODE"), width = 35
                             ))
-                            
+
                         )
-                        
+
                     }
         } else
             if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
@@ -3084,7 +3177,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select metric ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size` = 8
                         ),
                         choices =   c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
                                       "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt/ha","ORGNkg/ha",
@@ -3110,7 +3204,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size` = 8
                             ),
                             choices =   c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
                                           "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
@@ -3127,7 +3222,7 @@ server <- function(input, output, session) {
                                                                              "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
                                                                              "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"), width = 35
                             ))
-                            
+
                         )
                     }else
                         if(input$which_file == 'HRU'){
@@ -3138,7 +3233,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select metric ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size` = 8
                                 ),
                                 choices =   c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
                                               "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
@@ -3175,7 +3271,7 @@ server <- function(input, output, session) {
                                                                                  "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
                                                                                  "AREA","SUBBASIN","LU_CODE"), width = 35
                                 ))
-                                
+
                             )
                         }
             }
@@ -3237,38 +3333,33 @@ server <- function(input, output, session) {
     
     
     reachdf <- reactive({
+        req(input$DefOrUserUpload_SWAT)
         if (input$DefOrUserUpload_SWAT == 'Upload data') {
             req(SWAT_data())
             req(input$which_file)
             if(input$which_file == 'Subbasin'){
-                
+
             }else
                 if(input$which_file == 'Reach'){
-                    SWAT_data() 
-                    
-                    
+                    SWAT_data()
+
+
                 }else
                     if(input$which_file == 'HRU'){
-                        
+
                     }
         } else
             if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
                 req(input$which_file)
                 if(input$which_file == 'Subbasin'){
-                    
+
                 }else
                     if(input$which_file == 'Reach'){
-                        SWAT_data() 
-                        # %>% 
-                        #     dplyr::select(RCH, Watershed, Scenario,FLOW_OUTcms,EVAPcms,TLOSScms,SED_OUTtons,
-                        #                   `SEDCONCmg/L`,ORGN_OUTkg,NO3_OUTkg,NH4_OUTkg,NO2_OUTkg,
-                        #                   CHLA_OUTkg, CBOD_OUTkg,DISOX_OUTkg,SOLPST_OUTmg,SORPST_OUTmg,
-                        #                   REACTPSTmg,VOLPSTmg,SETTLPSTmg,SETTLPSTmg,
-                        #                   DIFFUSEPSTmg,REACBEDPSTmg,BURYPSTmg,BED_PSTmg,
-                        #                   BACTP_OUTct,BACTLP_OUTct,`CMETAL#1kg`,`CMETAL#2kg`,`CMETAL#3kg`)
+                        SWAT_data()
+
                     }else
                         if(input$which_file == 'HRU'){
-                            
+
                         }
             }
     })
@@ -3279,44 +3370,47 @@ server <- function(input, output, session) {
     ## -----------------------------------------------------------------------------------------------------------##
     
     subdf <- reactive({
+        req(input$DefOrUserUpload_SWAT)
         if (input$DefOrUserUpload_SWAT == 'Upload data') {
             req(SWAT_data())
             req(input$which_file)
             if(input$which_file == 'Subbasin'){
-                SWAT_data() 
+                SWAT_data()
             }else
                 if(input$which_file == 'Reach'){
-                     
-                    
-                    
+
+
+
                 }else
                     if(input$which_file == 'HRU'){
-                          
+
                     }
         } else
             if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
                 req(input$which_file)
                 if(input$which_file == 'Subbasin'){
-                    SWAT_data()   
+                    SWAT_data()
                 }else
                     if(input$which_file == 'Reach'){
-                        
+
                        }else
                         if(input$which_file == 'HRU'){
-                            
+
                         }
             }
     })
     
-    output$testtab2 <- renderTable({
-        reach_subset()
-    })
+    # output$testtab2 <- renderTable({
+    #     reach_subset()
+    # })
     
     ## -----------------------------------------------------------------------------------------------------------##
     ################# Filtering logic for Reach DF ################
     ## -----------------------------------------------------------------------------------------------------------##    
     reach_subset <- reactive({
         req(reachdf())
+        req(input$SWAT_wshed)
+        req(input$SWAT_reachnum)
         req(input$AreaVsScen_swat)
         if (input$AreaVsScen_swat == 'allscen_swat') {
             reachdf() %>% dplyr::filter(Watershed %in% input$SWAT_wshed) %>%
@@ -3336,15 +3430,17 @@ server <- function(input, output, session) {
     
     output$Plotheatrch <- renderPlotly({
         req(reach_subset())
-        
-        
+        req(input$AreaVsScen_swat)
+        req(input$swat_var_rch)
+
+
         reach_subset <- reach_subset()
         if (input$AreaVsScen_swat == 'allscen_swat') {
             d <-
                 reach_subset() %>% dplyr::select(Scenario, input$swat_var_rch) %>%
                 dplyr::mutate_if(is.numeric, scale)
             d.m <- reshape2::melt(d)
-            
+
             p <-
                 plot_ly(
                     x = d.m$Scenario,
@@ -3376,22 +3472,23 @@ server <- function(input, output, session) {
                     )
                 )
             p
-            
-            
+
+
         } else
             if (input$AreaVsScen_swat == 'allwat_swat') {
-                
+
                 if (length(unique(reach_subset()$Watershed))<2) {
                     d <-
                         reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch)
                 }else
                     if (length(unique(reach_subset()$Watershed))>=2) {
                 d <-
-                    reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch) %>% dplyr::mutate_if(is.numeric, scale)}
-                
+                    reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch) %>% 
+                    dplyr::mutate_if(is.numeric, scale)}
+
                 d.m <- reshape2::melt(d)
-                
-                
+
+
                 p <-
                     plot_ly(
                         x = d.m$Watershed,
@@ -3422,26 +3519,26 @@ server <- function(input, output, session) {
                             )
                         )
                     )
-                
+
                 p
-            } 
-        
+            }
+
     })
-    
-    
     
     
     output$Plotbarrch <- renderPlotly({
         req(reach_subset())
-        
-        
+        req(input$AreaVsScen_swat)
+        req(input$swat_var_rch)
+
+
         reach_subset <- reach_subset()
         if (input$AreaVsScen_swat == 'allscen_swat') {
-            
+
             d <-  reach_subset() %>% dplyr::select(Scenario, input$swat_var_rch)
-                    
+
                     d.m <- reshape2::melt(d)
-                    
+
                     ## Calculates percent contribution of each variable across all
                     ## the simulated scenarios
                     d.m <- d.m %>%
@@ -3449,15 +3546,15 @@ server <- function(input, output, session) {
                         mutate(total = sum(value),
                                share = (value / total) * 100) %>% dplyr::select(-total) %>%
                         ungroup()
-                    
+
                     b <- ggplot(d.m) +
-                        
+
                         geom_bar(
                             aes(
                                 y = share,
                                 x = variable,
                                 fill = reorder(Scenario, share)
-                                
+
                             ),
                             stat = "identity",
                             position = "dodge"
@@ -3475,12 +3572,12 @@ server <- function(input, output, session) {
                             legend.title = element_blank(),
                             legend.position = "none"
                         ) + coord_flip() + labs(y = "Percent of total across all Scenarios", x = "") +
-                        scale_fill_brewer(palette = "Dark2") +
+                        scale_fill_brewer(palette = "RdYlGn", direction = 1) +
                         scale_y_continuous(
                             labels = function(x)
                                 paste0(x * 1, "%")
                         )
-                    
+
                     ggplotly(b) %>%
                         layout(
                             title = list(
@@ -3501,11 +3598,11 @@ server <- function(input, output, session) {
                                 pad = 0
                             )
                         )
-                    
-                    
+
+
                 }else
                     if (input$AreaVsScen_swat == 'allwat_swat') {
-               
+
                         d <-  reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch)
 
                         d.m <- reshape2::melt(d)
@@ -3542,7 +3639,7 @@ server <- function(input, output, session) {
                                 legend.title = element_blank()
                             ) + labs(y = "Percent of total across all Watersheds", x = "") +
                             coord_flip() +
-                            scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
+                            scale_fill_brewer(palette = "RdYlGn", direction = 1) + theme(legend.position =
                                                                               "none")
                         ggplotly(b)  %>%
                             layout(
@@ -3563,10 +3660,10 @@ server <- function(input, output, session) {
                                     pad = 0
                                 )
                             )
-                        
-                        
+
+
                     }
-            
+
     })
     
     
