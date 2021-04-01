@@ -147,7 +147,7 @@ ui <- navbarPage(
                         align  = "center",
                         
                         HTML(
-                            '<div class="jumbotron", >
+                            '<div style="background:transparent !important" class="jumbotron" >
                                                       <h1  style="">Viz-WEPPcloud </h1>
                                                       <h4  style="">A post-processing tool for identifying and examining impacts of management on pollutant 
                                                       source areas in large spatially explicit watershed output files.</h4>
@@ -194,18 +194,18 @@ ui <- navbarPage(
                                 label = 'Spatial Visualization',
                                 content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
                             ),
-                            actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("line-chart"),style = "pill",
+                            actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("layer-group"),style = "pill",
                                        color = "success")
                         ),
                         column(
                             3,
                             align  = "center",
                             thumbnail_label1(
-                                image = 'swat.jpg',
+                                image = 'hru1.jpg',
                                 label = 'SWAT-Viz',
                                 content = 'Visualize hydrologic response unit (HRU) scale output and targeted hotspots across multiple watersheds for multiple treatments.'
                             ),
-                            actionBttn("Swatbutton", "Navigate to SWAT-Viz", icon = icon("line-chart"),style = "pill",
+                            actionBttn("Swatbutton", "Navigate to SWAT-Viz", icon = icon("layer-group"),style = "pill",
                                        color = "success")
                         )
                     # )
@@ -217,25 +217,25 @@ ui <- navbarPage(
                         # offset = 3,
                         align  = "center",
                         
-                        style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;background-color:#F8F9FA;", #background-color:#eae2e2;#F8F9FA;
+                        style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;", #background-color:#eae2e2;#F8F9FA;
                         
-                        tags$div(
-                            tags$p(
-                                "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
-                                align = "center"
-                            ),
-                            tags$p(
-                                a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
-                                ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project',
-                                tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project",
-                                       "(WEPP)"), 'model. It estimates
-                                                          hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
-                                                          post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
-                                .noWS = c("after-begin", "before-end"),
-                                align = "center"
-                            ),
-                            
-                        )
+                       tags$div(
+                           tags$p(
+                               "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
+                               align = "center"
+                           ),
+                           tags$p(
+                               a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
+                               ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project',
+                               tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project",
+                                      "(WEPP)"), 'model. It estimates
+                                                         hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
+                                                         post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
+                               .noWS = c("after-begin", "before-end"),
+                               align = "center"
+                           ),
+
+                       )
                         
                     )
                 )
@@ -285,7 +285,7 @@ ui <- navbarPage(
                             "Upload your own data" = "Upload data"
                         ),
                         selected = "Default_Data_LT",
-                        status = 'warning'
+                        status = 'success'
                     ),
                     
                     
@@ -300,7 +300,7 @@ ui <- navbarPage(
                                 "allwat"
                         ),
                         selected = "allscen",
-                        status = 'warning'
+                        status = 'success'
                     ),
                     
                     uiOutput("Wshed_wshed_S"),
@@ -311,15 +311,26 @@ ui <- navbarPage(
                     
                     uiOutput("wshed_var"),
                     
-                    awesomeRadio(
+                    radioGroupButtons(
                         inputId = "ScenVvar",
                         label = "Visualization type:",
                         choices = c("Heatmap" = "Heatmap", "Bar Chart" =
                                         "Bar Chart"),
-                        
                         selected = "Heatmap",
-                        status = 'warning'
+                        checkIcon = list(
+                            yes = icon("ok",
+                                       lib = "glyphicon")),
+                        status = 'success'
                     ),
+                    # awesomeRadio(
+                    #     inputId = "ScenVvar",
+                    #     label = "Visualization type:",
+                    #     choices = c("Heatmap" = "Heatmap", "Bar Chart" =
+                    #                     "Bar Chart"),
+                    #     
+                    #     selected = "Heatmap",
+                    #     status = 'warning'
+                    # ),
                     
                 ),
                 
@@ -371,7 +382,7 @@ ui <- navbarPage(
                                 "Upload data"
                         ),
                         selected = "Default_Data_LT",
-                        status = 'warning'
+                        status = 'success'
                     ),
                     uiOutput("H_FileInput"),
                     uiOutput("Hill_selectfile"),
@@ -404,18 +415,30 @@ ui <- navbarPage(
                     
                     
                     # uiOutput("Hill_scen"),
-                    
-                    awesomeRadio(
+                    radioGroupButtons(
                         inputId = "summary_DT_by_var_H",
                         label = "Summarize by:",
-                        choices = c(
-                            "Land Use" = "Landuse",
-                            "Soil Type" = "Soiltype",
-                            "Both" = "Both"
-                        ),
+                        choices = c("Land Use" = "Landuse",
+                                    "Soil Type" = "Soiltype",
+                                    "Both" = "Both"),
                         selected = "Both",
-                        status = 'warning'
+                        checkIcon = list(
+                            yes = icon("ok",
+                                       lib = "glyphicon")),
+                        status = 'success'
                     ),
+                    
+                    # awesomeRadio(
+                    #     inputId = "summary_DT_by_var_H",
+                    #     label = "Summarize by:",
+                    #     choices = c(
+                    #         "Land Use" = "Landuse",
+                    #         "Soil Type" = "Soiltype",
+                    #         "Both" = "Both"
+                    #     ),
+                    #     selected = "Both",
+                    #     status = 'warning'
+                    # ),
                     
                 ),
                 
@@ -495,7 +518,7 @@ ui <- navbarPage(
                         "Upload your own data" = "Upload data"
                     ),
                     selected = "Default_Data_LT",
-                    status = 'warning'
+                    status = 'success'
                 ),
                 
                 
@@ -603,7 +626,7 @@ ui <- navbarPage(
             sidebarLayout(
                 position = "left",
                 sidebarPanel(
-                    width = 3,
+                    width = 4,
                     
                     awesomeRadio(
                         inputId = "DefOrUserUpload_SWAT",
@@ -613,7 +636,7 @@ ui <- navbarPage(
                             "Upload data" = "Upload data"
                         ),
                         selected = "Default_Data_WE38",
-                        status = 'warning'
+                        status = 'success'
                     ),
                     
                     
@@ -625,14 +648,17 @@ ui <- navbarPage(
                     uiOutput("SWAT_scen_comp"),
                     uiOutput("SWAT_variable"),
                     uiOutput("SWAT_reachno"),
-                    uiOutput("SWAT_subnum")
+                    uiOutput("SWAT_subnum"),
+                    uiOutput("swat_hru_lulc"),
+                    uiOutput("hru_slp_slider")
+                    
                     # 
                     
                 ),
                 
                 # Main panel for displaying outputs ----
                 mainPanel(
-                    width = 9,
+                    width = 8,
                     
                 uiOutput("swat_tabpanels")
                     
@@ -2425,7 +2451,8 @@ server <- function(input, output, session) {
                 selected = "Reach",
                 checkIcon = list(
                     yes = icon("ok",
-                               lib = "glyphicon"))
+                               lib = "glyphicon")),
+                status = "success"
             )
         })
     
@@ -2445,7 +2472,7 @@ server <- function(input, output, session) {
                             "allwat_swat"
                     ),
                     selected = "allscen_swat",
-                    status = 'warning'
+                    status = 'success'
                 )
             }}else
             if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
@@ -2460,7 +2487,7 @@ server <- function(input, output, session) {
                                 "allwat_swat"
                         ),
                         selected = "allscen_swat",
-                        status = 'warning'
+                        status = 'success'
                     )
                 }
             }
@@ -2489,11 +2516,11 @@ server <- function(input, output, session) {
             }else
                 if(input$which_file == 'HRU'){
                     tabsetPanel(
-                        tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-                                 plotlyOutput("Plothru", height = "600px", width =
+                        tabPanel("HRUs",icon =icon("layer-group"),style = 'padding:20px;',
+                                 leaflet::leafletOutput("Plothru", height = "600px", width =
                                                   "800px") %>% withSpinner(type = 8 )),
                         tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                                 tableOutput("tablehru")  %>% withSpinner(type = 8 ))
+                                 DT::dataTableOutput("tablehru")  %>% withSpinner(type = 8 ))
                     )
                 }
     })
@@ -2898,7 +2925,7 @@ server <- function(input, output, session) {
                 }else
                     if(input$which_file == 'HRU'){
                         pickerInput(
-                            "SWAT_scen_hru",
+                            "SWAT_scen_hru_base",
                             "Select the scenario of interest",
                             choices = unique(as.character(SWAT_data()$Scenario)),
                             options = list(`actions-box` = TRUE,
@@ -2945,7 +2972,7 @@ server <- function(input, output, session) {
                     }else
                         if(input$which_file == 'HRU'){
                             pickerInput(
-                                "SWAT_scen",
+                                "SWAT_scen_hru_base",
                                 "Select the scenario of interest",
                                 choices = unique(as.character(SWAT_data()$Scenario)),
                                 options = list(`actions-box` = TRUE,
@@ -2976,39 +3003,19 @@ server <- function(input, output, session) {
                     selected = unique(SWAT_data()$Scenario)[2],
                     multiple = F
                 )
-            }
-            # else
-                # if(input$which_file == 'Reach'){
-                #     req(input$AreaVsScen_swat)
-                #     if(input$AreaVsScen_swat == "allscen_swat"){
-                #     }else
-                #         if(input$AreaVsScen_swat == "allwat_swat"){
-                #             pickerInput(
-                #                 "SWAT_scen_rch",
-                #                 "Select the scenario of interest",
-                #                 choices = unique(as.character(SWAT_data()$Scenario)),
-                #                 options = list(`actions-box` = TRUE,
-                #                                `header` = "Select Scenario",
-                #                                `windowPadding` = 1,
-                #                                `width` = " css-width "),
-                #                 selected = unique(SWAT_data()$Scenario)[1],
-                #                 multiple = F
-                #             )
-                #         }
-                # }else
-                #     if(input$which_file == 'HRU'){
-                #         pickerInput(
-                #             "SWAT_scen_hru",
-                #             "Select the scenario of interest",
-                #             choices = unique(as.character(SWAT_data()$Scenario)),
-                #             options = list(`actions-box` = TRUE,
-                #                            `header` = "Select Scenario",
-                #                            `windowPadding` = 1,
-                #                            `width` = " css-width "),
-                #             selected = unique(SWAT_data()$Scenario)[1],
-                #             multiple = F
-                #         )
-                #     }
+            }else
+                if(input$which_file == 'HRU'){
+                    pickerInput(
+                        "SWAT_scen_hru_comp",
+                        "Select the comparison scenario",
+                        choices = unique(as.character(SWAT_data()$Scenario)),
+                        options = list(`actions-box` = TRUE,
+                                       `header` = "Select Scenario",
+                                       `windowPadding` = 1,
+                                       `width` = " css-width "),
+                        selected = unique(SWAT_data()$Scenario)[2],
+                        multiple = F )  
+                }
         } else
             if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
                 req(input$which_file)
@@ -3024,39 +3031,20 @@ server <- function(input, output, session) {
                         selected = unique(SWAT_data()$Scenario)[2],
                         multiple = F
                     )
-                }
-                # else
-                #     if(input$which_file == 'Reach'){
-                #         req(input$AreaVsScen_swat)
-                #         if(input$AreaVsScen_swat == "allscen_swat"){
-                #         }else
-                #             if(input$AreaVsScen_swat == "allwat_swat"){
-                #                 pickerInput(
-                #                     "SWAT_scen_rch",
-                #                     "Select the scenario of interest",
-                #                     choices = unique(as.character(SWAT_data()$Scenario)),
-                #                     options = list(`actions-box` = TRUE,
-                #                                    `header` = "Select Scenario",
-                #                                    `windowPadding` = 1,
-                #                                    `width` = " css-width "),
-                #                     selected = unique(SWAT_data()$Scenario)[1],
-                #                     multiple = F
-                #                 )
-                #             }
-                #     }else
-                #         if(input$which_file == 'HRU'){
-                #             pickerInput(
-                #                 "SWAT_scen",
-                #                 "Select the scenario of interest",
-                #                 choices = unique(as.character(SWAT_data()$Scenario)),
-                #                 options = list(`actions-box` = TRUE,
-                #                                `header` = "Select Scenario",
-                #                                `windowPadding` = 1,
-                #                                `width` = " css-width "),
-                #                 selected = unique(SWAT_data()$Scenario)[1],
-                #                 multiple = F
-                #             )
-                #         }
+                }else
+                    if(input$which_file == 'HRU'){
+                        pickerInput(
+                            "SWAT_scen_hru_comp",
+                            "Select the comparison scenario",
+                            choices = unique(as.character(SWAT_data()$Scenario)),
+                            options = list(`actions-box` = TRUE,
+                                           `header` = "Select Scenario",
+                                           `windowPadding` = 1,
+                                           `width` = " css-width "),
+                            selected = unique(SWAT_data()$Scenario)[2],
+                            multiple = F
+                        ) 
+                    }
             }
     })
     
@@ -3159,6 +3147,127 @@ server <- function(input, output, session) {
                         }
             }
     })
+    
+    
+    
+    
+    output$hru_slp_slider <- renderUI({
+        if (input$DefOrUserUpload_SWAT == 'Upload data') {
+            req(input$which_file)
+            if(input$which_file == 'Subbasin'){
+                }else
+                if(input$which_file == 'Reach'){
+                    
+                }else
+                    if(input$which_file == 'HRU'){
+                        sliderInput(
+                            "swat_thresh_slp",
+                            "Slope Threshold (%):",
+                            min = 0,
+                            max = 100,
+                            value = c(0,100),
+                            step = NULL,
+                            round = TRUE,
+                            ticks = TRUE,
+                            animate = FALSE
+                        ) 
+                        # %>%
+                        #     helper(
+                        #         icon = "question-circle",
+                        #         colour = "#FF0000",
+                        #         content = "H_plot_thresh",
+                        #         type = "markdown",
+                        #         size = "l",
+                        #         buttonLabel = "Okay",
+                        #         easyClose = TRUE,
+                        #         fade = TRUE
+                        #     )  
+                    }
+        } else
+            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+                req(input$which_file)
+                if(input$which_file == 'Subbasin'){
+                    
+                }else
+                    if(input$which_file == 'Reach'){
+                        
+                    }else
+                        if(input$which_file == 'HRU'){
+                            sliderInput(
+                                "swat_thresh_slp",
+                                "Slope Threshold (%):",
+                                min = 0,
+                                max = 100,
+                                value = c(0,100),
+                                step = NULL,
+                                round = TRUE,
+                                ticks = TRUE,
+                                animate = FALSE
+                            )
+                            # %>%
+                            #     helper(
+                            #         icon = "question-circle",
+                            #         colour = "#FF0000",
+                            #         content = "H_plot_thresh",
+                            #         type = "markdown",
+                            #         size = "l",
+                            #         buttonLabel = "Okay",
+                            #         easyClose = TRUE,
+                            #         fade = TRUE
+                            #     )  
+                        }
+            }
+    })
+    
+    output$swat_hru_lulc <- renderUI({
+        req(SWAT_data())
+        if (input$DefOrUserUpload_SWAT == 'Upload data') {
+            req(input$which_file)
+            if(input$which_file == 'Subbasin'){
+            }else
+                if(input$which_file == 'Reach'){
+                    
+                }else
+                    if(input$which_file == 'HRU'){
+                        pickerInput(
+                            "SWAT_hru_lulc",
+                            "Select the Land Use/Land Cover of interest",
+                            choices = unique(as.character(SWAT_data()$LULC)),
+                            options = list(`actions-box` = TRUE,
+                                           `header` = "Select Reach",
+                                           `windowPadding` = 1,
+                                           `width` = " css-width ",
+                                           `size` = 6),
+                            selected = unique(SWAT_data()$LULC)[1],
+                            multiple = TRUE
+                        )
+                    }
+        } else
+            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+                req(input$which_file)
+                if(input$which_file == 'Subbasin'){
+                    
+                }else
+                    if(input$which_file == 'Reach'){
+                        
+                    }else
+                        if(input$which_file == 'HRU'){
+                            pickerInput(
+                                "SWAT_hru_lulc",
+                                "Select the Land Use/Land Cover of interest",
+                                choices = unique(as.character(SWAT_data()$LULC)),
+                                options = list(`actions-box` = TRUE,
+                                               `header` = "Select Reach",
+                                               `windowPadding` = 1,
+                                               `width` = " css-width ",
+                                               `size` = 6),
+                                selected = unique(SWAT_data()$LULC)[1],
+                                multiple = TRUE
+                            )  
+                        }
+            }
+    })
+    
     
     
     output$SWAT_subnum <- renderUI({
@@ -3290,35 +3399,35 @@ server <- function(input, output, session) {
                                           "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
                                           "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
                                           "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                          "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ/m2",
-                                          "SYLDt/ha","USLEt/ha","N_APPkg/ha","P_APPkg/ha","NAUTOkg/ha",
-                                          "PAUTOkg/ha","NGRZkg/ha","PGRZkg/ha","NCFRTkg/ha","PCFRTkg/ha",
-                                          "NRAINkg/ha","NFIXkg/ha","F-MNkg/ha","A-MNkg/ha","A-SNkg/ha",
-                                          "F-MPkg/ha","AO-LPkg/ha","L-APkg/ha", "A-SPkg/ha", "DNITkg/ha",
-                                          "NUPkg/ha","PUPkg/ha","ORGNkg/ha","ORGPkg/ha","SEDPkg/ha","NSURQkg/ha",
-                                          "NLATQkg/ha","NO3Lkg/ha","NO3GWkg/ha","SOLPkg/ha","P_GWkg/ha",
-                                          "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt/ha","LAI",
-                                          "YLDt/ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                          "CMUPkg/ha",  "CMTOTkg/ha", "QTILEmm","TNO3kg/ha",
-                                          "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
+                                          "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
+                                          "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
+                                          "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
+                                          "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
+                                          "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
+                                          "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
+                                          "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
+                                          "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
+                                          "YLDt_ha","BACTPct","BACTLPct","SNOmm", 
+                                          "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
+                                          "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
                                           "AREA","SUBBASIN","LU_CODE"),
-                            selected =  "SYLDt/ha",
+                            selected =  "SYLDt_ha",
                             multiple = F,
                             choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
                                                                              "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
                                                                              "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
                                                                              "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                                                             "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ/m2",
-                                                                             "SYLDt/ha","USLEt/ha","N_APPkg/ha","P_APPkg/ha","NAUTOkg/ha",
-                                                                             "PAUTOkg/ha","NGRZkg/ha","PGRZkg/ha","NCFRTkg/ha","PCFRTkg/ha",
-                                                                             "NRAINkg/ha","NFIXkg/ha","F-MNkg/ha","A-MNkg/ha","A-SNkg/ha",
-                                                                             "F-MPkg/ha","AO-LPkg/ha","L-APkg/ha", "A-SPkg/ha", "DNITkg/ha",
-                                                                             "NUPkg/ha","PUPkg/ha","ORGNkg/ha","ORGPkg/ha","SEDPkg/ha","NSURQkg/ha",
-                                                                             "NLATQkg/ha","NO3Lkg/ha","NO3GWkg/ha","SOLPkg/ha","P_GWkg/ha",
-                                                                             "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt/ha","LAI",
-                                                                             "YLDt/ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                                                             "CMUPkg/ha",  "CMTOTkg/ha", "QTILEmm","TNO3kg/ha",
-                                                                             "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
+                                                                             "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
+                                                                             "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
+                                                                             "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
+                                                                             "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
+                                                                             "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
+                                                                             "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
+                                                                             "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
+                                                                             "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
+                                                                             "YLDt_ha","BACTPct","BACTLPct","SNOmm",
+                                                                             "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
+                                                                             "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
                                                                              "AREA","SUBBASIN","LU_CODE"), width = 35
                             ))
 
@@ -3399,35 +3508,35 @@ server <- function(input, output, session) {
                                               "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
                                               "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
                                               "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                              "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ/m2",
-                                              "SYLDt/ha","USLEt/ha","N_APPkg/ha","P_APPkg/ha","NAUTOkg/ha",
-                                              "PAUTOkg/ha","NGRZkg/ha","PGRZkg/ha","NCFRTkg/ha","PCFRTkg/ha",
-                                              "NRAINkg/ha","NFIXkg/ha","F-MNkg/ha","A-MNkg/ha","A-SNkg/ha",
-                                              "F-MPkg/ha","AO-LPkg/ha","L-APkg/ha", "A-SPkg/ha", "DNITkg/ha",
-                                              "NUPkg/ha","PUPkg/ha","ORGNkg/ha","ORGPkg/ha","SEDPkg/ha","NSURQkg/ha",
-                                              "NLATQkg/ha","NO3Lkg/ha","NO3GWkg/ha","SOLPkg/ha","P_GWkg/ha",
-                                              "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt/ha","LAI",
-                                              "YLDt/ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                              "CMUPkg/ha",  "CMTOTkg/ha", "QTILEmm","TNO3kg/ha",
-                                              "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
+                                              "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
+                                              "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
+                                              "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
+                                              "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
+                                              "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
+                                              "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
+                                              "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
+                                              "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
+                                              "YLDt_ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
+                                              "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
+                                              "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
                                               "AREA","SUBBASIN","LU_CODE"),
-                                selected =  "SYLDt/ha",
+                                selected =  "SYLDt_ha",
                                 multiple = F,
                                 choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
                                                                                  "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
                                                                                  "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
                                                                                  "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                                                                 "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ/m2",
-                                                                                 "SYLDt/ha","USLEt/ha","N_APPkg/ha","P_APPkg/ha","NAUTOkg/ha",
-                                                                                 "PAUTOkg/ha","NGRZkg/ha","PGRZkg/ha","NCFRTkg/ha","PCFRTkg/ha",
-                                                                                 "NRAINkg/ha","NFIXkg/ha","F-MNkg/ha","A-MNkg/ha","A-SNkg/ha",
-                                                                                 "F-MPkg/ha","AO-LPkg/ha","L-APkg/ha", "A-SPkg/ha", "DNITkg/ha",
-                                                                                 "NUPkg/ha","PUPkg/ha","ORGNkg/ha","ORGPkg/ha","SEDPkg/ha","NSURQkg/ha",
-                                                                                 "NLATQkg/ha","NO3Lkg/ha","NO3GWkg/ha","SOLPkg/ha","P_GWkg/ha",
-                                                                                 "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt/ha","LAI",
-                                                                                 "YLDt/ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                                                                 "CMUPkg/ha",  "CMTOTkg/ha", "QTILEmm","TNO3kg/ha",
-                                                                                 "LNO3kg/ha","GW_Q_Dmm","LATQCNTmm","TVAPkg/ha", "LULC", "MEAN_SLOPE",
+                                                                                 "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
+                                                                                 "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
+                                                                                 "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
+                                                                                 "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
+                                                                                 "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
+                                                                                 "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
+                                                                                 "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
+                                                                                 "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
+                                                                                 "YLDt_ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
+                                                                                 "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
+                                                                                 "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
                                                                                  "AREA","SUBBASIN","LU_CODE"), width = 35
                                 ))
 
@@ -3576,7 +3685,9 @@ server <- function(input, output, session) {
     ### !!paste0("AbsChange_", input$swat_var_sub) := 
     #                       input$swat_var_sub - input$swat_var_sub[Scenario == input$SWAT_scen_sub_base]) %>% ungroup()
     
-    SWATSub_data_rel<- reactive({ subdf() %>%
+    SWATSub_data_rel<- reactive({
+        req(input$SWAT_wshed)
+        subdf() %>%
             dplyr::filter(Watershed %in% input$SWAT_wshed)%>%
             dplyr::group_by(SUB) %>%
             dplyr::mutate(AbsChange_PRECIPmm = PRECIPmm - PRECIPmm[Scenario == input$SWAT_scen_sub_base],
@@ -3608,6 +3719,8 @@ server <- function(input, output, session) {
     })
     
     SWATSub_data_comp <- reactive({
+        req(input$SWAT_wshed)
+        req(input$SWAT_scen_sub_comp)
         req(SWATSub_data_rel())
         req(input$SWAT_wshed)
         SWATSub_data_rel() %>%
@@ -3627,6 +3740,177 @@ server <- function(input, output, session) {
                           input$swat_var_sub,
                           paste0("AbsChange_",input$swat_var_sub))%>% dplyr::filter(SUB %in% input$SWAT_subnum)
     })
+    
+    
+    ## -----------------------------------------------------------------------------------------------------------##
+    ## ---------------------------------Dataframe Calculations for HRU df SWAT-------------------------------------------------------##
+    ## -----------------------------------------------------------------------------------------------------------##
+    hrudf <- reactive({
+        req(input$DefOrUserUpload_SWAT)
+        if (input$DefOrUserUpload_SWAT == 'Upload data') {
+            req(SWAT_data())
+            req(input$which_file)
+            if(input$which_file == 'Subbasin'){
+                
+            }else
+                if(input$which_file == 'Reach'){
+                }else
+                    if(input$which_file == 'HRU'){
+                        SWAT_data()
+                    }
+        } else
+            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
+                req(input$which_file)
+                if(input$which_file == 'Subbasin'){
+                    
+                }else
+                    if(input$which_file == 'Reach'){
+                        
+                    }else
+                        if(input$which_file == 'HRU'){
+                            SWAT_data()
+                        }
+            }
+    })
+    
+    
+    SWATHru_subset_base <- reactive({
+        req(hrudf())
+        req(input$SWAT_wshed)
+        req(input$SWAT_scen_hru_base)
+        req(input$swat_var_hru)
+        hrudf() %>%
+            dplyr::filter(Watershed %in% input$SWAT_wshed &
+                              Scenario %in% input$SWAT_scen_hru_base)%>% 
+            arrange_at(.vars = input$swat_var_hru, desc) %>% ungroup() %>%
+            dplyr::mutate_if(is.numeric, round, 2) %>% 
+            dplyr::filter(LULC %in% input$SWAT_hru_lulc)%>%
+            dplyr::filter(MEAN_SLOPE >= min(input$swat_thresh_slp) & MEAN_SLOPE <= max(input$swat_thresh_slp) )
+        
+        
+    })
+    
+    SWATHru_data_rel<- reactive({ 
+        req(hrudf())
+        req(input$SWAT_wshed)
+        req(input$SWAT_scen_hru_base)    
+        hrudf() %>%
+            dplyr::filter(Watershed %in% input$SWAT_wshed)%>%
+            dplyr::group_by(GIS) %>%
+            dplyr::mutate(AbsChange_PRECIPmm = PRECIPmm - PRECIPmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SNOFALLmm = SNOFALLmm - SNOFALLmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SNOMELTmm = SNOMELTmm - SNOMELTmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_IRRmm = IRRmm - IRRmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PETmm = PETmm - PETmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_ETmm = ETmm - ETmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SW_INITmm = SW_INITmm - SW_INITmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SW_ENDmm = SW_ENDmm - SW_ENDmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PERCmm = PERCmm - PERCmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_GW_RCHGmm = GW_RCHGmm - GW_RCHGmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_DA_RCHGmm = DA_RCHGmm - DA_RCHGmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_REVAPmm = REVAPmm - REVAPmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SA_IRRmm = SA_IRRmm - SA_IRRmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_DA_IRRmm = DA_IRRmm - DA_IRRmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SA_STmm = SA_STmm - SA_STmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_DA_STmm = DA_STmm - DA_STmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SURQ_GENmm = SURQ_GENmm - SURQ_GENmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SURQ_CNTmm = SURQ_CNTmm - SURQ_CNTmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TLOSSmm = TLOSSmm - TLOSSmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_LATQGENmm = LATQGENmm - LATQGENmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_GW_Qmm = GW_Qmm - GW_Qmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_WYLDmm = WYLDmm - WYLDmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_DAILYCN = DAILYCN - DAILYCN[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TMP_AVdgC = TMP_AVdgC - TMP_AVdgC[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TMP_MXdgC = TMP_MXdgC - TMP_MXdgC[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TMP_MNdgC = TMP_MNdgC - TMP_MNdgC[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SOL_TMPdgC = SOL_TMPdgC - SOL_TMPdgC[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SOLARMJ_m2 = SOLARMJ_m2 - SOLARMJ_m2[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SYLDt_ha = SYLDt_ha - SYLDt_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_USLEt_ha = USLEt_ha - USLEt_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_N_APPkg_ha = N_APPkg_ha - N_APPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_P_APPkg_ha = P_APPkg_ha - P_APPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NAUTOkg_ha = NAUTOkg_ha - NAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PAUTOkg_ha = PAUTOkg_ha - PAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NGRZkg_ha = NGRZkg_ha - NGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PGRZkg_ha = PGRZkg_ha - PGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NCFRTkg_ha = NCFRTkg_ha - NCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PCFRTkg_ha = PCFRTkg_ha - PCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NRAINkg_ha = NRAINkg_ha - NRAINkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NFIXkg_ha = NFIXkg_ha - NFIXkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_F_MPkg_ha = F_MPkg_ha - F_MPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_AO_LPkg_ha = AO_LPkg_ha - AO_LPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_L_APkg_ha = L_APkg_ha - L_APkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_A_SPkg_ha = A_SPkg_ha - A_SPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_DNITkg_ha = DNITkg_ha - DNITkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NUPkg_ha = NUPkg_ha - NUPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_PUPkg_ha = PUPkg_ha - PUPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_ORGNkg_ha= ORGNkg_ha - ORGNkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_ORGPkg_ha = ORGPkg_ha - ORGPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SEDPkg_ha = SEDPkg_ha - SEDPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NSURQkg_ha = NSURQkg_ha - NSURQkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NLATQkg_ha = NLATQkg_ha - NLATQkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NO3Lkg_ha = NO3Lkg_ha - NO3Lkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NO3GWkg_ha = NO3GWkg_ha - NO3GWkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SOLPkg_ha = SOLPkg_ha - SOLPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_P_GWkg_ha = P_GWkg_ha - P_GWkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_W_STRS = W_STRS - W_STRS[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TMP_STRS = TMP_STRS - TMP_STRS[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_N_STRS = N_STRS - N_STRS[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_P_STRS = P_STRS - P_STRS[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_BIOMt_ha = BIOMt_ha - BIOMt_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_LAI = LAI - LAI[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_GW_Qmm = GW_Qmm - GW_Qmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_WYLDmm = WYLDmm - WYLDmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_YLDt_ha = YLDt_ha - YLDt_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_BACTPct = BACTPct - BACTPct[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_BACTLPct = BACTLPct - BACTLPct[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_unknown1 = unknown1 - unknown1[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_unknown2 = unknown2 - unknown2[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_SNOmm = SNOmm - SNOmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_CMUPkg_ha = CMUPkg_ha - CMUPkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_CMTOTkg_ha = CMTOTkg_ha - CMTOTkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_QTILEmm = QTILEmm - QTILEmm[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TNO3kg_ha = TNO3kg_ha - TNO3kg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_NAUTOkg_ha = NAUTOkg_ha - NAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_LNO3kg_ha = LNO3kg_ha - LNO3kg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_GW_Q_Dmm = NGRZkg_ha - NGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_LATQCNTmm = PGRZkg_ha - PGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          AbsChange_TVAPkg_ha = NCFRTkg_ha - NCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
+                          )%>%ungroup()%>%
+            dplyr::mutate_if(is.numeric, round, 2)
+        
+    })
+    
+    
+    SWATHru_data_comp <- reactive({
+        req(SWATHru_data_rel())
+        SWATHru_data_rel() %>%
+            dplyr::filter(Watershed %in% input$SWAT_wshed &
+                              Scenario %in% input$SWAT_scen_hru_comp)%>% 
+            dplyr::filter(LULC %in% input$SWAT_hru_lulc)%>%
+            dplyr::filter(MEAN_SLOPE >= min(input$swat_thresh_slp) & MEAN_SLOPE <= max(input$swat_thresh_slp) )%>%
+            arrange_at(.vars = input$swat_var_hru, desc)
+    })
+    
+    
+    swat_hru_table <- reactive({
+        req(SWATHru_data_comp())
+        
+        SWATHru_data_comp() %>% as.data.frame() %>%
+            dplyr::select(-geometry) %>%
+            dplyr::select(GIS, LULC, SUBBASIN, LU_CODE, MEAN_SLOPE, AREA,
+                          input$swat_var_hru,
+                          paste0("AbsChange_",input$swat_var_hru))
+    })
+    
+    
+    
+    
+    
+    ## -----------------------------------------------------------------------------------------------------------##
+    ## ---------------------------------TAble output subwatersheds df SWAT----------------------------------------##
+    ## -----------------------------------------------------------------------------------------------------------##
+    
     
     output$tablesub <- DT::renderDataTable(
         swat_sub_table(),
@@ -3658,7 +3942,39 @@ server <- function(input, output, session) {
         
     )
     
+    ## -----------------------------------------------------------------------------------------------------------##
+    ## ---------------------------------TAble output HRU df SWAT-------------------------------------------------------##
+    ## -----------------------------------------------------------------------------------------------------------##
     
+    
+    output$tablehru <- DT::renderDataTable(
+        swat_hru_table(),
+        extensions = list("Buttons" = NULL, 'Scroller' = NULL),
+        options = list(
+            deferRender = TRUE,
+            autoWidth = TRUE,
+            scrollY = 350,
+            scrollX = 200,
+            scroller = TRUE,
+            dom = 'BRSfrti',
+            buttons =
+                list(
+                    'copy',
+                    'print',
+                    list(
+                        extend = 'collection',
+                        buttons = c('csv', 'excel', 'pdf'),
+                        text = 'Download'
+                    )
+                ),
+            # pageLength = 5,
+            fixedHeader = TRUE,
+            fillContainer = F,
+            class = "display",
+            columnDefs = list(list(className = 'dt-left'))
+        ),
+        rownames = FALSE  
+    )
     
     # output$testtab2 <- renderTable({
     #     reach_subset()
@@ -4201,8 +4517,6 @@ server <- function(input, output, session) {
                     
                 }
     })
-    
-    
     
     output$Sed_stats_by_category <- DT::renderDataTable(
         sed_stats_df(),
@@ -5454,14 +5768,16 @@ server <- function(input, output, session) {
     ## -----------------------------------------------------------------------------------------------------------##
     
     output$Plotsub <- leaflet::renderLeaflet({
-        # req(SWATSub_subset_base())
-        # req(input$swat_var_sub)
+        req(SWATSub_subset_base())
+        req(SWATSub_data_comp())
+        req(input$swat_var_sub)
+        
         
         tmsub<-tm_shape(SWATSub_data_comp(), name = "Difference between comparison & baseline scenario") +
             tmap::tm_polygons(
                 paste0("AbsChange_",input$swat_var_sub),
                 id = "watershed",
-                palette = "-inferno",
+                palette = "plasma",
                 legend.hist = TRUE,
                 style = "pretty",
                 # style = "fixed",
@@ -5474,7 +5790,7 @@ server <- function(input, output, session) {
             tmap::tm_polygons(
                         input$swat_var_sub,
                         id = "watershed",
-                        palette = "-inferno",
+                        palette = "plasma",
                         legend.hist = TRUE,
                         style = "pretty",
                         # style = "fixed",
@@ -5488,7 +5804,7 @@ server <- function(input, output, session) {
                     tmap::tm_polygons(
                         input$swat_var_sub,
                         id = "watershed",
-                        palette = "-inferno",
+                        palette = "plasma",
                         legend.hist = TRUE,
                         style = "pretty",
                         # style = "fixed",
@@ -5507,57 +5823,48 @@ server <- function(input, output, session) {
                                zoomAnimation = TRUE,position = "bottomleft",height = 100)
     })
     
-    # output$Plotsub <- leaflet::renderLeaflet({
-    #     req(Spatial_data())
-    #     req(Spatial_subset_comp())
-    #     req(input$S_scen_comp)
-    #     req(input$S_variable)
-    #     req(Spatial_subset_base())
-    #     req(input$S_scen_base)
-    #     tm2 <-tm_shape(Spatial_subset_comp(), name = "Difference between comparison & baseline scenario") +
-    #         tmap::tm_polygons(
-    #             paste0("AbsChange_", input$S_variable),
-    #             id = "watershed",
-    #             palette = "-inferno",
-    #             style = "pretty",
-    #             # style = "fixed",
-    #             # breaks = c(0, 1, 10, 100, 1000,
-    #             #            5000, 10000, 15000,20000,Inf),
-    #             title = "Comparison minus Baseline"
-    #         )+
-    #         tm_shape(Spatial_subset_base(), name = "Baseline Scenario") +
-    #         # tm_borders(lwd = 0, alpha=0.0) +
-    #         tmap::tm_polygons(
-    #             input$S_variable,
-    #             id = "watershed",
-    #             palette = "-inferno",
-    #             # style = "log10_pretty"
-    #             style = "fixed",
-    #             breaks = c(0, 1, 10, 100, 1000,
-    #                        5000, 10000, 15000,20000,Inf),
-    #             title = " "
-    #         )+
-    #         tm_shape(Spatial_subset_comp(), name = "Comparison Scenario") +
-    #         tmap::tm_polygons(
-    #             input$S_variable,
-    #             id = "watershed",
-    #             palette = "-inferno",
-    #             legend.hist = TRUE,
-    #             # style = "log10_pretty",
-    #             style = "fixed",
-    #             breaks = c(0, 1, 10, 100, 1000,
-    #                        5000, 10000, 15000,20000,Inf),
-    #             legend.show = FALSE,
-    #         ) +
-    #         tmap::tm_layout(scale = 0.1,
-    #                         title = "")
-    #     
-    #     tmap_leaflet(tm2,in.shiny = TRUE)  %>%
-    #         addMiniMap(tiles = providers$Esri.WorldStreetMap,
-    #                    toggleDisplay = TRUE,
-    #                    zoomAnimation = TRUE,position = "bottomleft",height = 100)
-    # })
+    ## -----------------------------------------------------------------------------------------------------------##
+    ## ---------------------------------Plots:HRU DF-------------------------------------------------------##
+    ## -----------------------------------------------------------------------------------------------------------##
     
+    output$Plothru <- leaflet::renderLeaflet({
+        tmhru<-tm_shape(SWATHru_data_comp(), name = "Difference between comparison & baseline scenario") +
+            tmap::tm_polygons(
+                paste0("AbsChange_",input$swat_var_hru),
+                id = "watershed",
+                palette = "plasma",
+                legend.hist = TRUE,
+                style = "pretty",
+                title = "Comparison minus Baseline"
+            )+
+            tm_shape(SWATHru_subset_base(), name = "Baseline Scenario") +
+            tmap::tm_polygons(
+                input$swat_var_hru,
+                id = "watershed",
+                palette = "plasma",
+                legend.hist = TRUE,
+                style = "pretty",
+                title = "Baseline Scenario "
+            )+
+            tm_shape(SWATHru_data_comp(), name = "Comparison Scenario") +
+            tmap::tm_polygons(
+                input$swat_var_hru,
+                id = "watershed",
+                palette = "plasma",
+                legend.hist = TRUE,
+                style = "pretty",
+                title = "Comparison Scenario"
+            )+
+            tmap::tm_layout(scale = 0.1,
+                            title = "")
+        
+        
+        tmap_leaflet(tmhru,in.shiny = TRUE)  %>%
+            addMiniMap(tiles = providers$Esri.WorldStreetMap,
+                       toggleDisplay = TRUE,
+                       zoomAnimation = TRUE,position = "bottomleft",height = 100)
+        
+    })
     
     
     observe_helpers()
@@ -5568,3 +5875,4 @@ server <- function(input, output, session) {
 # Run the application
 shinyApp(ui = ui, server = server)
 # run_with_themer(shinyApp(ui = ui, server = server))
+#bg = "#14213D", fg = "#FFF"
