@@ -9,25 +9,25 @@
 #
 #
 
-# thumbnail_label1 <- function(image, label, content){
-#     div(class = "row", style="height:360px",
-#         div(class = "col-sm-14 col-md-12",
-#             div(class = "thumbnail",style="background-color:#17141D;height:60px",
-#                 img(src = image, alt = "...", width ="100%",
-#                     div(class = "caption",style="color:#ffffff;max-width: 100%", h3(label), p(content)
-#                     )))))
-# }
-
-
 thumbnail_label1 <- function(image, label, content){
-    div(class = "row", style="height:370px",
+    div(class = "row", style="height:410px",
         div(class = "col-sm-14 col-md-12",
-            div(class = "thumbnail",style="height:50px",
+            div(class = "thumbnail",style="background-color:#17141D;height:60px",
                 img(src = image, alt = "...", width ="100%",
-                    div(class = "caption",style="max-width: 100%;text-align:centre",
-                        h4(label)), div(class = "description",style="max-width:90%;text-justify:inter-word", p(content)
+                    div(class = "caption",style=";max-width: 100%", h3(label), p(content)
                     )))))
 }
+
+
+# thumbnail_label1 <- function(image, label, content){
+#     div(class = "row", style="height:370px",
+#         div(class = "col-sm-14 col-md-12",
+#             div(class = "thumbnail",style="height:50px",
+#                 img(src = image, alt = "...", width ="100%",
+#                     div(class = "caption",style="max-width: 100%;text-align:centre",
+#                         h4(label)), div(class = "description",style="max-width:90%;text-justify:inter-word", p(content)
+#                     )))))
+# }
 
 ### customize the html bakground image function to blur the image
 

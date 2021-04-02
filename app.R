@@ -103,22 +103,11 @@ ui <- navbarPage(
     ## ----------------------------------Set Theme------------------------------------------##
     ## set the theme
     
-   # theme = bslib:: bs_theme(
-   #      bg = "#202123", 
-   #      fg = "#B8BCC2", 
-   #      primary = "#EA80FC", 
-   #      secondary = "#1900A0",
-   #      success = "#38FF12",
-   #      info = "#00F5FB",
-   #      warning = "#FFF100",
-   #      danger = "#FF00E3",
-   #      # base_font = "Marker Felt",
-   #      heading_font = bslib::font_google("Oswald"),
-   #      # code_font = "Chalkduster",
-   #      base_font = bslib::font_google("Oswald")
-   #  ),
+   
         
-   theme = bslib::bs_theme(bootswatch = "minty", bg=, fg=),
+   theme = bslib::bs_theme(bootswatch = "minty",  bg = "#2f3e46", fg = "#fff",
+                           base_font = bslib::font_google("Oswald")
+                          ),
     
     ## ----------------------------------Start defining Tabs------------------------------------------##
     
@@ -147,7 +136,7 @@ ui <- navbarPage(
                         align  = "center",
                         
                         HTML(
-                            '<div style="background:transparent !important" class="jumbotron" >
+                            '<div   class="jumbotron" >
                                                       <h1  style="">Viz-WEPPcloud </h1>
                                                       <h4  style="">A post-processing tool for identifying and examining impacts of management on pollutant 
                                                       source areas in large spatially explicit watershed output files.</h4>
@@ -162,7 +151,7 @@ ui <- navbarPage(
                     #     12,
                         # offset = 1,
                     #     align  = "center",
-                        column(3,
+                        column(4,
                                align  = "center",
                                # offset = 1,
                                thumbnail_label1(
@@ -175,7 +164,7 @@ ui <- navbarPage(
                                           color = "success")
                         ),
                         column(
-                            3,
+                            4,
                             align  = "center",
                             thumbnail_label1(
                                 image = 'hillslope_img.jpg',
@@ -187,7 +176,7 @@ ui <- navbarPage(
                                        color = "success")
                         ),
                         column(
-                            3,
+                            4,
                             align  = "center",
                             thumbnail_label1(
                                 image = 'spatial_imp.PNG',
@@ -196,18 +185,18 @@ ui <- navbarPage(
                             ),
                             actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("layer-group"),style = "pill",
                                        color = "success")
-                        ),
-                        column(
-                            3,
-                            align  = "center",
-                            thumbnail_label1(
-                                image = 'hru1.jpg',
-                                label = 'SWAT-Viz',
-                                content = 'Visualize hydrologic response unit (HRU) scale output and targeted hotspots across multiple watersheds for multiple treatments.'
-                            ),
-                            actionBttn("Swatbutton", "Navigate to SWAT-Viz", icon = icon("layer-group"),style = "pill",
-                                       color = "success")
                         )
+                        # column(
+                        #     3,
+                        #     align  = "center",
+                        #     thumbnail_label1(
+                        #         image = 'hru1.jpg',
+                        #         label = 'SWAT-Viz',
+                        #         content = 'Visualize hydrologic response unit (HRU) scale output and targeted hotspots across multiple watersheds for multiple treatments.'
+                        #     ),
+                        #     actionBttn("Swatbutton", "Navigate to SWAT-Viz", icon = icon("layer-group"),style = "pill",
+                        #                color = "success")
+                        # )
                     # )
                 ),
                 HTML("<br style = “line-height:10;”><br>"),
@@ -216,9 +205,9 @@ ui <- navbarPage(
                         12,
                         # offset = 3,
                         align  = "center",
-                        
-                        style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;", #background-color:#eae2e2;#F8F9FA;
-                        
+                        #background:transparent !important;
+                        # style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;", #background-color:#eae2e2;#F8F9FA;
+                        style=" padding-left:10px;padding-top:10px;padding-bottom:10px;background-color:#59656B",
                        tags$div(
                            tags$p(
                                "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
@@ -404,7 +393,7 @@ ui <- navbarPage(
                     ) %>%
                         helper(
                             icon = "question-circle",
-                            colour = "#FF0000",
+                            colour = "#00ffff",
                             content = "H_plot_thresh",
                             type = "markdown",
                             size = "l",
@@ -462,7 +451,7 @@ ui <- navbarPage(
                     # HTML("<br style = “line-height:5;”><br>"),
                     # uiOutput("Exp3_Exp4") %>% withSpinner(color =
                     #                                           "#0dc5c1"),
-                    # HTML("<br style = “line-height:5;”><br>"),
+                    HTML("<br style = “line-height:5;”><br>"),
                     fluidRow(
                         column(
                             6,
@@ -475,7 +464,7 @@ ui <- navbarPage(
                             plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 8 )
                         )
                     )),
-                    tabPanel("Plot",icon =icon("table"), style = 'padding:20px;',
+                    tabPanel("Table",icon =icon("table"), style = 'padding:20px;',
                     # HTML("<br style = “line-height:5;”><br>"),
                     
                     
@@ -544,7 +533,7 @@ ui <- navbarPage(
                 ) %>%
                     helper(
                         icon = "question-circle",
-                        colour = "#FF0000",
+                        colour = "#00ffff",
                         content = "S_plot_thresh",
                         type = "markdown",
                         size = "l",
@@ -568,7 +557,7 @@ ui <- navbarPage(
                 ) %>%
                     helper(
                         icon = "question-circle",
-                        colour = "#FF0000",
+                        colour = "#00ffff",
                         content = "S_slope_thresh",
                         type = "markdown",
                         size = "l",
@@ -603,70 +592,70 @@ ui <- navbarPage(
             
             
         )
-    ),
+    )
     
     # ## -----------------------------------------SWAT-viz Tab---------------------------------------------##
     
-    tabPanel(
-        "SWAT-Viz",
-        
-        tags$head(includeHTML((
-            "google-analytics.html"
-        ))),
-        
-        
-        
-        column(
-            width = 12,
-            style = 'padding-top:70px;',
-            
-            # Set up shinyalert
-            useShinyalert(),
-            
-            sidebarLayout(
-                position = "left",
-                sidebarPanel(
-                    width = 4,
-                    
-                    awesomeRadio(
-                        inputId = "DefOrUserUpload_SWAT",
-                        label = "Data Import Options:",
-                        choices = c(
-                            "Default Data (WE38)" = "Default_Data_WE38",
-                            "Upload data" = "Upload data"
-                        ),
-                        selected = "Default_Data_WE38",
-                        status = 'success'
-                    ),
-                    
-                    
-                    uiOutput("SWAT_FileInput"),
-                    uiOutput("Which_SWAT_out"),
-                    uiOutput("SWAT_wshed_mgmt_optns"),
-                    uiOutput("SWAT_wshed"),
-                    uiOutput("SWAT_scen"),
-                    uiOutput("SWAT_scen_comp"),
-                    uiOutput("SWAT_variable"),
-                    uiOutput("SWAT_reachno"),
-                    uiOutput("SWAT_subnum"),
-                    uiOutput("swat_hru_lulc"),
-                    uiOutput("hru_slp_slider")
-                    
-                    # 
-                    
-                ),
-                
-                # Main panel for displaying outputs ----
-                mainPanel(
-                    width = 8,
-                    
-                uiOutput("swat_tabpanels")
-                    
-                    
-                )
-            )
-        )
-    )
+    # tabPanel(
+    #     "SWAT-Viz",
+    #     
+    #     tags$head(includeHTML((
+    #         "google-analytics.html"
+    #     ))),
+    #     
+    #     
+    #     
+    #     column(
+    #         width = 12,
+    #         style = 'padding-top:70px;',
+    #         
+    #         # Set up shinyalert
+    #         useShinyalert(),
+    #         
+    #         sidebarLayout(
+    #             position = "left",
+    #             sidebarPanel(
+    #                 width = 4,
+    #                 
+    #                 awesomeRadio(
+    #                     inputId = "DefOrUserUpload_SWAT",
+    #                     label = "Data Import Options:",
+    #                     choices = c(
+    #                         "Default Data (WE38)" = "Default_Data_WE38",
+    #                         "Upload data" = "Upload data"
+    #                     ),
+    #                     selected = "Default_Data_WE38",
+    #                     status = 'success'
+    #                 ),
+    #                 
+    #                 
+    #                 uiOutput("SWAT_FileInput"),
+    #                 uiOutput("Which_SWAT_out"),
+    #                 uiOutput("SWAT_wshed_mgmt_optns"),
+    #                 uiOutput("SWAT_wshed"),
+    #                 uiOutput("SWAT_scen"),
+    #                 uiOutput("SWAT_scen_comp"),
+    #                 uiOutput("SWAT_variable"),
+    #                 uiOutput("SWAT_reachno"),
+    #                 uiOutput("SWAT_subnum"),
+    #                 uiOutput("swat_hru_lulc"),
+    #                 uiOutput("hru_slp_slider")
+    #                 
+    #                 # 
+    #                 
+    #             ),
+    #             
+    #             # Main panel for displaying outputs ----
+    #             mainPanel(
+    #                 width = 8,
+    #                 
+    #             uiOutput("swat_tabpanels")
+    #                 
+    #                 
+    #             )
+    #         )
+    #     )
+    # )
     
     
 )
@@ -812,7 +801,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select watershed ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     ),
                     choicesOpt = list(content = stringr::str_trunc(
                         unique(Wshed_data()$Watershed),
@@ -829,7 +819,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select scenario ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                 }
@@ -845,7 +836,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select watershed ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                 } else
@@ -858,7 +850,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select scenario ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                         )
                     }
@@ -875,7 +868,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select watershed ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                         )
                     } else
@@ -888,7 +882,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select scenario ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                         }
@@ -905,7 +900,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select watershed ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 ),
                                 choicesOpt = list(content = stringr::str_trunc(
                                     unique(Wshed_data()$Watershed),
@@ -922,7 +918,8 @@ server <- function(input, output, session) {
                                         `actions-box` = TRUE,
                                         `header` = "Select scenario ",
                                         `windowPadding` = 1,
-                                        `width` = " css-width "
+                                        `width` = " css-width ",
+                                        `size`= 6
                                     )
                                 )
                             }
@@ -939,7 +936,8 @@ server <- function(input, output, session) {
                                         `actions-box` = TRUE,
                                         `header` = "Select watershed ",
                                         `windowPadding` = 1,
-                                        `width` = " css-width "
+                                        `width` = " css-width ",
+                                        `size`= 6
                                     )
                                 )
                             } else
@@ -952,7 +950,8 @@ server <- function(input, output, session) {
                                             `actions-box` = TRUE,
                                             `header` = "Select scenario ",
                                             `windowPadding` = 1,
-                                            `width` = " css-width "
+                                            `width` = " css-width ",
+                                            `size`= 6
                                         )
                                     )
                                 }
@@ -979,7 +978,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select watersheds ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                 }
@@ -999,7 +999,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select watersheds ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                         )
                     }
@@ -1020,7 +1021,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select watersheds ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                         }
@@ -1041,7 +1043,8 @@ server <- function(input, output, session) {
                                         `actions-box` = TRUE,
                                         `header` = "Select watersheds ",
                                         `windowPadding` = 1,
-                                        `width` = "css-width"
+                                        `width` = "css-width",
+                                        `size`= 6
                                     ),
                                     choicesOpt = list(content = stringr::str_trunc(
                                         unique(Wshed_data()$Watershed),
@@ -1066,7 +1069,8 @@ server <- function(input, output, session) {
                                             `actions-box` = TRUE,
                                             `header` = "Select watersheds ",
                                             `windowPadding` = 1,
-                                            `width` = " css-width "
+                                            `width` = " css-width ",
+                                            `size`= 6
                                         )
                                     )
                                 }
@@ -1092,7 +1096,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select metric ",
                     `windowPadding` = 1,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 ),
                 choicesOpt = list(content = stringr::str_trunc(
                     colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
@@ -1109,7 +1114,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select metric ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     ),
                     choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                        "Watershed",
@@ -1132,7 +1138,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select metric ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         ),
                         choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                            "Watershed",
@@ -1156,7 +1163,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             ),
                             choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                                "Watershed",
@@ -1179,7 +1187,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select metric ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 ),
                                 choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                                    "Watershed",
@@ -1214,7 +1223,7 @@ server <- function(input, output, session) {
             ) %>%
                 helper(
                     icon = "question-circle",
-                    colour = "#FF0000",
+                    colour = "#00ffff",
                     content = "H_upload",
                     type = "markdown",
                     size = "l",
@@ -1515,7 +1524,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select metric ",
                     `windowPadding` = 2,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 )
             )
         } else
@@ -1548,7 +1558,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select metric ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     )
                 )
                 
@@ -1582,7 +1593,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select metric ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                     
@@ -1616,7 +1628,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             ),
                             choicesOpt = list(content = stringr::str_trunc(
                                 c(
@@ -1671,7 +1684,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select metric ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                             
@@ -1692,7 +1706,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select watershed ",
                     `windowPadding` = 1,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 )
             )
             
@@ -1707,7 +1722,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select watershed ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     )
                 )
                 
@@ -1722,7 +1738,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select watershed ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                     
@@ -1737,7 +1754,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select watershed ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             ),
                             choicesOpt = list(content = stringr::str_trunc(
                                 unique(Hill_data()$Watershed),
@@ -1755,7 +1773,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select watershed ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                             
@@ -1778,7 +1797,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select baseline scenario ",
                     `windowPadding` = 1,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 )
             )
         } else
@@ -1793,7 +1813,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select baseline scenario ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     )
                 )
                 
@@ -1809,7 +1830,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select baseline scenario ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                     
@@ -1825,7 +1847,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select baseline scenario ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                         )
                         
@@ -1841,7 +1864,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select baseline scenario ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                             
@@ -1864,7 +1888,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select comparison scenario ",
                     `windowPadding` = 1,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 )
             )
         } else
@@ -1879,7 +1904,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select comparison scenario ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     )
                     
                 )
@@ -1896,7 +1922,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select comparison scenario ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                         
                     )
@@ -1913,7 +1940,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select comparison scenario ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                             
                         )
@@ -1930,7 +1958,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select comparison scenario ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                                 
                             )
@@ -1954,7 +1983,8 @@ server <- function(input, output, session) {
                     `actions-box` = TRUE,
                     `header` = "Select scenario ",
                     `windowPadding` = 1,
-                    `width` = " css-width "
+                    `width` = " css-width ",
+                    `size`= 6
                 )
             )
         } else
@@ -1969,7 +1999,8 @@ server <- function(input, output, session) {
                         `actions-box` = TRUE,
                         `header` = "Select scenario ",
                         `windowPadding` = 1,
-                        `width` = " css-width "
+                        `width` = " css-width ",
+                        `size`= 6
                     )
                 )
                 
@@ -1985,7 +2016,8 @@ server <- function(input, output, session) {
                             `actions-box` = TRUE,
                             `header` = "Select scenario ",
                             `windowPadding` = 1,
-                            `width` = " css-width "
+                            `width` = " css-width ",
+                            `size`= 6
                         )
                     )
                     
@@ -2001,7 +2033,8 @@ server <- function(input, output, session) {
                                 `actions-box` = TRUE,
                                 `header` = "Select scenario ",
                                 `windowPadding` = 1,
-                                `width` = " css-width "
+                                `width` = " css-width ",
+                                `size`= 6
                             )
                         )
                         
@@ -2017,7 +2050,8 @@ server <- function(input, output, session) {
                                     `actions-box` = TRUE,
                                     `header` = "Select scenario ",
                                     `windowPadding` = 1,
-                                    `width` = " css-width "
+                                    `width` = " css-width ",
+                                    `size`= 6
                                 )
                             )
                             
@@ -2039,7 +2073,7 @@ server <- function(input, output, session) {
                 placeholder = "No file selected",
                 accept = c(".RDS", ".qs")
             )%>% 
-                helper(icon = "question-circle", colour = "#FF0000",
+                helper(icon = "question-circle", colour = "#00ffff",
                        content = "S_upload",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -2098,7 +2132,8 @@ server <- function(input, output, session) {
                 options = list(`actions-box` = TRUE,
                                `header` = "Select Watershed",
                                `windowPadding` = 1,
-                               `width` = " css-width "),
+                               `width` = " css-width ",
+                               `size`= 6),
                 selected = unique(Spatial_data()$Watershed)[1],
                 multiple = T
             )
@@ -2111,7 +2146,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select Watershed",
                                    `windowPadding` = 1,
-                                   `width` = " css-width "),
+                                   `width` = " css-width ",
+                                   `size`= 6),
                     selected = unique(Spatial_data()$Watershed)[1],
                     multiple = T
                 )
@@ -2125,7 +2161,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Watershed",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(Spatial_data()$Watershed)[1],
                         multiple = T
                     )
@@ -2139,7 +2176,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select Watershed",
                                            `windowPadding` = 1,
-                                           `width` = " css-width "),
+                                           `width` = " css-width ",
+                                           `size`= 6),
                             choicesOpt = list(
                                 content = stringr::str_trunc(unique(Spatial_data()$Watershed),
                                                              width = 25)),
@@ -2156,7 +2194,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select Watershed",
                                                `windowPadding` = 1,
-                                               `width` = " css-width "),
+                                               `width` = " css-width ",
+                                               `size`= 6),
                                 selected = unique(Spatial_data()$Watershed)[1],
                                 multiple = T
                             )
@@ -2178,7 +2217,8 @@ server <- function(input, output, session) {
                 options = list(`actions-box` = TRUE,
                                `header` = "Select baseline scenario ",
                                `windowPadding` = 1,
-                               `width` = " css-width ")
+                               `width` = " css-width ",
+                               `size`= 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2191,7 +2231,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select baseline scenario ",
                                    `windowPadding` = 1,
-                                   `width` = " css-width ")
+                                   `width` = " css-width ",
+                                   `size`= 6)
                 )
                 
             }else
@@ -2205,7 +2246,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select baseline scenario ",
                                        `windowPadding` = 1,
-                                       `width` = " css-width ")
+                                       `width` = " css-width ",
+                                       `size`= 6)
                     )
                     
                 }else
@@ -2219,7 +2261,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select baseline scenario ",
                                            `windowPadding` = 1,
-                                           `width` = " css-width ")
+                                           `width` = " css-width ",
+                                           `size`= 6)
                         )
                         
                     }else
@@ -2233,7 +2276,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select baseline scenario ",
                                                `windowPadding` = 1,
-                                               `width` = " css-width ")
+                                               `width` = " css-width ",
+                                               `size`= 6)
                             )
                             
                         }
@@ -2253,7 +2297,8 @@ server <- function(input, output, session) {
                 options = list(`actions-box` = TRUE,
                                `header` = "Select comparison scenario ",
                                `windowPadding` = 1,
-                               `width` = " css-width ")
+                               `width` = " css-width ",
+                               `size`= 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2266,7 +2311,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select comparison scenario ",
                                    `windowPadding` = 1,
-                                   `width` = " css-width ")
+                                   `width` = " css-width ",
+                                   `size`= 6)
                 )
                 
             }else
@@ -2280,7 +2326,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select comparison scenario ",
                                        `windowPadding` = 1,
-                                       `width` = " css-width ")
+                                       `width` = " css-width ",
+                                       `size`= 6)
                     )
                     
                 }else
@@ -2294,7 +2341,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select comparison scenario ",
                                            `windowPadding` = 1,
-                                           `width` = " css-width ")
+                                           `width` = " css-width ",
+                                           `size`= 6)
                         )
                         
                     }else
@@ -2308,7 +2356,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select comparison scenario ",
                                                `windowPadding` = 1,
-                                               `width` = " css-width ")
+                                               `width` = " css-width ",
+                                               `size`= 6)
                             )
                             
                         }
@@ -2338,7 +2387,8 @@ server <- function(input, output, session) {
                 options = list(`actions-box` = TRUE,
                                `header` = "Select metric ",
                                `windowPadding` = 1,
-                               `width` = " css-width ")
+                               `width` = " css-width ",
+                               `size`= 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2361,7 +2411,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select metric ",
                                    `windowPadding` = 1,
-                                   `width` = " css-width ")
+                                   `width` = " css-width ",
+                                   `size`= 6)
                 )
                 
             }else
@@ -2385,7 +2436,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select metric ",
                                        `windowPadding` = 1,
-                                       `width` = " css-width ")
+                                       `width` = " css-width ",
+                                       `size`= 6)
                     )
                     
                 }else
@@ -2409,7 +2461,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select metric ",
                                            `windowPadding` = 1,
-                                           `width` = " css-width ")
+                                           `width` = " css-width ",
+                                           `size`= 6)
                         )
                         
                     }else
@@ -2433,7 +2486,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select metric ",
                                                `windowPadding` = 1,
-                                               `width` = " css-width ")
+                                               `width` = " css-width ",
+                                               `size`= 6)
                             )
                             
                         }
@@ -2780,7 +2834,8 @@ server <- function(input, output, session) {
                 options = list(`actions-box` = TRUE,
                                `header` = "Select Watershed",
                                `windowPadding` = 1,
-                               `width` = " css-width "),
+                               `width` = " css-width ",
+                               `size`= 6),
                 selected = unique(SWAT_data()$Watershed)[1],
                 multiple = F
             )
@@ -2795,7 +2850,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Watershed",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$Watershed)[1],
                         multiple = T
                     )}else
@@ -2807,7 +2863,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select Watershed",
                                                `windowPadding` = 1,
-                                               `width` = " css-width "),
+                                               `width` = " css-width ",
+                                               `size`= 6),
                                 selected = unique(SWAT_data()$Watershed)[1],
                                 multiple = F
                             )
@@ -2821,7 +2878,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select Watershed",
                                            `windowPadding` = 1,
-                                           `width` = " css-width "),
+                                           `width` = " css-width ",
+                                           `size`= 6),
                             selected = unique(SWAT_data()$Watershed)[1],
                             multiple = F
                         )
@@ -2837,7 +2895,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Watershed",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$Watershed)[1],
                         multiple = F
                     )
@@ -2852,7 +2911,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select Watershed",
                                                `windowPadding` = 1,
-                                               `width` = " css-width "),
+                                               `width` = " css-width ",
+                                               `size`= 6),
                                 selected = unique(SWAT_data()$Watershed)[1],
                                 multiple = T
                             )}else
@@ -2864,7 +2924,8 @@ server <- function(input, output, session) {
                                         options = list(`actions-box` = TRUE,
                                                        `header` = "Select Watershed",
                                                        `windowPadding` = 1,
-                                                       `width` = " css-width "),
+                                                       `width` = " css-width ",
+                                                       `size`= 6),
                                         selected = unique(SWAT_data()$Watershed)[1],
                                         multiple = F
                                     )
@@ -2878,7 +2939,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select Watershed",
                                                `windowPadding` = 1,
-                                               `width` = " css-width "),
+                                               `width` = " css-width ",
+                                               `size`= 6),
                                 selected = unique(SWAT_data()$Watershed)[1],
                                 multiple = F
                             )
@@ -2900,7 +2962,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select Scenario",
                                    `windowPadding` = 1,
-                                   `width` = " css-width "),
+                                   `width` = " css-width ",
+                                   `size`= 6),
                     selected = unique(SWAT_data()$Scenario)[1],
                     multiple = F
                 )
@@ -2917,7 +2980,8 @@ server <- function(input, output, session) {
                                     options = list(`actions-box` = TRUE,
                                                    `header` = "Select Scenario",
                                                    `windowPadding` = 1,
-                                                   `width` = " css-width "),
+                                                   `width` = " css-width ",
+                                                   `size`= 6),
                                     selected = unique(SWAT_data()$Scenario)[1],
                                     multiple = F
                                 )
@@ -2931,7 +2995,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select Scenario",
                                            `windowPadding` = 1,
-                                           `width` = " css-width "),
+                                           `width` = " css-width ",
+                                           `size`= 6),
                             selected = unique(SWAT_data()$Scenario)[1],
                             multiple = F
                         )
@@ -2947,7 +3012,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Scenario",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$Scenario)[1],
                         multiple = F
                     )
@@ -2964,7 +3030,8 @@ server <- function(input, output, session) {
                                     options = list(`actions-box` = TRUE,
                                                    `header` = "Select Scenario",
                                                    `windowPadding` = 1,
-                                                   `width` = " css-width "),
+                                                   `width` = " css-width ",
+                                                   `size`= 6),
                                     selected = unique(SWAT_data()$Scenario)[1],
                                     multiple = F
                                 )
@@ -2978,7 +3045,8 @@ server <- function(input, output, session) {
                                 options = list(`actions-box` = TRUE,
                                                `header` = "Select Scenario",
                                                `windowPadding` = 1,
-                                               `width` = " css-width "),
+                                               `width` = " css-width ",
+                                               `size`= 6),
                                 selected = unique(SWAT_data()$Scenario)[1],
                                 multiple = F
                             )
@@ -2999,7 +3067,8 @@ server <- function(input, output, session) {
                     options = list(`actions-box` = TRUE,
                                    `header` = "Select Scenario",
                                    `windowPadding` = 1,
-                                   `width` = " css-width "),
+                                   `width` = " css-width ",
+                                   `size`= 6),
                     selected = unique(SWAT_data()$Scenario)[2],
                     multiple = F
                 )
@@ -3012,7 +3081,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Scenario",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$Scenario)[2],
                         multiple = F )  
                 }
@@ -3027,7 +3097,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Scenario",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$Scenario)[2],
                         multiple = F
                     )
@@ -3040,7 +3111,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select Scenario",
                                            `windowPadding` = 1,
-                                           `width` = " css-width "),
+                                           `width` = " css-width ",
+                                           `size`= 6),
                             selected = unique(SWAT_data()$Scenario)[2],
                             multiple = F
                         ) 
@@ -3115,7 +3187,8 @@ server <- function(input, output, session) {
                         options = list(`actions-box` = TRUE,
                                        `header` = "Select Reach",
                                        `windowPadding` = 1,
-                                       `width` = " css-width "),
+                                       `width` = " css-width ",
+                                       `size`= 6),
                         selected = unique(SWAT_data()$RCH)[1],
                         multiple = F
                     )
@@ -3137,7 +3210,8 @@ server <- function(input, output, session) {
                             options = list(`actions-box` = TRUE,
                                            `header` = "Select Reach",
                                            `windowPadding` = 1,
-                                           `width` = " css-width "),
+                                           `width` = " css-width ",
+                                           `size`= 6),
                             selected = unique(SWAT_data()$RCH)[1],
                             multiple = F
                         )
@@ -3174,7 +3248,7 @@ server <- function(input, output, session) {
                         # %>%
                         #     helper(
                         #         icon = "question-circle",
-                        #         colour = "#FF0000",
+                        #         colour = "#00ffff",
                         #         content = "H_plot_thresh",
                         #         type = "markdown",
                         #         size = "l",
@@ -3207,7 +3281,7 @@ server <- function(input, output, session) {
                             # %>%
                             #     helper(
                             #         icon = "question-circle",
-                            #         colour = "#FF0000",
+                            #         colour = "#00ffff",
                             #         content = "H_plot_thresh",
                             #         type = "markdown",
                             #         size = "l",
@@ -5875,4 +5949,3 @@ server <- function(input, output, session) {
 # Run the application
 shinyApp(ui = ui, server = server)
 # run_with_themer(shinyApp(ui = ui, server = server))
-#bg = "#14213D", fg = "#FFF"
