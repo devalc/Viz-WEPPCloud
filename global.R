@@ -10,9 +10,9 @@
 #
 
 thumbnail_label1 <- function(image, label, content){
-    div(class = "row", style="height:410px",
-        div(class = "col-sm-14 col-md-12",
-            div(class = "thumbnail",style="background-color:#17141D;height:60px",
+    div(class = "row", style="height:430px;",
+        div(class = "col-sm-14 col-md-12;background-color:#98ff98;",
+            div(class = "thumbnail",style="height:60px", #background-color:#98ff98;
                 img(src = image, alt = "...", width ="100%",
                     div(class = "caption",style=";max-width: 100%", h3(label), p(content)
                     )))))

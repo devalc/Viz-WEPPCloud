@@ -20,7 +20,6 @@
 ## ----------------------------------Load packages---------------------------------------##
 
 
-
 library(shiny,quietly = TRUE)
 library(qs,quietly = TRUE,warn.conflicts = FALSE)
 library(tools,quietly = TRUE)
@@ -40,10 +39,10 @@ library(shinyhelper,quietly = TRUE)
 library(shinyalert,quietly = TRUE)
 # library(crosstalk,quietly = TRUE)
 library(sever,quietly = TRUE)
-library(showtext, quietly = TRUE)
+# library(showtext, quietly = TRUE)
 library(ragg, quietly = TRUE)
 library(thematic, quietly = TRUE)
-library(bslib, quietly = TRUE)
+# library(bslib, quietly = TRUE)
 
 
 source("global.R")
@@ -100,14 +99,15 @@ ui <- navbarPage(
     id = 'tabs',
     
     
+    
+    
     ## ----------------------------------Set Theme------------------------------------------##
     ## set the theme
     
+    
+    theme = shinytheme("flatly"),
+    
    
-        
-   theme = bslib::bs_theme(bootswatch = "minty",  bg = "#2f3e46", fg = "#fff",
-                           base_font = bslib::font_google("Oswald")
-                          ),
     
     ## ----------------------------------Start defining Tabs------------------------------------------##
     
@@ -125,115 +125,107 @@ ui <- navbarPage(
         
         use_sever(),
         #h1("sever" )
-        
+        HTML("<br style = “line-height:10;”><br>"),
         # mainPanel(style = "background-color:#d5c4c4"
-            fluidPage(HTML("<br style = “line-height:10;”><br>"),
-                HTML("<br>"),
-                fluidRow(
-                    column(
-                        12,
-                        # offset = 1,
-                        align  = "center",
-                        
-                        HTML(
-                            '<div   class="jumbotron" >
-                                                      <h1  style="">Viz-WEPPcloud </h1>
-                                                      <h4  style="">A post-processing tool for identifying and examining impacts of management on pollutant 
+        fluidPage(HTML("<br style = “line-height:10;”><br>"),
+                  HTML("<br>"),
+                  fluidRow(
+                      column(
+                          10,
+                          offset = 1,
+                          align  = "center",
+                          
+                          HTML(
+                              '<div  class="jumbotron" style = "background-color : #2C3E50 !important;" >
+                                                      <h1  style="color:#fff">Viz-WEPPcloud </h1>
+                                                      <h4  style="color:#fff">A post-processing tool for identifying and examining impacts of management on pollutant 
                                                       source areas in large spatially explicit watershed output files.</h4>
                                                       </div>'
-                        ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
-                        
-                    )
-                ),
-                
-                fluidRow(
-                    # column(
-                    #     12,
-                        # offset = 1,
-                    #     align  = "center",
-                        column(4,
-                               align  = "center",
-                               # offset = 1,
-                               thumbnail_label1(
-                                   image = 'background.jpg',
-                                   label = 'Watershed Analysis',
-                                   content = "Inter-watershed comparison of impacts of management on annual water yield and 
+                          ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
+                          
+                      )
+                  ),
+                  
+                  fluidRow(
+                      column(
+                          11,
+                      offset = 1,
+                          align  = "center",
+                      column(3,
+                             align  = "center",
+                             offset = 1,
+                             thumbnail_label1(
+                                 image = 'background.jpg',
+                                 label = 'Watershed Analysis',
+                                 content = "Inter-watershed comparison of impacts of management on annual water yield and 
                                       water quality at the watershed outlet"
-                               ),
-                               actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"),style = "pill",
-                                          color = "success")
-                        ),
-                        column(
-                            4,
-                            align  = "center",
-                            thumbnail_label1(
-                                image = 'hillslope_img.jpg',
-                                label = 'Hillslope Analysis',
-                                content = 'Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
+                             ),
+                             actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"),style = "pill",
+                                        color = "success")
+                      ),
+                      column(
+                          3,
+                          align  = "center",
+                          # offset = 1,
+                          thumbnail_label1(
+                              image = 'hillslope_img.jpg',
+                              label = 'Hillslope Analysis',
+                              content = 'Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
                                       and management on the detachment and delivery of pollutants from these hotspots'
-                            ),
-                            actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"),style = "pill",
-                                       color = "success")
-                        ),
-                        column(
-                            4,
-                            align  = "center",
-                            thumbnail_label1(
-                                image = 'spatial_imp.PNG',
-                                label = 'Spatial Visualization',
-                                content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
-                            ),
-                            actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("layer-group"),style = "pill",
-                                       color = "success")
-                        )
-                        # column(
-                        #     3,
-                        #     align  = "center",
-                        #     thumbnail_label1(
-                        #         image = 'hru1.jpg',
-                        #         label = 'SWAT-Viz',
-                        #         content = 'Visualize hydrologic response unit (HRU) scale output and targeted hotspots across multiple watersheds for multiple treatments.'
-                        #     ),
-                        #     actionBttn("Swatbutton", "Navigate to SWAT-Viz", icon = icon("layer-group"),style = "pill",
-                        #                color = "success")
-                        # )
-                    # )
-                ),
-                HTML("<br style = “line-height:10;”><br>"),
-                fluidRow(
-                    column(
-                        12,
-                        # offset = 3,
-                        align  = "center",
-                        #background:transparent !important;
-                        # style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;", #background-color:#eae2e2;#F8F9FA;
-                        style=" padding-left:10px;padding-top:10px;padding-bottom:10px;background-color:#59656B",
-                       tags$div(
-                           tags$p(
-                               "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
-                               align = "center"
-                           ),
-                           tags$p(
-                               a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
-                               ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project',
-                               tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project",
-                                      "(WEPP)"), 'model. It estimates
+                          ),
+                          actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"),style = "pill",
+                                     color = "success")
+                      ),
+                      column(
+                          3,
+                          align  = "center",
+                          # offset = 1,
+                          thumbnail_label1(
+                              image = 'spatial_imp.PNG',
+                              label = 'Spatial Visualization',
+                              content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
+                          ),
+                          actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("layer-group"),style = "pill",
+                                     color = "success")
+                      )
+                  )),
+                  
+
+                  HTML("<br style = “line-height:10;”><br>"),
+                  fluidRow(
+                      column(
+                          10,
+                          offset = 1,
+                          align  = "center",
+
+                          style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;background-color:#2c3e50;color:#fff", #background-color:#eae2e2;#F8F9FA;
+
+                          tags$div(
+                              tags$p(
+                                  "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
+                                  align = "center"
+                              ),
+                              tags$p(
+                                  a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
+                                  ' is a cloud based simulation tool based on the process based Watershed Erosion Prediction Project',
+                                  tags$a(href="https://www.fs.usda.gov/ccrc/tools/watershed-erosion-prediction-project",
+                                         "(WEPP)"), 'model. It estimates
                                                          hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
                                                          post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
-                               .noWS = c("after-begin", "before-end"),
-                               align = "center"
-                           ),
+                                  .noWS = c("after-begin", "before-end"),
+                                  align = "center"
+                              ),
 
-                       )
-                        
-                    )
-                )
-                
-                )
-            
-            
-            # HTML("<br style = “line-height:30;”><br>"),
-           
+                          )
+
+                      )
+                  )
+                  
+        )
+        
+        
+        # HTML("<br style = “line-height:30;”><br>"),
+        
         
     ),
     
@@ -284,7 +276,7 @@ ui <- navbarPage(
                         inputId = "AreaVsScen",
                         label = "Management/watershed Options: ",
                         choices = c(
-                            "One Watershed, All Scenarios" = "allscen",
+                            "One Watershed, Selected Scenarios" = "allscen",
                             "One Scenario, Selected Watersheds" =
                                 "allwat"
                         ),
@@ -328,7 +320,7 @@ ui <- navbarPage(
                     width = 8,
                     
                     plotlyOutput("Plot9", height = "700px", width =
-                                     "800px") %>% withSpinner(type = 8 )
+                                     "1000px") %>% withSpinner(type = 8 )
                     
                 )
             )
@@ -393,7 +385,7 @@ ui <- navbarPage(
                     ) %>%
                         helper(
                             icon = "question-circle",
-                            colour = "#00ffff",
+                            colour = "#FF0000",
                             content = "H_plot_thresh",
                             type = "markdown",
                             size = "l",
@@ -436,39 +428,39 @@ ui <- navbarPage(
                     width = 9,
                     tabsetPanel(
                         tabPanel("Plot",icon =icon("chart-line"), style = 'padding:20px;',
-                    fluidRow(
-                        column(
-                            6,
-                            align = "center",
-                            plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(type = 8 )
-                        ),
-                        column(
-                            6,
-                            align = "center",
-                            plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(type = 8 )
-                        )
-                    ),
-                    # HTML("<br style = “line-height:5;”><br>"),
-                    # uiOutput("Exp3_Exp4") %>% withSpinner(color =
-                    #                                           "#0dc5c1"),
-                    HTML("<br style = “line-height:5;”><br>"),
-                    fluidRow(
-                        column(
-                            6,
-                            align = "center",
-                            plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(type = 8)
-                        ),
-                        column(
-                            6,
-                            align = "center",
-                            plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 8 )
-                        )
-                    )),
-                    tabPanel("Table",icon =icon("table"), style = 'padding:20px;',
-                    # HTML("<br style = “line-height:5;”><br>"),
-                    
-                    
-                    uiOutput("tab_H")%>% withSpinner(type = 8 )))
+                                 fluidRow(
+                                     column(
+                                         6,
+                                         align = "center",
+                                         plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(type = 8 )
+                                     ),
+                                     column(
+                                         6,
+                                         align = "center",
+                                         plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(type = 8 )
+                                     )
+                                 ),
+                                 # HTML("<br style = “line-height:5;”><br>"),
+                                 # uiOutput("Exp3_Exp4") %>% withSpinner(color =
+                                 #                                           "#0dc5c1"),
+                                 HTML("<br <br>"),
+                                 fluidRow(
+                                     column(
+                                         6,
+                                         align = "center",
+                                         plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(type = 8)
+                                     ),
+                                     column(
+                                         6,
+                                         align = "center",
+                                         plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 8 )
+                                     )
+                                 )),
+                        tabPanel("Table",icon =icon("table"), style = 'padding:20px;',
+                                 # HTML("<br style = “line-height:5;”><br>"),
+                                 
+                                 
+                                 uiOutput("tab_H")%>% withSpinner(type = 8 )))
                 )
             )
         )
@@ -533,7 +525,7 @@ ui <- navbarPage(
                 ) %>%
                     helper(
                         icon = "question-circle",
-                        colour = "#00ffff",
+                        colour = "#FF0000",
                         content = "S_plot_thresh",
                         type = "markdown",
                         size = "l",
@@ -557,7 +549,7 @@ ui <- navbarPage(
                 ) %>%
                     helper(
                         icon = "question-circle",
-                        colour = "#00ffff",
+                        colour = "#FF0000",
                         content = "S_slope_thresh",
                         type = "markdown",
                         size = "l",
@@ -573,20 +565,20 @@ ui <- navbarPage(
                 # style = 'padding:80px;',
                 tabsetPanel(
                     tabPanel("Plot",icon =icon("layer-group"), style = 'padding:20px;',
-                fluidRow(column(
-                    12,
-                    # offset = 1,
-                    leaflet::leafletOutput("Plot12",height = "600px") %>%
-                        withSpinner(type = 8)
-                ))),
-                tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                # HTML("<br style = “line-height:5;”><br>"),
-                # fluidRow(column(
-                #     10,
-                #     offset = 1,
-                    uiOutput("tab_sp") %>%
-                    withSpinner(type = 8)
-                )),
+                             fluidRow(column(
+                                 12,
+                                 # offset = 1,
+                                 leaflet::leafletOutput("Plot12",height = "600px") %>%
+                                     withSpinner(type = 8)
+                             ))),
+                    tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+                             # HTML("<br style = “line-height:5;”><br>"),
+                             # fluidRow(column(
+                             #     10,
+                             #     offset = 1,
+                             uiOutput("tab_sp") %>%
+                                 withSpinner(type = 8)
+                    )),
                 # HTML("<br style = “line-height:5;”><br>")
             )
             
@@ -594,75 +586,16 @@ ui <- navbarPage(
         )
     )
     
-    # ## -----------------------------------------SWAT-viz Tab---------------------------------------------##
-    
-    # tabPanel(
-    #     "SWAT-Viz",
-    #     
-    #     tags$head(includeHTML((
-    #         "google-analytics.html"
-    #     ))),
-    #     
-    #     
-    #     
-    #     column(
-    #         width = 12,
-    #         style = 'padding-top:70px;',
-    #         
-    #         # Set up shinyalert
-    #         useShinyalert(),
-    #         
-    #         sidebarLayout(
-    #             position = "left",
-    #             sidebarPanel(
-    #                 width = 4,
-    #                 
-    #                 awesomeRadio(
-    #                     inputId = "DefOrUserUpload_SWAT",
-    #                     label = "Data Import Options:",
-    #                     choices = c(
-    #                         "Default Data (WE38)" = "Default_Data_WE38",
-    #                         "Upload data" = "Upload data"
-    #                     ),
-    #                     selected = "Default_Data_WE38",
-    #                     status = 'success'
-    #                 ),
-    #                 
-    #                 
-    #                 uiOutput("SWAT_FileInput"),
-    #                 uiOutput("Which_SWAT_out"),
-    #                 uiOutput("SWAT_wshed_mgmt_optns"),
-    #                 uiOutput("SWAT_wshed"),
-    #                 uiOutput("SWAT_scen"),
-    #                 uiOutput("SWAT_scen_comp"),
-    #                 uiOutput("SWAT_variable"),
-    #                 uiOutput("SWAT_reachno"),
-    #                 uiOutput("SWAT_subnum"),
-    #                 uiOutput("swat_hru_lulc"),
-    #                 uiOutput("hru_slp_slider")
-    #                 
-    #                 # 
-    #                 
-    #             ),
-    #             
-    #             # Main panel for displaying outputs ----
-    #             mainPanel(
-    #                 width = 8,
-    #                 
-    #             uiOutput("swat_tabpanels")
-    #                 
-    #                 
-    #             )
-    #         )
-    #     )
-    # )
-    
     
 )
 
 
 ## ----------------------------------define server logic------------------------------------------##
 server <- function(input, output, session) {
+    
+    ## BEtter disconnected screen
+    sever()
+    
     observe({
         if (input$DefOrUserUpload_W == 'Upload data') {
             shinyalert(
@@ -690,20 +623,20 @@ server <- function(input, output, session) {
     })
     
     
-
+    
     observeEvent(input$Wbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
                           selected = "Watershed")
     })
-
-
+    
+    
     observeEvent(input$Hbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
                           selected = "Hillslope")
     })
-
+    
     observeEvent(input$Sbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
@@ -802,7 +735,7 @@ server <- function(input, output, session) {
                         `header` = "Select watershed ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     ),
                     choicesOpt = list(content = stringr::str_trunc(
                         unique(Wshed_data()$Watershed),
@@ -820,7 +753,7 @@ server <- function(input, output, session) {
                             `header` = "Select scenario ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                 }
@@ -837,7 +770,7 @@ server <- function(input, output, session) {
                             `header` = "Select watershed ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                 } else
@@ -851,7 +784,7 @@ server <- function(input, output, session) {
                                 `header` = "Select scenario ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                         )
                     }
@@ -869,7 +802,7 @@ server <- function(input, output, session) {
                                 `header` = "Select watershed ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                         )
                     } else
@@ -883,7 +816,7 @@ server <- function(input, output, session) {
                                     `header` = "Select scenario ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                         }
@@ -901,7 +834,7 @@ server <- function(input, output, session) {
                                     `header` = "Select watershed ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 ),
                                 choicesOpt = list(content = stringr::str_trunc(
                                     unique(Wshed_data()$Watershed),
@@ -919,7 +852,7 @@ server <- function(input, output, session) {
                                         `header` = "Select scenario ",
                                         `windowPadding` = 1,
                                         `width` = " css-width ",
-                                        `size`= 6
+                                        `size` = 6
                                     )
                                 )
                             }
@@ -937,7 +870,7 @@ server <- function(input, output, session) {
                                         `header` = "Select watershed ",
                                         `windowPadding` = 1,
                                         `width` = " css-width ",
-                                        `size`= 6
+                                        `size` = 6
                                     )
                                 )
                             } else
@@ -951,7 +884,7 @@ server <- function(input, output, session) {
                                             `header` = "Select scenario ",
                                             `windowPadding` = 1,
                                             `width` = " css-width ",
-                                            `size`= 6
+                                            `size` = 6
                                         )
                                     )
                                 }
@@ -965,7 +898,20 @@ server <- function(input, output, session) {
         if (input$DefOrUserUpload_W == 'Upload data') {
             req(Wshed_data())
             if (input$AreaVsScen == 'allscen') {
-                
+                pickerInput(
+                    "Wshed_wshed_S",
+                    "Select the scenarios of interest",
+                    unique(Wshed_data()$Scenario),
+                    selected =   unique(Wshed_data()$Scenario)[1:10],
+                    multiple = TRUE,
+                    options = list(
+                        `actions-box` = TRUE,
+                        `header` = "Select scenarios ",
+                        `windowPadding` = 1,
+                        `width` = " css-width ",
+                        `size` = 6
+                    )
+                )
             } else
                 if (input$AreaVsScen == 'allwat') {
                     pickerInput(
@@ -979,14 +925,27 @@ server <- function(input, output, session) {
                             `header` = "Select watersheds ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                 }
         } else
             if (input$DefOrUserUpload_W == 'Default_Data_Portland') {
                 if (input$AreaVsScen == 'allscen') {
-                    
+                    pickerInput(
+                        "Wshed_wshed_S",
+                        "Select the scenarios of interest",
+                        unique(Wshed_data()$Scenario),
+                        selected =   unique(Wshed_data()$Scenario)[1:10],
+                        multiple = TRUE,
+                        options = list(
+                            `actions-box` = TRUE,
+                            `header` = "Select scenarios ",
+                            `windowPadding` = 1,
+                            `width` = " css-width ",
+                            `size` = 6
+                        )
+                    ) 
                 } else
                     if (input$AreaVsScen == 'allwat') {
                         pickerInput(
@@ -1000,7 +959,7 @@ server <- function(input, output, session) {
                                 `header` = "Select watersheds ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                         )
                     }
@@ -1008,7 +967,20 @@ server <- function(input, output, session) {
             } else
                 if (input$DefOrUserUpload_W == 'Default_Data_Seattle') {
                     if (input$AreaVsScen == 'allscen') {
-                        
+                        pickerInput(
+                            "Wshed_wshed_S",
+                            "Select the scenarios of interest",
+                            unique(Wshed_data()$Scenario),
+                            selected =   unique(Wshed_data()$Scenario)[1:10],
+                            multiple = TRUE,
+                            options = list(
+                                `actions-box` = TRUE,
+                                `header` = "Select scenarios ",
+                                `windowPadding` = 1,
+                                `width` = " css-width ",
+                                `size` = 6
+                            )
+                        ) 
                     } else
                         if (input$AreaVsScen == 'allwat') {
                             pickerInput(
@@ -1022,7 +994,7 @@ server <- function(input, output, session) {
                                     `header` = "Select watersheds ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                         }
@@ -1030,7 +1002,20 @@ server <- function(input, output, session) {
                 } else
                     if (input$DefOrUserUpload_W == 'Default_Data_LT') {
                         if (input$AreaVsScen == 'allscen') {
-                            
+                            pickerInput(
+                                "Wshed_wshed_S",
+                                "Select the scenarios of interest",
+                                unique(Wshed_data()$Scenario),
+                                selected =   unique(Wshed_data()$Scenario)[1:10],
+                                multiple = TRUE,
+                                options = list(
+                                    `actions-box` = TRUE,
+                                    `header` = "Select scenarios ",
+                                    `windowPadding` = 1,
+                                    `width` = " css-width ",
+                                    `size` = 6
+                                )
+                            ) 
                         } else
                             if (input$AreaVsScen == 'allwat') {
                                 pickerInput(
@@ -1044,7 +1029,7 @@ server <- function(input, output, session) {
                                         `header` = "Select watersheds ",
                                         `windowPadding` = 1,
                                         `width` = "css-width",
-                                        `size`= 6
+                                        `size` = 6
                                     ),
                                     choicesOpt = list(content = stringr::str_trunc(
                                         unique(Wshed_data()$Watershed),
@@ -1056,7 +1041,20 @@ server <- function(input, output, session) {
                     } else
                         if (input$DefOrUserUpload_W == 'Default_Data_Palouse') {
                             if (input$AreaVsScen == 'allscen') {
-                                
+                                pickerInput(
+                                    "Wshed_wshed_S",
+                                    "Select the scenarios of interest",
+                                    unique(Wshed_data()$Scenario),
+                                    selected =   unique(Wshed_data()$Scenario)[1:10],
+                                    multiple = TRUE,
+                                    options = list(
+                                        `actions-box` = TRUE,
+                                        `header` = "Select scenarios ",
+                                        `windowPadding` = 1,
+                                        `width` = " css-width ",
+                                        `size` = 6
+                                    )
+                                )  
                             } else
                                 if (input$AreaVsScen == 'allwat') {
                                     pickerInput(
@@ -1070,7 +1068,7 @@ server <- function(input, output, session) {
                                             `header` = "Select watersheds ",
                                             `windowPadding` = 1,
                                             `width` = " css-width ",
-                                            `size`= 6
+                                            `size` = 6
                                         )
                                     )
                                 }
@@ -1097,7 +1095,7 @@ server <- function(input, output, session) {
                     `header` = "Select metric ",
                     `windowPadding` = 1,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 ),
                 choicesOpt = list(content = stringr::str_trunc(
                     colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
@@ -1115,7 +1113,7 @@ server <- function(input, output, session) {
                         `header` = "Select metric ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     ),
                     choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                        "Watershed",
@@ -1139,7 +1137,7 @@ server <- function(input, output, session) {
                             `header` = "Select metric ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         ),
                         choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                            "Watershed",
@@ -1164,7 +1162,7 @@ server <- function(input, output, session) {
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             ),
                             choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                                "Watershed",
@@ -1188,7 +1186,7 @@ server <- function(input, output, session) {
                                     `header` = "Select metric ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 ),
                                 choices =   colnames(Wshed_data())[!(colnames(Wshed_data()) %in% c("ProjectName",
                                                                                                    "Watershed",
@@ -1223,7 +1221,7 @@ server <- function(input, output, session) {
             ) %>%
                 helper(
                     icon = "question-circle",
-                    colour = "#00ffff",
+                    colour = "#FF0000",
                     content = "H_upload",
                     type = "markdown",
                     size = "l",
@@ -1525,7 +1523,7 @@ server <- function(input, output, session) {
                     `header` = "Select metric ",
                     `windowPadding` = 2,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 )
             )
         } else
@@ -1559,7 +1557,7 @@ server <- function(input, output, session) {
                         `header` = "Select metric ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     )
                 )
                 
@@ -1594,7 +1592,7 @@ server <- function(input, output, session) {
                             `header` = "Select metric ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                     
@@ -1629,7 +1627,7 @@ server <- function(input, output, session) {
                                 `header` = "Select metric ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             ),
                             choicesOpt = list(content = stringr::str_trunc(
                                 c(
@@ -1685,7 +1683,7 @@ server <- function(input, output, session) {
                                     `header` = "Select metric ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                             
@@ -1707,7 +1705,7 @@ server <- function(input, output, session) {
                     `header` = "Select watershed ",
                     `windowPadding` = 1,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 )
             )
             
@@ -1723,7 +1721,7 @@ server <- function(input, output, session) {
                         `header` = "Select watershed ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     )
                 )
                 
@@ -1739,7 +1737,7 @@ server <- function(input, output, session) {
                             `header` = "Select watershed ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                     
@@ -1755,7 +1753,7 @@ server <- function(input, output, session) {
                                 `header` = "Select watershed ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             ),
                             choicesOpt = list(content = stringr::str_trunc(
                                 unique(Hill_data()$Watershed),
@@ -1774,7 +1772,7 @@ server <- function(input, output, session) {
                                     `header` = "Select watershed ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                             
@@ -1798,7 +1796,7 @@ server <- function(input, output, session) {
                     `header` = "Select baseline scenario ",
                     `windowPadding` = 1,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 )
             )
         } else
@@ -1814,7 +1812,7 @@ server <- function(input, output, session) {
                         `header` = "Select baseline scenario ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     )
                 )
                 
@@ -1831,7 +1829,7 @@ server <- function(input, output, session) {
                             `header` = "Select baseline scenario ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                     
@@ -1848,7 +1846,7 @@ server <- function(input, output, session) {
                                 `header` = "Select baseline scenario ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                         )
                         
@@ -1865,7 +1863,7 @@ server <- function(input, output, session) {
                                     `header` = "Select baseline scenario ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                             
@@ -1889,7 +1887,7 @@ server <- function(input, output, session) {
                     `header` = "Select comparison scenario ",
                     `windowPadding` = 1,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 )
             )
         } else
@@ -1905,7 +1903,7 @@ server <- function(input, output, session) {
                         `header` = "Select comparison scenario ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     )
                     
                 )
@@ -1923,7 +1921,7 @@ server <- function(input, output, session) {
                             `header` = "Select comparison scenario ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                         
                     )
@@ -1941,7 +1939,7 @@ server <- function(input, output, session) {
                                 `header` = "Select comparison scenario ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                             
                         )
@@ -1959,7 +1957,7 @@ server <- function(input, output, session) {
                                     `header` = "Select comparison scenario ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                                 
                             )
@@ -1984,7 +1982,7 @@ server <- function(input, output, session) {
                     `header` = "Select scenario ",
                     `windowPadding` = 1,
                     `width` = " css-width ",
-                    `size`= 6
+                    `size` = 6
                 )
             )
         } else
@@ -2000,7 +1998,7 @@ server <- function(input, output, session) {
                         `header` = "Select scenario ",
                         `windowPadding` = 1,
                         `width` = " css-width ",
-                        `size`= 6
+                        `size` = 6
                     )
                 )
                 
@@ -2017,7 +2015,7 @@ server <- function(input, output, session) {
                             `header` = "Select scenario ",
                             `windowPadding` = 1,
                             `width` = " css-width ",
-                            `size`= 6
+                            `size` = 6
                         )
                     )
                     
@@ -2034,7 +2032,7 @@ server <- function(input, output, session) {
                                 `header` = "Select scenario ",
                                 `windowPadding` = 1,
                                 `width` = " css-width ",
-                                `size`= 6
+                                `size` = 6
                             )
                         )
                         
@@ -2051,7 +2049,7 @@ server <- function(input, output, session) {
                                     `header` = "Select scenario ",
                                     `windowPadding` = 1,
                                     `width` = " css-width ",
-                                    `size`= 6
+                                    `size` = 6
                                 )
                             )
                             
@@ -2073,7 +2071,7 @@ server <- function(input, output, session) {
                 placeholder = "No file selected",
                 accept = c(".RDS", ".qs")
             )%>% 
-                helper(icon = "question-circle", colour = "#00ffff",
+                helper(icon = "question-circle", colour = "#FF0000",
                        content = "S_upload",
                        type = "markdown", size = "l",
                        buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
@@ -2084,7 +2082,7 @@ server <- function(input, output, session) {
                 input$DefOrUserUpload_S == 'Default_Data_Palouse') {
             }
     }) 
-     
+    
     
     Spatial_data1 <- reactive({
         req(input$DefOrUserUpload_S)
@@ -2133,7 +2131,7 @@ server <- function(input, output, session) {
                                `header` = "Select Watershed",
                                `windowPadding` = 1,
                                `width` = " css-width ",
-                               `size`= 6),
+                               `size` = 6),
                 selected = unique(Spatial_data()$Watershed)[1],
                 multiple = T
             )
@@ -2147,7 +2145,7 @@ server <- function(input, output, session) {
                                    `header` = "Select Watershed",
                                    `windowPadding` = 1,
                                    `width` = " css-width ",
-                                   `size`= 6),
+                                   `size` = 6),
                     selected = unique(Spatial_data()$Watershed)[1],
                     multiple = T
                 )
@@ -2162,7 +2160,7 @@ server <- function(input, output, session) {
                                        `header` = "Select Watershed",
                                        `windowPadding` = 1,
                                        `width` = " css-width ",
-                                       `size`= 6),
+                                       `size` = 6),
                         selected = unique(Spatial_data()$Watershed)[1],
                         multiple = T
                     )
@@ -2177,7 +2175,7 @@ server <- function(input, output, session) {
                                            `header` = "Select Watershed",
                                            `windowPadding` = 1,
                                            `width` = " css-width ",
-                                           `size`= 6),
+                                           `size` = 6),
                             choicesOpt = list(
                                 content = stringr::str_trunc(unique(Spatial_data()$Watershed),
                                                              width = 25)),
@@ -2195,7 +2193,7 @@ server <- function(input, output, session) {
                                                `header` = "Select Watershed",
                                                `windowPadding` = 1,
                                                `width` = " css-width ",
-                                               `size`= 6),
+                                               `size` = 6),
                                 selected = unique(Spatial_data()$Watershed)[1],
                                 multiple = T
                             )
@@ -2218,7 +2216,7 @@ server <- function(input, output, session) {
                                `header` = "Select baseline scenario ",
                                `windowPadding` = 1,
                                `width` = " css-width ",
-                               `size`= 6)
+                               `size` = 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2232,7 +2230,7 @@ server <- function(input, output, session) {
                                    `header` = "Select baseline scenario ",
                                    `windowPadding` = 1,
                                    `width` = " css-width ",
-                                   `size`= 6)
+                                   `size` = 6)
                 )
                 
             }else
@@ -2247,7 +2245,7 @@ server <- function(input, output, session) {
                                        `header` = "Select baseline scenario ",
                                        `windowPadding` = 1,
                                        `width` = " css-width ",
-                                       `size`= 6)
+                                       `size` = 6)
                     )
                     
                 }else
@@ -2262,7 +2260,7 @@ server <- function(input, output, session) {
                                            `header` = "Select baseline scenario ",
                                            `windowPadding` = 1,
                                            `width` = " css-width ",
-                                           `size`= 6)
+                                           `size` = 6)
                         )
                         
                     }else
@@ -2277,7 +2275,7 @@ server <- function(input, output, session) {
                                                `header` = "Select baseline scenario ",
                                                `windowPadding` = 1,
                                                `width` = " css-width ",
-                                               `size`= 6)
+                                               `size` = 6)
                             )
                             
                         }
@@ -2298,7 +2296,7 @@ server <- function(input, output, session) {
                                `header` = "Select comparison scenario ",
                                `windowPadding` = 1,
                                `width` = " css-width ",
-                               `size`= 6)
+                               `size` = 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2312,7 +2310,7 @@ server <- function(input, output, session) {
                                    `header` = "Select comparison scenario ",
                                    `windowPadding` = 1,
                                    `width` = " css-width ",
-                                   `size`= 6)
+                                   `size` = 6)
                 )
                 
             }else
@@ -2327,7 +2325,7 @@ server <- function(input, output, session) {
                                        `header` = "Select comparison scenario ",
                                        `windowPadding` = 1,
                                        `width` = " css-width ",
-                                       `size`= 6)
+                                       `size` = 6)
                     )
                     
                 }else
@@ -2342,7 +2340,7 @@ server <- function(input, output, session) {
                                            `header` = "Select comparison scenario ",
                                            `windowPadding` = 1,
                                            `width` = " css-width ",
-                                           `size`= 6)
+                                           `size` = 6)
                         )
                         
                     }else
@@ -2357,7 +2355,7 @@ server <- function(input, output, session) {
                                                `header` = "Select comparison scenario ",
                                                `windowPadding` = 1,
                                                `width` = " css-width ",
-                                               `size`= 6)
+                                               `size` = 6)
                             )
                             
                         }
@@ -2388,7 +2386,7 @@ server <- function(input, output, session) {
                                `header` = "Select metric ",
                                `windowPadding` = 1,
                                `width` = " css-width ",
-                               `size`= 6)
+                               `size` = 6)
             )
         } else
             if (input$DefOrUserUpload_S == 'Default_Data_Portland') {
@@ -2412,7 +2410,7 @@ server <- function(input, output, session) {
                                    `header` = "Select metric ",
                                    `windowPadding` = 1,
                                    `width` = " css-width ",
-                                   `size`= 6)
+                                   `size` = 6)
                 )
                 
             }else
@@ -2437,7 +2435,7 @@ server <- function(input, output, session) {
                                        `header` = "Select metric ",
                                        `windowPadding` = 1,
                                        `width` = " css-width ",
-                                       `size`= 6)
+                                       `size` = 6)
                     )
                     
                 }else
@@ -2462,7 +2460,7 @@ server <- function(input, output, session) {
                                            `header` = "Select metric ",
                                            `windowPadding` = 1,
                                            `width` = " css-width ",
-                                           `size`= 6)
+                                           `size` = 6)
                         )
                         
                     }else
@@ -2487,1837 +2485,12 @@ server <- function(input, output, session) {
                                                `header` = "Select metric ",
                                                `windowPadding` = 1,
                                                `width` = " css-width ",
-                                               `size`= 6)
+                                               `size` = 6)
                             )
                             
                         }
         
     })
-    
-    ## ----------------------------------Spatial-Viz tab server logic------------------------------------------##
-    ######## Server logic for UI generation for spatial-Viz tab ##########
-    
-    output$Which_SWAT_out <- renderUI({
-        radioGroupButtons(
-                inputId = "which_file",
-                label = "Select Output",
-                choices = c("Subbasin", "Reach", "HRU"),
-                selected = "Reach",
-                checkIcon = list(
-                    yes = icon("ok",
-                               lib = "glyphicon")),
-                status = "success"
-            )
-        })
-    
-    output$SWAT_wshed_mgmt_optns <- renderUI({
-        
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            # req(input$swat_file)
-            if(input$which_file == 'Reach'){
-                awesomeRadio(
-                    inputId = "AreaVsScen_swat",
-                    label = "Management/Watershed Options: ",
-                    choices = c(
-                        "One Watershed, All Scenarios" = "allscen_swat",
-                        "One Scenario, Selected Watersheds" =
-                            "allwat_swat"
-                    ),
-                    selected = "allscen_swat",
-                    status = 'success'
-                )
-            }}else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Reach'){
-                    awesomeRadio(
-                        inputId = "AreaVsScen_swat",
-                        label = "Management/Watershed Options: ",
-                        choices = c(
-                            "One Watershed, All Scenarios" = "allscen_swat",
-                            "One Scenario, Selected Watersheds" =
-                                "allwat_swat"
-                        ),
-                        selected = "allscen_swat",
-                        status = 'success'
-                    )
-                }
-            }
-    })
-    
-    output$swat_tabpanels <- renderUI({
-        req(input$which_file)
-        if(input$which_file == 'Subbasin'){
-            tabsetPanel(
-                tabPanel("Subwatersheds",icon =icon("layer-group"),style = 'padding:20px;',
-                         leaflet::leafletOutput("Plotsub", height = "600px", width =
-                                          "800px") %>% withSpinner(type = 8 )),
-                tabPanel("Table",icon =icon("tablesub"),style = 'padding:20px;',
-                         DT::dataTableOutput("tablesub")  %>% withSpinner(type = 8 ))
-            )
-        }else
-            if(input$which_file == 'Reach'){
-        tabsetPanel(
-            tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
-                     plotlyOutput("Plotheatrch", height = "600px", width =
-                                      "800px") %>% withSpinner(type = 8 )),
-            tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
-                     plotlyOutput("Plotbarrch", height = "600px", width =
-                                       "800px")  %>% withSpinner(type = 8 ))
-        )
-            }else
-                if(input$which_file == 'HRU'){
-                    tabsetPanel(
-                        tabPanel("HRUs",icon =icon("layer-group"),style = 'padding:20px;',
-                                 leaflet::leafletOutput("Plothru", height = "600px", width =
-                                                  "800px") %>% withSpinner(type = 8 )),
-                        tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                                 DT::dataTableOutput("tablehru")  %>% withSpinner(type = 8 ))
-                    )
-                }
-    })
-    
-    # output$swat_tabpanels <- renderUI({
-    #     req(input$DefOrUserUpload_SWAT)
-    #     req(input$which_file)
-    #     if (input$DefOrUserUpload_SWAT == 'Upload data') {
-    #         if(input$which_file == 'Subbasin'){
-    #             tabsetPanel(
-    #                 tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-    #                          plotlyOutput("Plotsub", height = "600px", width =
-    #                                           "800px") %>% withSpinner(type = 8 )),
-    #                 tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-    #                          tableOutput("tablesub")  %>% withSpinner(type = 8 ))
-    #             )
-    #         }else
-    #             if(input$which_file == 'Reach'){
-    #                 tabsetPanel(
-    #                     tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
-    #                              plotlyOutput("Plotheatrch", height = "600px", width =
-    #                                               "800px") %>% withSpinner(type = 8 )),
-    #                     tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
-    #                              plotlyOutput("Plotbarrch", height = "600px", width =
-    #                                               "800px")  %>% withSpinner(type = 8 ))
-    #                 )
-    #             }else
-    #                 if(input$which_file == 'HRU'){
-    #                     tabsetPanel(
-    #                         tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-    #                                  plotlyOutput("Plothru", height = "600px", width =
-    #                                                   "800px") %>% withSpinner(type = 8 )),
-    #                         tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-    #                                  tableOutput("tablehru")  %>% withSpinner(type = 8 ))
-    #                     )
-    #                 }
-    #     }else
-    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-    #             if(input$which_file == 'Subbasin'){
-    #                 tabsetPanel(
-    #                     tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-    #                              plotlyOutput("Plotsub", height = "600px", width =
-    #                                               "800px") %>% withSpinner(type = 8 )),
-    #                     tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-    #                              tableOutput("Plotsub")  %>% withSpinner(type = 8 ))
-    #                 )
-    #             }else
-    #                 if(input$which_file == 'Reach'){
-    #                     tabsetPanel(
-    #                         tabPanel("Heatmap",icon =icon("th"),style = 'padding:20px;',
-    #                                  plotlyOutput("Plotheatrch", height = "600px", width =
-    #                                                   "800px") %>% withSpinner(type = 8 )),
-    #                         tabPanel("Bar Chart",icon =icon("chart-bar"),style = 'padding:20px;',
-    #                                  plotlyOutput("Plotbarrch", height = "600px", width =
-    #                                                   "800px")  %>% withSpinner(type = 8 ))
-    #                     )
-    #                 }else
-    #                     if(input$which_file == 'HRU'){
-    #                         tabsetPanel(
-    #                             tabPanel("Plot",icon =icon("layer-group"),style = 'padding:20px;',
-    #                                      plotlyOutput("Plothru", height = "600px", width =
-    #                                                       "800px") %>% withSpinner(type = 8 )),
-    #                             tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-    #                                      tableOutput("tablehru")  %>% withSpinner(type = 8 ))
-    #                         )
-    #                     }
-    #         }
-    # })
-    
-    output$SWAT_FileInput <- renderUI({
-        req(input$DefOrUserUpload_SWAT)
-        req(input$which_file)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            if(input$which_file == 'Subbasin'){
-                fileInput(
-                    "swat_file_sub",
-                    label = "Uplaod subbasin RDS/qs file",
-                    multiple = F,
-                    placeholder = "No file selected",
-                    accept = c(".RDS", ".qs")
-                )%>%
-                    helper(icon = "question-circle",
-                           content = "SWAT_upload_sub",
-                           type = "markdown", size = "l",
-                           buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
-            }else
-                if(input$which_file == 'Reach'){
-                    fileInput(
-                        "swat_file_rch",
-                        label = "Uplaod reach RDS/qs/csv file",
-                        multiple = F,
-                        placeholder = "No file selected",
-                        accept = c(".RDS", ".qs", ".csv")
-                    )%>%
-                        helper(icon = "question-circle",
-                               content = "SWAT_upload_rch",
-                               type = "markdown", size = "l",
-                               buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
-                }else
-                    if(input$which_file == 'HRU'){
-                        fileInput(
-                            "swat_file_hru",
-                            label = "Uplaod hru RDS/qs file",
-                            multiple = F,
-                            placeholder = "No file selected",
-                            accept = c(".RDS", ".qs")
-                        )%>%
-                            helper(icon = "question-circle",
-                                   content = "SWAT_upload_hru",
-                                   type = "markdown", size = "l",
-                                   buttonLabel = "Okay", easyClose = TRUE, fade = TRUE)
-                    }
-            } else
-                if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                    req(input$which_file_def)
-                    if(input$which_file_def == 'Subbasin'){
-
-                    }else
-                        if(input$which_file_def == 'Reach'){
-
-                    }else
-                        if(input$which_file_def == 'HRU'){
-
-                    }
-                }
-    })
-    
-    SWAT_data <- reactive({
-        req(input$DefOrUserUpload_SWAT)
-        req(input$which_file)
-        if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-            
-            if(input$which_file == 'Reach'){
-                d<- qs::qread("data/summary_output_rch.qs")
-            }else
-                if(input$which_file == 'Subbasin'){
-                    d<-qs::qread("data/summary_output_sub.qs")%>%sf::st_set_crs(value = 4326)
-                }else
-                    if(input$which_file == 'HRU'){
-                        d<-qs::qread("data/summary_output_hru.qs")%>%sf::st_set_crs(value = 4326)
-                    }
-
-        }else
-            if (input$DefOrUserUpload_SWAT == 'Upload data'){
-                req(input$which_file)
-                if(input$which_file == 'Reach'){
-                    req(input$swat_file_rch)
-                    file <- input$swat_file_rch
-                    if (is.null(file)) {
-                        return()
-                    }
-                    if (tools::file_ext(file$datapath) == "RDS") {
-                        d<-readRDS(file$datapath)
-                    }else
-                        if (tools::file_ext(file$datapath) == "qs") {
-                            d<-qs::qread(file$datapath)
-                        }else
-                            if (tools::file_ext(file$datapath) == "csv") {
-                                d<- read.csv(file$datapath)
-                            }
-                }else
-                    if(input$which_file == 'Subbasin'){
-                        req(input$swat_file_sub)
-                        file <- input$swat_file_sub
-                        if (is.null(file)) {
-                            return()
-                        }
-                        if (tools::file_ext(file$datapath) == "RDS") {
-                            d<-readRDS(file$datapath)
-                            d<- d %>%sf::st_set_crs(value = 4326)
-                        }else
-                            if (tools::file_ext(file$datapath) == "qs") {
-                                d<- qs::qread(file$datapath)
-                                d<- d %>%sf::st_set_crs(value = 4326)
-                            }
-
-                    }else
-                        if(input$which_file == 'HRU'){
-                            req(input$swat_file_hru)
-                            file <- input$swat_file_hru
-                            if (is.null(file)) {
-                                return()
-                            }
-                            if (tools::file_ext(file$datapath) == "RDS") {
-                                d<- readRDS(file$datapath)
-                                d<- d%>%sf::st_set_crs(value = 4326)
-                            }else
-                                if (tools::file_ext(file$datapath) == "qs") {
-                                    d<- qs::qread(file$datapath)
-                                    d<- d%>%sf::st_set_crs(value = 4326)
-                                }
-
-                        }
-            }
-    })
-    
-    
-    
-    # SWAT_data <- reactive({
-    #         req(SWAT_data1())
-    #         req(input$which_file)
-    #             if(input$which_file == 'Subbasin'){
-    #                 SWAT_data1()%>%sf::st_set_crs(value = 4326)
-    #             }else
-    #                 if(input$which_file == 'Reach'){
-    #                     SWAT_data1()
-    #                 }else
-    #                     if(input$which_file == 'HRU'){
-    #                         SWAT_data1()%>%sf::st_set_crs(value = 4326)
-    #                     }
-    #         })
-    
-    # SWAT_data <- reactive({
-    #         req(SWAT_data1())
-    #         req(input$DefOrUserUpload_SWAT)
-    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-    #             req(input$which_file)
-    #             if(input$which_file == 'Subbasin'){
-    #                 SWAT_data1() 
-    #             }else
-    #                 if(input$which_file == 'Reach'){
-    #                     SWAT_data1()
-    #                 }else
-    #                     if(input$which_file == 'HRU'){
-    #                         SWAT_data1() 
-    #                     }
-    # 
-    #         }else
-    #             if (input$DefOrUserUpload_SWAT == 'Upload data'){
-    #                 req(input$which_file)
-    #                 if(input$which_file == 'Subbasin'){
-    #                     SWAT_data1() %>%sf::st_set_crs(value = 4326)
-    #                 }else
-    #                     if(input$which_file_up == 'HRU'){
-    #                         SWAT_data1() %>%sf::st_set_crs(value = 4326)
-    #                     }else
-    #                         if(input$which_file == 'Reach'){
-    #                             SWAT_data1()
-    # 
-    #                         }
-    #             }
-    #     })
-    
-    
-    
-    
-    output$SWAT_wshed <- renderUI({
-        req(input$DefOrUserUpload_SWAT)
-        req(SWAT_data())
-        req(input$which_file)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            if(input$which_file == 'Subbasin'){
-            pickerInput(
-                "SWAT_wshed",
-                "Select the watershed of interest",
-                choices = unique(as.character(SWAT_data()$Watershed)),
-                options = list(`actions-box` = TRUE,
-                               `header` = "Select Watershed",
-                               `windowPadding` = 1,
-                               `width` = " css-width ",
-                               `size`= 6),
-                selected = unique(SWAT_data()$Watershed)[1],
-                multiple = F
-            )
-            }else
-                if(input$which_file == 'Reach'){
-                    req(input$AreaVsScen_swat)
-                    if(input$AreaVsScen_swat == "allwat_swat"){
-                    pickerInput(
-                        "SWAT_wshed",
-                        "Select the watershed of interest",
-                        choices = unique(as.character(SWAT_data()$Watershed)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Watershed",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$Watershed)[1],
-                        multiple = T
-                    )}else
-                        if(input$AreaVsScen_swat == "allscen_swat"){
-                            pickerInput(
-                                "SWAT_wshed",
-                                "Select the watershed of interest",
-                                choices = unique(as.character(SWAT_data()$Watershed)),
-                                options = list(`actions-box` = TRUE,
-                                               `header` = "Select Watershed",
-                                               `windowPadding` = 1,
-                                               `width` = " css-width ",
-                                               `size`= 6),
-                                selected = unique(SWAT_data()$Watershed)[1],
-                                multiple = F
-                            )
-                        }
-                }else
-                    if(input$which_file == 'HRU'){
-                        pickerInput(
-                            "SWAT_wshed",
-                            "Select the watershed of interest",
-                            choices = unique(as.character(SWAT_data()$Watershed)),
-                            options = list(`actions-box` = TRUE,
-                                           `header` = "Select Watershed",
-                                           `windowPadding` = 1,
-                                           `width` = " css-width ",
-                                           `size`= 6),
-                            selected = unique(SWAT_data()$Watershed)[1],
-                            multiple = F
-                        )
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    pickerInput(
-                        "SWAT_wshed",
-                        "Select the watershed of interest",
-                        choices = unique(as.character(SWAT_data()$Watershed)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Watershed",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$Watershed)[1],
-                        multiple = F
-                    )
-                }else
-                    if(input$which_file == 'Reach'){
-                        req(input$AreaVsScen_swat)
-                        if(input$AreaVsScen_swat == "allwat_swat"){
-                            pickerInput(
-                                "SWAT_wshed",
-                                "Select the watershed of interest",
-                                choices = unique(as.character(SWAT_data()$Watershed)),
-                                options = list(`actions-box` = TRUE,
-                                               `header` = "Select Watershed",
-                                               `windowPadding` = 1,
-                                               `width` = " css-width ",
-                                               `size`= 6),
-                                selected = unique(SWAT_data()$Watershed)[1],
-                                multiple = T
-                            )}else
-                                if(input$AreaVsScen_swat == "allscen_swat"){
-                                    pickerInput(
-                                        "SWAT_wshed",
-                                        "Select the watershed of interest",
-                                        choices = unique(as.character(SWAT_data()$Watershed)),
-                                        options = list(`actions-box` = TRUE,
-                                                       `header` = "Select Watershed",
-                                                       `windowPadding` = 1,
-                                                       `width` = " css-width ",
-                                                       `size`= 6),
-                                        selected = unique(SWAT_data()$Watershed)[1],
-                                        multiple = F
-                                    )
-                                }
-                    }else
-                        if(input$which_file == 'HRU'){
-                            pickerInput(
-                                "SWAT_wshed",
-                                "Select the watershed of interest",
-                                choices = unique(as.character(SWAT_data()$Watershed)),
-                                options = list(`actions-box` = TRUE,
-                                               `header` = "Select Watershed",
-                                               `windowPadding` = 1,
-                                               `width` = " css-width ",
-                                               `size`= 6),
-                                selected = unique(SWAT_data()$Watershed)[1],
-                                multiple = F
-                            )
-                        }
-            }
-        })
-    
-    
-    
-    output$SWAT_scen <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                pickerInput(
-                    "SWAT_scen_sub_base",
-                    "Select the scenario of interest",
-                    choices = unique(as.character(SWAT_data()$Scenario)),
-                    options = list(`actions-box` = TRUE,
-                                   `header` = "Select Scenario",
-                                   `windowPadding` = 1,
-                                   `width` = " css-width ",
-                                   `size`= 6),
-                    selected = unique(SWAT_data()$Scenario)[1],
-                    multiple = F
-                )
-            }else
-                if(input$which_file == 'Reach'){
-                    req(input$AreaVsScen_swat)
-                    if(input$AreaVsScen_swat == "allscen_swat"){
-                        }else
-                            if(input$AreaVsScen_swat == "allwat_swat"){
-                                pickerInput(
-                                    "SWAT_scen_rch",
-                                    "Select the scenario of interest",
-                                    choices = unique(as.character(SWAT_data()$Scenario)),
-                                    options = list(`actions-box` = TRUE,
-                                                   `header` = "Select Scenario",
-                                                   `windowPadding` = 1,
-                                                   `width` = " css-width ",
-                                                   `size`= 6),
-                                    selected = unique(SWAT_data()$Scenario)[1],
-                                    multiple = F
-                                )
-                            }
-                }else
-                    if(input$which_file == 'HRU'){
-                        pickerInput(
-                            "SWAT_scen_hru_base",
-                            "Select the scenario of interest",
-                            choices = unique(as.character(SWAT_data()$Scenario)),
-                            options = list(`actions-box` = TRUE,
-                                           `header` = "Select Scenario",
-                                           `windowPadding` = 1,
-                                           `width` = " css-width ",
-                                           `size`= 6),
-                            selected = unique(SWAT_data()$Scenario)[1],
-                            multiple = F
-                        )
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    pickerInput(
-                        "SWAT_scen_sub_base",
-                        "Select the scenario of interest",
-                        choices = unique(as.character(SWAT_data()$Scenario)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Scenario",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$Scenario)[1],
-                        multiple = F
-                    )
-                }else
-                    if(input$which_file == 'Reach'){
-                        req(input$AreaVsScen_swat)
-                        if(input$AreaVsScen_swat == "allscen_swat"){
-                        }else
-                            if(input$AreaVsScen_swat == "allwat_swat"){
-                                pickerInput(
-                                    "SWAT_scen_rch",
-                                    "Select the scenario of interest",
-                                    choices = unique(as.character(SWAT_data()$Scenario)),
-                                    options = list(`actions-box` = TRUE,
-                                                   `header` = "Select Scenario",
-                                                   `windowPadding` = 1,
-                                                   `width` = " css-width ",
-                                                   `size`= 6),
-                                    selected = unique(SWAT_data()$Scenario)[1],
-                                    multiple = F
-                                )
-                            }
-                    }else
-                        if(input$which_file == 'HRU'){
-                            pickerInput(
-                                "SWAT_scen_hru_base",
-                                "Select the scenario of interest",
-                                choices = unique(as.character(SWAT_data()$Scenario)),
-                                options = list(`actions-box` = TRUE,
-                                               `header` = "Select Scenario",
-                                               `windowPadding` = 1,
-                                               `width` = " css-width ",
-                                               `size`= 6),
-                                selected = unique(SWAT_data()$Scenario)[1],
-                                multiple = F
-                            )
-                        }
-            }
-    })
-    
-    
-    output$SWAT_scen_comp <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                pickerInput(
-                    "SWAT_scen_sub_comp",
-                    "Select the comparison scenario",
-                    choices = unique(as.character(SWAT_data()$Scenario)),
-                    options = list(`actions-box` = TRUE,
-                                   `header` = "Select Scenario",
-                                   `windowPadding` = 1,
-                                   `width` = " css-width ",
-                                   `size`= 6),
-                    selected = unique(SWAT_data()$Scenario)[2],
-                    multiple = F
-                )
-            }else
-                if(input$which_file == 'HRU'){
-                    pickerInput(
-                        "SWAT_scen_hru_comp",
-                        "Select the comparison scenario",
-                        choices = unique(as.character(SWAT_data()$Scenario)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Scenario",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$Scenario)[2],
-                        multiple = F )  
-                }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    pickerInput(
-                        "SWAT_scen_sub_comp",
-                        "Select the comparison scenario",
-                        choices = unique(as.character(SWAT_data()$Scenario)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Scenario",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$Scenario)[2],
-                        multiple = F
-                    )
-                }else
-                    if(input$which_file == 'HRU'){
-                        pickerInput(
-                            "SWAT_scen_hru_comp",
-                            "Select the comparison scenario",
-                            choices = unique(as.character(SWAT_data()$Scenario)),
-                            options = list(`actions-box` = TRUE,
-                                           `header` = "Select Scenario",
-                                           `windowPadding` = 1,
-                                           `width` = " css-width ",
-                                           `size`= 6),
-                            selected = unique(SWAT_data()$Scenario)[2],
-                            multiple = F
-                        ) 
-                    }
-            }
-    })
-    
-    
-    
-    # output$SWAT_wshed_mgmt_optns <- renderUI({
-    #     if (input$DefOrUserUpload_SWAT == 'Upload data') {
-    #         req(SWAT_data())
-    #         req(input$which_file)
-    #         if(input$which_file == 'Reach'){
-    #             awesomeRadio(
-    #                 inputId = "AreaVsScen_swat",
-    #                 label = "Management/Watershed Options: ",
-    #                 choices = c(
-    #                     "One Watershed, All Scenarios" = "allscen_swat",
-    #                     "One Scenario, Selected Watersheds" =
-    #                         "allwat_swat"
-    #                 ),
-    #                 selected = "allscen_swat",
-    #                 status = 'warning'
-    #             )
-    #         }else
-    #             if(input$which_file == 'HRU'){
-    #                 return()
-    #             }else
-    #                 if(input$which_file == 'Subbasin'){
-    #                     return()  
-    #                 }
-    #     } else
-    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-    #             req(input$which_file)
-    #             if(input$which_file == 'Reach'){
-    #                 awesomeRadio(
-    #                     inputId = "AreaVsScen_swat",
-    #                     label = "Management/Watershed Options: ",
-    #                     choices = c(
-    #                         "One Watershed, All Scenarios" = "allscen_swat",
-    #                         "One Scenario, Selected Watersheds" =
-    #                             "allwat_swat"
-    #                     ),
-    #                     selected = "allscen_swat",
-    #                     status = 'warning'
-    #                 )
-    #             }else
-    #                 if(input$which_file == 'HRU'){
-    #                     return()
-    #                 }else
-    #                     if(input$which_file == 'Subbasin'){
-    #                         return()
-    #                     }
-    #         }
-    # })
-    
-    
-    output$SWAT_reachno <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                NULL
-
-            }else
-                if(input$which_file == 'Reach'){
-                    pickerInput(
-                        "SWAT_reachnum",
-                        "Select the reach of interest",
-                        choices = unique(as.character(SWAT_data()$RCH)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Reach",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size`= 6),
-                        selected = unique(SWAT_data()$RCH)[1],
-                        multiple = F
-                    )
-                }else
-                    if(input$which_file == 'HRU'){
-
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-
-                }else
-                    if(input$which_file == 'Reach'){
-                        pickerInput(
-                            "SWAT_reachnum",
-                            "Select the reach of interest",
-                            choices = unique(as.character(SWAT_data()$RCH)),
-                            options = list(`actions-box` = TRUE,
-                                           `header` = "Select Reach",
-                                           `windowPadding` = 1,
-                                           `width` = " css-width ",
-                                           `size`= 6),
-                            selected = unique(SWAT_data()$RCH)[1],
-                            multiple = F
-                        )
-                    }else
-                        if(input$which_file == 'HRU'){
-
-                        }
-            }
-    })
-    
-    
-    
-    
-    output$hru_slp_slider <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                }else
-                if(input$which_file == 'Reach'){
-                    
-                }else
-                    if(input$which_file == 'HRU'){
-                        sliderInput(
-                            "swat_thresh_slp",
-                            "Slope Threshold (%):",
-                            min = 0,
-                            max = 100,
-                            value = c(0,100),
-                            step = NULL,
-                            round = TRUE,
-                            ticks = TRUE,
-                            animate = FALSE
-                        ) 
-                        # %>%
-                        #     helper(
-                        #         icon = "question-circle",
-                        #         colour = "#00ffff",
-                        #         content = "H_plot_thresh",
-                        #         type = "markdown",
-                        #         size = "l",
-                        #         buttonLabel = "Okay",
-                        #         easyClose = TRUE,
-                        #         fade = TRUE
-                        #     )  
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    
-                }else
-                    if(input$which_file == 'Reach'){
-                        
-                    }else
-                        if(input$which_file == 'HRU'){
-                            sliderInput(
-                                "swat_thresh_slp",
-                                "Slope Threshold (%):",
-                                min = 0,
-                                max = 100,
-                                value = c(0,100),
-                                step = NULL,
-                                round = TRUE,
-                                ticks = TRUE,
-                                animate = FALSE
-                            )
-                            # %>%
-                            #     helper(
-                            #         icon = "question-circle",
-                            #         colour = "#00ffff",
-                            #         content = "H_plot_thresh",
-                            #         type = "markdown",
-                            #         size = "l",
-                            #         buttonLabel = "Okay",
-                            #         easyClose = TRUE,
-                            #         fade = TRUE
-                            #     )  
-                        }
-            }
-    })
-    
-    output$swat_hru_lulc <- renderUI({
-        req(SWAT_data())
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-            }else
-                if(input$which_file == 'Reach'){
-                    
-                }else
-                    if(input$which_file == 'HRU'){
-                        pickerInput(
-                            "SWAT_hru_lulc",
-                            "Select the Land Use/Land Cover of interest",
-                            choices = unique(as.character(SWAT_data()$LULC)),
-                            options = list(`actions-box` = TRUE,
-                                           `header` = "Select Reach",
-                                           `windowPadding` = 1,
-                                           `width` = " css-width ",
-                                           `size` = 6),
-                            selected = unique(SWAT_data()$LULC)[1],
-                            multiple = TRUE
-                        )
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    
-                }else
-                    if(input$which_file == 'Reach'){
-                        
-                    }else
-                        if(input$which_file == 'HRU'){
-                            pickerInput(
-                                "SWAT_hru_lulc",
-                                "Select the Land Use/Land Cover of interest",
-                                choices = unique(as.character(SWAT_data()$LULC)),
-                                options = list(`actions-box` = TRUE,
-                                               `header` = "Select Reach",
-                                               `windowPadding` = 1,
-                                               `width` = " css-width ",
-                                               `size` = 6),
-                                selected = unique(SWAT_data()$LULC)[1],
-                                multiple = TRUE
-                            )  
-                        }
-            }
-    })
-    
-    
-    
-    output$SWAT_subnum <- renderUI({
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                pickerInput(
-                    "SWAT_subnum",
-                    "Select the subbasin of interest",
-                    choices = unique(as.character(SWAT_data()$SUB)),
-                    options = list(`actions-box` = TRUE,
-                                   `header` = "Select Reach",
-                                   `windowPadding` = 1,
-                                   `width` = " css-width ",
-                                   `size` = 6),
-                    selected = unique(SWAT_data()$SUB),
-                    multiple = TRUE
-                )
-                
-            }else
-                if(input$which_file == 'Reach'){
-                    
-                }else
-                    if(input$which_file == 'HRU'){
-                        
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    pickerInput(
-                        "SWAT_subnum",
-                        "Select the subbasin of interest",
-                        choices = unique(as.character(SWAT_data()$SUB)),
-                        options = list(`actions-box` = TRUE,
-                                       `header` = "Select Reach",
-                                       `windowPadding` = 1,
-                                       `width` = " css-width ",
-                                       `size` = 6),
-                        selected = unique(SWAT_data()$SUB),
-                        multiple = TRUE
-                    )
-                    
-                }else
-                    if(input$which_file == 'Reach'){
-                        
-                    }else
-                        if(input$which_file == 'HRU'){
-                            
-                        }
-            }
-    })
-    
-    
-    output$SWAT_variable <- renderUI({
-        req(SWAT_data())
-        req(input$which_file)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-
-            if(input$which_file == 'Subbasin'){
-                pickerInput(
-                    inputId = "swat_var_sub",
-                    label = "Select the Water quantity/quality metric of interest",
-                    options = list(
-                        `actions-box` = TRUE,
-                        `header` = "Select metric ",
-                        `windowPadding` = 1,
-                        `width` = " css-width ",
-                        `size` = 8
-                    ),
-                    choices =   c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
-                                  "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt_ha","ORGNkg_ha",
-                                  "ORGPkg_ha","NSURQkg_ha","SOLPkg_ha", "SEDPkg_ha",
-                                  "LATQ_mm","LATNO3kg_ha","GWNO3kg_ha","CHOLAmic_L",
-                                  "CBODUmg_L","DOXQmg_L","TNO3kg_ha","QTILEmm","TVAPkg_ha"),
-                    selected = "SYLDt_ha",
-                    multiple = F,
-                    choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
-                                                                     "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt_ha","ORGNkg_ha",
-                                                                     "ORGPkg_ha","NSURQkg_ha","SOLPkg_ha", "SEDPkg_ha",
-                                                                     "LATQ_mm","LATNO3kg_ha","GWNO3kg_ha","CHOLAmic_L",
-                                                                     "CBODUmg_L","DOXQmg_L","TNO3kg_ha","QTILEmm","TVAPkg_ha"), width = 35
-                    ))
-
-                )
-            }else
-                if(input$which_file == 'Reach'){
-                    pickerInput(
-                        inputId = "swat_var_rch",
-                        label = "Select the Water quantity/quality metric of interest",
-                        options = list(
-                            `actions-box` = TRUE,
-                            `header` = "Select metric ",
-                            `windowPadding` = 1,
-                            `width` = " css-width ",
-                            `size` = 8
-                        ),
-                        choices =   c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
-                                                                                        "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
-                                                                                         "CHLA_OUTkg", "CBOD_OUTkg","DISOX_OUTkg","SOLPST_OUTmg","SORPST_OUTmg",
-                                                                                         "REACTPSTmg","VOLPSTmg","SETTLPSTmg","SETTLPSTmg",
-                                                                                         "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
-                                                                                         "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"),
-                        selected = colnames(SWAT_data()[c(4:8)]),
-                        multiple = T,
-                        choicesOpt = list(content = stringr::str_trunc(c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
-                                                                                   "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
-                                                                                   "CHLA_OUTkg", "CBOD_OUTkg","DISOX_OUTkg","SOLPST_OUTmg","SORPST_OUTmg",
-                                                                                   "REACTPSTmg","VOLPSTmg","SETTLPSTmg","SETTLPSTmg",
-                                                                                   "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
-                                                                                   "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"), width = 35
-                        ))
-
-                    )
-                }else
-                    if(input$which_file == 'HRU'){
-                        pickerInput(
-                            inputId = "swat_var_hru",
-                            label = "Select the Water quantity/quality metric of interest",
-                            options = list(
-                                `actions-box` = TRUE,
-                                `header` = "Select metric ",
-                                `windowPadding` = 1,
-                                `width` = " css-width ",
-                                `size` = 8
-                            ),
-                            choices =   c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
-                                          "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
-                                          "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
-                                          "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                          "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
-                                          "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
-                                          "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
-                                          "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
-                                          "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
-                                          "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
-                                          "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
-                                          "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
-                                          "YLDt_ha","BACTPct","BACTLPct","SNOmm", 
-                                          "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
-                                          "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
-                                          "AREA","SUBBASIN","LU_CODE"),
-                            selected =  "SYLDt_ha",
-                            multiple = F,
-                            choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
-                                                                             "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
-                                                                             "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
-                                                                             "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                                                             "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
-                                                                             "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
-                                                                             "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
-                                                                             "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
-                                                                             "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
-                                                                             "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
-                                                                             "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
-                                                                             "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
-                                                                             "YLDt_ha","BACTPct","BACTLPct","SNOmm",
-                                                                             "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
-                                                                             "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
-                                                                             "AREA","SUBBASIN","LU_CODE"), width = 35
-                            ))
-
-                        )
-
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    pickerInput(
-                        inputId = "swat_var_sub",
-                        label = "Select the Water quantity/quality metric of interest",
-                        options = list(
-                            `actions-box` = TRUE,
-                            `header` = "Select metric ",
-                            `windowPadding` = 1,
-                            `width` = " css-width ",
-                            `size` = 8
-                        ),
-                        choices =   c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
-                                      "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt_ha","ORGNkg_ha",
-                                      "ORGPkg_ha","NSURQkg_ha","SOLPkg_ha", "SEDPkg_ha",
-                                      "LATQ_mm","LATNO3kg_ha","GWNO3kg_ha","CHOLAmic_L",
-                                      "CBODUmg_L","DOXQmg_L","TNO3kg_ha","QTILEmm","TVAPkg_ha"),
-                        selected = "SYLDt_ha",
-                        multiple = F,
-                        choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOMELTmm","PETmm","ETmm","SWmm",
-                                                                         "PERCmm","SURQmm","GW_Qmm","WYLDmm","SYLDt_ha","ORGNkg_ha",
-                                                                         "ORGPkg_ha","NSURQkg_ha","SOLPkg_ha", "SEDPkg_ha",
-                                                                         "LATQ_mm","LATNO3kg_ha","GWNO3kg_ha","CHOLAmic_L",
-                                                                         "CBODUmg_L","DOXQmg_L","TNO3kg_ha","QTILEmm","TVAPkg_ha"), width = 35
-                        ))
-
-                    )
-                }else
-                    if(input$which_file == 'Reach'){
-                        pickerInput(
-                            inputId = "swat_var_rch",
-                            label = "Select the Water quantity/quality metric of interest",
-                            options = list(
-                                `actions-box` = TRUE,
-                                `header` = "Select metric ",
-                                `windowPadding` = 1,
-                                `width` = " css-width ",
-                                `size` = 8
-                            ),
-                            choices =   c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
-                                          "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
-                                          "CHLA_OUTkg", "CBOD_OUTkg","DISOX_OUTkg","SOLPST_OUTmg","SORPST_OUTmg",
-                                          "REACTPSTmg","VOLPSTmg","SETTLPSTmg","SETTLPSTmg",
-                                          "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
-                                          "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"),
-                            selected = colnames(SWAT_data()[c(4:8)]),
-                            multiple = T,
-                            choicesOpt = list(content = stringr::str_trunc(c("FLOW_OUTcms","EVAPcms","TLOSScms","SED_OUTtons",
-                                                                             "SEDCONCmg/L","ORGN_OUTkg","NO3_OUTkg","NH4_OUTkg","NO2_OUTkg",
-                                                                             "CHLA_OUTkg", "CBOD_OUTkg","DISOX_OUTkg","SOLPST_OUTmg","SORPST_OUTmg",
-                                                                             "REACTPSTmg","VOLPSTmg","SETTLPSTmg","SETTLPSTmg",
-                                                                             "DIFFUSEPSTmg","REACBEDPSTmg","BURYPSTmg","BED_PSTmg",
-                                                                             "BACTP_OUTct","BACTLP_OUTct","CMETAL#1kg","CMETAL#2kg","CMETAL#3kg"), width = 35
-                            ))
-
-                        )
-                    }else
-                        if(input$which_file == 'HRU'){
-                            pickerInput(
-                                inputId = "swat_var_hru",
-                                label = "Select the Water quantity/quality metric of interest",
-                                options = list(
-                                    `actions-box` = TRUE,
-                                    `header` = "Select metric ",
-                                    `windowPadding` = 1,
-                                    `width` = " css-width ",
-                                    `size` = 8
-                                ),
-                                choices =   c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
-                                              "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
-                                              "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
-                                              "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                              "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
-                                              "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
-                                              "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
-                                              "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
-                                              "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
-                                              "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
-                                              "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
-                                              "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
-                                              "YLDt_ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                              "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
-                                              "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
-                                              "AREA","SUBBASIN","LU_CODE"),
-                                selected =  "SYLDt_ha",
-                                multiple = F,
-                                choicesOpt = list(content = stringr::str_trunc(c("PRECIPmm","SNOFALLmm","SNOMELTmm","IRRmm","PETmm","ETmm",
-                                                                                 "SW_INITmm","SW_ENDmm","PERCmm","GW_RCHGmm","DA_RCHGmm",
-                                                                                 "REVAPmm","SA_IRRmm","DA_IRRmm","SA_STmm","DA_STmm","SURQ_GENmm",
-                                                                                 "SURQ_CNTmm","TLOSSmm","LATQGENmm","GW_Qmm","WYLDmm","DAILYCN",
-                                                                                 "TMP_AVdgC","TMP_MXdgC","TMP_MNdgC","SOL_TMPdgC","SOLARMJ_m2",
-                                                                                 "SYLDt_ha","USLEt_ha","N_APPkg_ha","P_APPkg_ha","NAUTOkg_ha",
-                                                                                 "PAUTOkg_ha","NGRZkg_ha","PGRZkg_ha","NCFRTkg_ha","PCFRTkg_ha",
-                                                                                 "NRAINkg_ha","NFIXkg_ha","F_MNkg_ha","A_MNkg_ha","A_SNkg_ha",
-                                                                                 "F_MPkg_ha","AO_LPkg_ha","L_APkg_ha", "A_SPkg_ha", "DNITkg_ha",
-                                                                                 "NUPkg_ha","PUPkg_ha","ORGNkg_ha","ORGPkg_ha","SEDPkg_ha","NSURQkg_ha",
-                                                                                 "NLATQkg_ha","NO3Lkg_ha","NO3GWkg_ha","SOLPkg_ha","P_GWkg_ha",
-                                                                                 "W_STRS","TMP_STRS","N_STRS","P_STRS","BIOMt_ha","LAI",
-                                                                                 "YLDt_ha","BACTPct","BACTLPct","unknown1","unknown2","SNOmm",
-                                                                                 "CMUPkg_ha",  "CMTOTkg_ha", "QTILEmm","TNO3kg_ha",
-                                                                                 "LNO3kg_ha","GW_Q_Dmm","LATQCNTmm","TVAPkg_ha", "LULC", "MEAN_SLOPE",
-                                                                                 "AREA","SUBBASIN","LU_CODE"), width = 35
-                                ))
-
-                            )
-                        }
-            }
-    })
-    
-    
-    # output$SWAT_viz_optns <- renderUI({
-    #     if (input$DefOrUserUpload_SWAT == 'Upload data') {
-    #         req(SWAT_data())
-    #         req(input$which_file)
-    #         if(input$which_file == 'Subbasin'){
-    #             
-    #         }else
-    #             if(input$which_file == 'Reach'){
-    #                 
-    #                 radioGroupButtons(
-    #                     inputId = "rch_viz_options",
-    #                     label = "Select Output",
-    #                     choices = c("Heatmap", "Bar Plot"),
-    #                     selected = "Heatmap",
-    #                     checkIcon = list(
-    #                         yes = icon("ok",
-    #                                    lib = "glyphicon"))
-    #                 )
-    #                 
-    #                 
-    #             }else
-    #                 if(input$which_file == 'HRU'){
-    #                     
-    #                 }
-    #     } else
-    #         if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-    #             req(input$which_file)
-    #             if(input$which_file == 'Subbasin'){
-    #             
-    #         }else
-    #             if(input$which_file == 'Reach'){
-    #                 radioGroupButtons(
-    #                     inputId = "rch_viz_options",
-    #                     label = "Visualization type:",
-    #                     choices = c("Heatmap", "Bar Chart"),
-    #                     selected = "Heatmap",
-    #                     checkIcon = list(
-    #                         yes = icon("ok",
-    #                                    lib = "glyphicon"))
-    #                 )    
-    #             }else
-    #                 if(input$which_file == 'HRU'){
-    #                     
-    #                 }
-    # }
-    # })
-    
-   
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Dataframe Calculations for Reach df SWAT-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    
-    reachdf <- reactive({
-        req(input$DefOrUserUpload_SWAT)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-
-            }else
-                if(input$which_file == 'Reach'){
-                    SWAT_data()
-
-
-                }else
-                    if(input$which_file == 'HRU'){
-
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-
-                }else
-                    if(input$which_file == 'Reach'){
-                        SWAT_data()
-
-                    }else
-                        if(input$which_file == 'HRU'){
-
-                        }
-            }
-    })
-    
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Dataframe Calculations for subwatersheds df SWAT-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    subdf <- reactive({
-        req(input$DefOrUserUpload_SWAT)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                SWAT_data()
-            }else
-                if(input$which_file == 'Reach'){
-
-
-
-                }else
-                    if(input$which_file == 'HRU'){
-
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    SWAT_data()
-                }else
-                    if(input$which_file == 'Reach'){
-
-                       }else
-                        if(input$which_file == 'HRU'){
-
-                        }
-            }
-    })
-    
-    SWATSub_subset_base <- reactive({
-        req(subdf())
-        req(input$SWAT_wshed)
-        req(input$SWAT_scen_sub_base)
-        req(input$swat_var_sub)
-        # req(input$SWAT_subnum)
-        subdf() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed &
-                              Scenario %in% input$SWAT_scen_sub_base)%>% 
-            arrange_at(.vars = input$swat_var_sub, desc) %>% ungroup() %>%
-            dplyr::mutate_if(is.numeric, round, 2) 
-        })
-    
-    ### Cool approch to be implemented some other time.
-    ### !!paste0("AbsChange_", input$swat_var_sub) := 
-    #                       input$swat_var_sub - input$swat_var_sub[Scenario == input$SWAT_scen_sub_base]) %>% ungroup()
-    
-    SWATSub_data_rel<- reactive({
-        req(input$SWAT_wshed)
-        subdf() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed)%>%
-            dplyr::group_by(SUB) %>%
-            dplyr::mutate(AbsChange_PRECIPmm = PRECIPmm - PRECIPmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SNOMELTmm = SNOMELTmm - SNOMELTmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_PETmm = PETmm - PETmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_ETmm = ETmm - ETmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SWmm = SWmm - SWmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_PERCmm = PERCmm - PERCmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SURQmm = SURQmm - SURQmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_GW_Qmm = GW_Qmm - GW_Qmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_WYLDmm = WYLDmm - WYLDmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SYLDt_ha = SYLDt_ha - SYLDt_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_ORGNkg_ha = ORGNkg_ha - ORGNkg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_ORGPkg_ha = ORGPkg_ha - ORGPkg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_NSURQkg_ha = NSURQkg_ha - NSURQkg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SOLPkg_ha = SOLPkg_ha - SOLPkg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_SEDPkg_ha = SEDPkg_ha - SEDPkg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_LATQ_mm = LATQ_mm - LATQ_mm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_LATNO3kg_ha = LATNO3kg_ha - LATNO3kg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_GWNO3kg_ha = GWNO3kg_ha - GWNO3kg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_CHOLAmic_L = CHOLAmic_L - CHOLAmic_L[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_CBODUmg_L = CBODUmg_L - CBODUmg_L[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_DOXQmg_L = DOXQmg_L - DOXQmg_L[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_TNO3kg_ha = TNO3kg_ha - TNO3kg_ha[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_QTILEmm = QTILEmm - QTILEmm[Scenario == input$SWAT_scen_sub_base],
-                          AbsChange_TVAPkg_ha = TVAPkg_ha - TVAPkg_ha[Scenario == input$SWAT_scen_sub_base])%>%
-            ungroup()
-            
-    })
-    
-    SWATSub_data_comp <- reactive({
-        req(input$SWAT_wshed)
-        req(input$SWAT_scen_sub_comp)
-        req(SWATSub_data_rel())
-        req(input$SWAT_wshed)
-        SWATSub_data_rel() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed &
-                              Scenario %in% input$SWAT_scen_sub_comp)%>%
-            arrange_at(.vars = input$swat_var_sub, desc) %>% ungroup()%>%
-            dplyr::mutate_if(is.numeric, round, 2)
-            })
-    
-    swat_sub_table <- reactive({
-        req(SWATSub_data_comp())
-        req(input$swat_var_sub)
-        
-        SWATSub_data_comp() %>% as.data.frame() %>%
-            dplyr::select(-geometry) %>%
-            dplyr::select(SUB,
-                          input$swat_var_sub,
-                          paste0("AbsChange_",input$swat_var_sub))%>% dplyr::filter(SUB %in% input$SWAT_subnum)
-    })
-    
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Dataframe Calculations for HRU df SWAT-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    hrudf <- reactive({
-        req(input$DefOrUserUpload_SWAT)
-        if (input$DefOrUserUpload_SWAT == 'Upload data') {
-            req(SWAT_data())
-            req(input$which_file)
-            if(input$which_file == 'Subbasin'){
-                
-            }else
-                if(input$which_file == 'Reach'){
-                }else
-                    if(input$which_file == 'HRU'){
-                        SWAT_data()
-                    }
-        } else
-            if (input$DefOrUserUpload_SWAT == 'Default_Data_WE38') {
-                req(input$which_file)
-                if(input$which_file == 'Subbasin'){
-                    
-                }else
-                    if(input$which_file == 'Reach'){
-                        
-                    }else
-                        if(input$which_file == 'HRU'){
-                            SWAT_data()
-                        }
-            }
-    })
-    
-    
-    SWATHru_subset_base <- reactive({
-        req(hrudf())
-        req(input$SWAT_wshed)
-        req(input$SWAT_scen_hru_base)
-        req(input$swat_var_hru)
-        hrudf() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed &
-                              Scenario %in% input$SWAT_scen_hru_base)%>% 
-            arrange_at(.vars = input$swat_var_hru, desc) %>% ungroup() %>%
-            dplyr::mutate_if(is.numeric, round, 2) %>% 
-            dplyr::filter(LULC %in% input$SWAT_hru_lulc)%>%
-            dplyr::filter(MEAN_SLOPE >= min(input$swat_thresh_slp) & MEAN_SLOPE <= max(input$swat_thresh_slp) )
-        
-        
-    })
-    
-    SWATHru_data_rel<- reactive({ 
-        req(hrudf())
-        req(input$SWAT_wshed)
-        req(input$SWAT_scen_hru_base)    
-        hrudf() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed)%>%
-            dplyr::group_by(GIS) %>%
-            dplyr::mutate(AbsChange_PRECIPmm = PRECIPmm - PRECIPmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SNOFALLmm = SNOFALLmm - SNOFALLmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SNOMELTmm = SNOMELTmm - SNOMELTmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_IRRmm = IRRmm - IRRmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PETmm = PETmm - PETmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_ETmm = ETmm - ETmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SW_INITmm = SW_INITmm - SW_INITmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SW_ENDmm = SW_ENDmm - SW_ENDmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PERCmm = PERCmm - PERCmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_GW_RCHGmm = GW_RCHGmm - GW_RCHGmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_DA_RCHGmm = DA_RCHGmm - DA_RCHGmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_REVAPmm = REVAPmm - REVAPmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SA_IRRmm = SA_IRRmm - SA_IRRmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_DA_IRRmm = DA_IRRmm - DA_IRRmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SA_STmm = SA_STmm - SA_STmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_DA_STmm = DA_STmm - DA_STmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SURQ_GENmm = SURQ_GENmm - SURQ_GENmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SURQ_CNTmm = SURQ_CNTmm - SURQ_CNTmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TLOSSmm = TLOSSmm - TLOSSmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_LATQGENmm = LATQGENmm - LATQGENmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_GW_Qmm = GW_Qmm - GW_Qmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_WYLDmm = WYLDmm - WYLDmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_DAILYCN = DAILYCN - DAILYCN[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TMP_AVdgC = TMP_AVdgC - TMP_AVdgC[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TMP_MXdgC = TMP_MXdgC - TMP_MXdgC[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TMP_MNdgC = TMP_MNdgC - TMP_MNdgC[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SOL_TMPdgC = SOL_TMPdgC - SOL_TMPdgC[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SOLARMJ_m2 = SOLARMJ_m2 - SOLARMJ_m2[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SYLDt_ha = SYLDt_ha - SYLDt_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_USLEt_ha = USLEt_ha - USLEt_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_N_APPkg_ha = N_APPkg_ha - N_APPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_P_APPkg_ha = P_APPkg_ha - P_APPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NAUTOkg_ha = NAUTOkg_ha - NAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PAUTOkg_ha = PAUTOkg_ha - PAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NGRZkg_ha = NGRZkg_ha - NGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PGRZkg_ha = PGRZkg_ha - PGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NCFRTkg_ha = NCFRTkg_ha - NCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PCFRTkg_ha = PCFRTkg_ha - PCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NRAINkg_ha = NRAINkg_ha - NRAINkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NFIXkg_ha = NFIXkg_ha - NFIXkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_F_MPkg_ha = F_MPkg_ha - F_MPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_AO_LPkg_ha = AO_LPkg_ha - AO_LPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_L_APkg_ha = L_APkg_ha - L_APkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_A_SPkg_ha = A_SPkg_ha - A_SPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_DNITkg_ha = DNITkg_ha - DNITkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NUPkg_ha = NUPkg_ha - NUPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_PUPkg_ha = PUPkg_ha - PUPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_ORGNkg_ha= ORGNkg_ha - ORGNkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_ORGPkg_ha = ORGPkg_ha - ORGPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SEDPkg_ha = SEDPkg_ha - SEDPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NSURQkg_ha = NSURQkg_ha - NSURQkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NLATQkg_ha = NLATQkg_ha - NLATQkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NO3Lkg_ha = NO3Lkg_ha - NO3Lkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NO3GWkg_ha = NO3GWkg_ha - NO3GWkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SOLPkg_ha = SOLPkg_ha - SOLPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_P_GWkg_ha = P_GWkg_ha - P_GWkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_W_STRS = W_STRS - W_STRS[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TMP_STRS = TMP_STRS - TMP_STRS[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_N_STRS = N_STRS - N_STRS[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_P_STRS = P_STRS - P_STRS[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_BIOMt_ha = BIOMt_ha - BIOMt_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_LAI = LAI - LAI[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_GW_Qmm = GW_Qmm - GW_Qmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_WYLDmm = WYLDmm - WYLDmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_YLDt_ha = YLDt_ha - YLDt_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_BACTPct = BACTPct - BACTPct[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_BACTLPct = BACTLPct - BACTLPct[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_unknown1 = unknown1 - unknown1[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_unknown2 = unknown2 - unknown2[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_SNOmm = SNOmm - SNOmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_CMUPkg_ha = CMUPkg_ha - CMUPkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_CMTOTkg_ha = CMTOTkg_ha - CMTOTkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_QTILEmm = QTILEmm - QTILEmm[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TNO3kg_ha = TNO3kg_ha - TNO3kg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_NAUTOkg_ha = NAUTOkg_ha - NAUTOkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_LNO3kg_ha = LNO3kg_ha - LNO3kg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_GW_Q_Dmm = NGRZkg_ha - NGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_LATQCNTmm = PGRZkg_ha - PGRZkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          AbsChange_TVAPkg_ha = NCFRTkg_ha - NCFRTkg_ha[Scenario == input$SWAT_scen_hru_base],
-                          )%>%ungroup()%>%
-            dplyr::mutate_if(is.numeric, round, 2)
-        
-    })
-    
-    
-    SWATHru_data_comp <- reactive({
-        req(SWATHru_data_rel())
-        SWATHru_data_rel() %>%
-            dplyr::filter(Watershed %in% input$SWAT_wshed &
-                              Scenario %in% input$SWAT_scen_hru_comp)%>% 
-            dplyr::filter(LULC %in% input$SWAT_hru_lulc)%>%
-            dplyr::filter(MEAN_SLOPE >= min(input$swat_thresh_slp) & MEAN_SLOPE <= max(input$swat_thresh_slp) )%>%
-            arrange_at(.vars = input$swat_var_hru, desc)
-    })
-    
-    
-    swat_hru_table <- reactive({
-        req(SWATHru_data_comp())
-        
-        SWATHru_data_comp() %>% as.data.frame() %>%
-            dplyr::select(-geometry) %>%
-            dplyr::select(GIS, LULC, SUBBASIN, LU_CODE, MEAN_SLOPE, AREA,
-                          input$swat_var_hru,
-                          paste0("AbsChange_",input$swat_var_hru))
-    })
-    
-    
-    
-    
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------TAble output subwatersheds df SWAT----------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    
-    output$tablesub <- DT::renderDataTable(
-        swat_sub_table(),
-        extensions = list("Buttons" = NULL, 'Scroller' = NULL),
-        options = list(
-            deferRender = TRUE,
-            autoWidth = TRUE,
-            scrollY = 350,
-            scrollX = 200,
-            scroller = TRUE,
-            dom = 'BRSfrti',
-            buttons =
-                list(
-                    'copy',
-                    'print',
-                    list(
-                        extend = 'collection',
-                        buttons = c('csv', 'excel', 'pdf'),
-                        text = 'Download'
-                    )
-                ),
-            # pageLength = 5,
-            fixedHeader = TRUE,
-            fillContainer = F,
-            class = "display",
-            columnDefs = list(list(className = 'dt-left'))
-        ),
-        rownames = FALSE 
-        
-    )
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------TAble output HRU df SWAT-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    
-    output$tablehru <- DT::renderDataTable(
-        swat_hru_table(),
-        extensions = list("Buttons" = NULL, 'Scroller' = NULL),
-        options = list(
-            deferRender = TRUE,
-            autoWidth = TRUE,
-            scrollY = 350,
-            scrollX = 200,
-            scroller = TRUE,
-            dom = 'BRSfrti',
-            buttons =
-                list(
-                    'copy',
-                    'print',
-                    list(
-                        extend = 'collection',
-                        buttons = c('csv', 'excel', 'pdf'),
-                        text = 'Download'
-                    )
-                ),
-            # pageLength = 5,
-            fixedHeader = TRUE,
-            fillContainer = F,
-            class = "display",
-            columnDefs = list(list(className = 'dt-left'))
-        ),
-        rownames = FALSE  
-    )
-    
-    # output$testtab2 <- renderTable({
-    #     reach_subset()
-    # })
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ################# Filtering logic for Reach DF ################
-    ## -----------------------------------------------------------------------------------------------------------##    
-    reach_subset <- reactive({
-        req(reachdf())
-        req(input$SWAT_wshed)
-        req(input$SWAT_reachnum)
-        req(input$AreaVsScen_swat)
-        if (input$AreaVsScen_swat == 'allscen_swat') {
-            reachdf() %>% dplyr::filter(Watershed %in% input$SWAT_wshed) %>%
-                dplyr::filter(RCH %in% input$SWAT_reachnum)
-        } else
-            if (input$AreaVsScen_swat == 'allwat_swat') {
-                reachdf() %>%
-                    dplyr::filter(RCH %in% input$SWAT_reachnum)%>%
-                    dplyr::filter(Watershed %in% input$SWAT_wshed & Scenario %in% input$SWAT_scen_rch)
-            }
-    })
-    
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Plots:Reach data SWAT-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    output$Plotheatrch <- renderPlotly({
-        req(reach_subset())
-        req(input$AreaVsScen_swat)
-        req(input$swat_var_rch)
-
-
-        reach_subset <- reach_subset()
-        if (input$AreaVsScen_swat == 'allscen_swat') {
-            d <-
-                reach_subset() %>% dplyr::select(Scenario, input$swat_var_rch) %>%
-                dplyr::mutate_if(is.numeric, scale)
-            d.m <- reshape2::melt(d)
-
-            p <-
-                plot_ly(
-                    x = d.m$Scenario,
-                    y = d.m$variable,
-                    z = d.m$value,
-                    type = "heatmap"
-                ) %>%
-                layout(
-                    xaxis = list(
-                        tickfont = list(size = 12),
-                        tickangle = 45
-                    ),
-                    margin = list(
-                        l = 150,
-                        r = 20,
-                        b = 150,
-                        t = 100,
-                        pad = 4
-                    ),
-                    title = list(
-                        text = paste0(
-                            '<b>Relative impacts of management and disturbance on the watershed</b>',
-                            '<br>',
-                            '<sup>',
-                            '<i>Plot displays the relative impact of the all disturbances on the delivered\nwater quantity/quality metric at the watershed outlet.</i>',
-                            '<br><br>',
-                            '</sup>'
-                        )
-                    )
-                )
-            p
-
-
-        } else
-            if (input$AreaVsScen_swat == 'allwat_swat') {
-
-                if (length(unique(reach_subset()$Watershed))<2) {
-                    d <-
-                        reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch)
-                }else
-                    if (length(unique(reach_subset()$Watershed))>=2) {
-                d <-
-                    reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch) %>% 
-                    dplyr::mutate_if(is.numeric, scale)}
-
-                d.m <- reshape2::melt(d)
-
-
-                p <-
-                    plot_ly(
-                        x = d.m$Watershed,
-                        y = d.m$variable,
-                        z = d.m$value,
-                        type = "heatmap"
-                    ) %>%
-                    layout(
-                        xaxis = list(
-                            tickfont = list(size = 12),
-                            tickangle = 45
-                        ),
-                        margin = list(
-                            l = 150,
-                            r = 20,
-                            b = 150,
-                            t = 100,
-                            pad = 4
-                        ),
-                        title = list(
-                            text = paste0(
-                                '<b>Relative impacts of the disturbance scenario across all watersheds </b>',
-                                '<br>',
-                                '<sup>',
-                                '<i>Plot displays the relative impact of the disturbance on the delivered particular\nwater quantity/quality metric at each of the watersheds</i>',
-                                '<br><br>',
-                                '</sup>'
-                            )
-                        )
-                    )
-
-                p
-            }
-
-    })
-    
-    
-    output$Plotbarrch <- renderPlotly({
-        req(reach_subset())
-        req(input$AreaVsScen_swat)
-        req(input$swat_var_rch)
-
-
-        reach_subset <- reach_subset()
-        if (input$AreaVsScen_swat == 'allscen_swat') {
-
-            d <-  reach_subset() %>% dplyr::select(Scenario, input$swat_var_rch)
-
-                    d.m <- reshape2::melt(d)
-
-                    ## Calculates percent contribution of each variable across all
-                    ## the simulated scenarios
-                    d.m <- d.m %>%
-                        group_by(variable) %>%
-                        mutate(total = sum(value),
-                               share = (value / total) * 100) %>% dplyr::select(-total) %>%
-                        ungroup()
-
-                    b <- ggplot(d.m) +
-
-                        geom_bar(
-                            aes(
-                                y = share,
-                                x = variable,
-                                fill = reorder(Scenario, share)
-
-                            ),
-                            stat = "identity",
-                            position = "dodge"
-                        ) +
-                        theme_bw(base_rect_size = 0.1) +
-                        theme(
-                            axis.text.x = element_text(
-                                angle = 45,
-                                vjust = ,
-                                colour = "Black"
-                            ),
-                            axis.text.y = element_text(colour = "Black"),
-                            axis.title.x = element_blank(),
-                            axis.title.y = element_blank(),
-                            legend.title = element_blank(),
-                            legend.position = "none"
-                        ) + coord_flip() + labs(y = "Percent of total across all Scenarios", x = "") +
-                        scale_fill_brewer(palette = "RdYlGn", direction = 1) +
-                        scale_y_continuous(
-                            labels = function(x)
-                                paste0(x * 1, "%")
-                        )
-
-                    ggplotly(b) %>%
-                        layout(
-                            title = list(
-                                text = paste0(
-                                    '<b>Relative impacts of management and disturbance on the watershed</b>',
-                                    '<br>',
-                                    '<sup>',
-                                    '<i>Plot displays the relative impact of the all disturbances on the delivered\nwater quantity/quality metric at the watershed outlet.</i>',
-                                    '<br><br>',
-                                    '</sup>'
-                                )
-                            ),
-                            margin = list(
-                                l = 10,
-                                r = 20,
-                                b = 5,
-                                t = 150,
-                                pad = 0
-                            )
-                        )
-
-
-                }else
-                    if (input$AreaVsScen_swat == 'allwat_swat') {
-
-                        d <-  reach_subset() %>% dplyr::select(Watershed, input$swat_var_rch)
-
-                        d.m <- reshape2::melt(d)
-
-                        ## Calculates percent contribution of each variable across all
-                        ## the simulated scenarios
-                        d.m <- d.m %>%
-                            group_by(variable) %>%
-                            mutate(total = sum(value),
-                                   share = (value / total) * 100) %>%
-                            ungroup()
-
-                        b <- ggplot(d.m) +
-
-                            geom_bar(
-                                aes(
-                                    y = share,
-                                    x = variable,
-                                    fill = reorder(Watershed,-share)
-                                ),
-                                stat = "identity",
-                                position = "dodge"
-                            )  +
-                            theme_bw(base_rect_size = 0.1) +
-                            theme(
-                                axis.text.x = element_text(
-                                    angle = 45,
-                                    vjust = ,
-                                    colour = "Black"
-                                ),
-                                axis.text.y = element_text(colour = "Black"),
-                                axis.title.x = element_blank(),
-                                axis.title.y = element_blank(),
-                                legend.title = element_blank()
-                            ) + labs(y = "Percent of total across all Watersheds", x = "") +
-                            coord_flip() +
-                            scale_fill_brewer(palette = "RdYlGn", direction = 1) + theme(legend.position =
-                                                                              "none")
-                        ggplotly(b)  %>%
-                            layout(
-                                title = list(
-                                    text = paste0(
-                                        '<b>Relative impacts of the disturbance scenario across all watersheds </b>',
-                                        '<br>',
-                                        '<sup>',
-                                        '<i>Plot displays the relative impact of the disturbance on the delivered particular\nwater quantity/quality metric at each of the watersheds</i>',
-                                        '</sup>'
-                                    )
-                                ),
-                                margin = list(
-                                    l = 10,
-                                    r = 20,
-                                    b = 5,
-                                    t = 150,
-                                    pad = 0
-                                )
-                            )
-
-
-                    }
-
-    })
-    
-    
-    
     
     ## -----------------------------------------------------------------------------------------------------------##
     ## ---------------------------------Dataframe Calculations for hillslopes-------------------------------------------------------##
@@ -4415,7 +2588,7 @@ server <- function(input, output, session) {
                     sum(Particle_Class_5_Fraction_kg) * 100,
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle_Fraction_Under_0.016_mm_kg) /
                     sum(Particle_Fraction_Under_0.016_mm_kg) * 100,
-                cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) /
+                cumSediment.Yield.of.Particles.Under.0.016.mm..kg = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) /
                     sum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) * 100
             ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
             ungroup()
@@ -4461,7 +2634,7 @@ server <- function(input, output, session) {
                     sum(Particle_Class_5_Fraction_kg) * 100,
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle_Fraction_Under_0.016_mm_kg) /
                     sum(Particle_Fraction_Under_0.016_mm_kg) * 100,
-                cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) /
+                cumSediment.Yield.of.Particles.Under.0.016.mm..kg = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) /
                     sum(Sediment_Yield_of_Particles_Under_0.016_mm_kg) * 100
             ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
             ungroup()
@@ -4492,7 +2665,7 @@ server <- function(input, output, session) {
                 cumParticle.Class.4.Fraction = cumsum(Particle_Class_4_Fraction_kg),
                 cumParticle.Class.5.Fraction = cumsum(Particle_Class_5_Fraction_kg),
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle_Fraction_Under_0.016_mm_kg),
-                cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg)
+                cumSediment.Yield.of.Particles.Under.0.016.mm..kg = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg)
             ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercArea < input$thresh_H) %>%
             ungroup()
     })
@@ -4520,7 +2693,7 @@ server <- function(input, output, session) {
                 cumParticle.Class.4.Fraction = cumsum(Particle_Class_4_Fraction_kg),
                 cumParticle.Class.5.Fraction = cumsum(Particle_Class_5_Fraction_kg),
                 cumParticle.Fraction.Under.0.016.mm = cumsum(Particle_Fraction_Under_0.016_mm_kg),
-                cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg)
+                cumSediment.Yield.of.Particles.Under.0.016.mm..kg = cumsum(Sediment_Yield_of_Particles_Under_0.016_mm_kg)
             ) %>% dplyr::filter(Scenario %in% c(input$Hill_scen_base,  input$Hill_scen_comp)) %>% dplyr::filter(cumPercLen < input$thresh_H) %>%
             ungroup()
     })
@@ -4631,12 +2804,12 @@ server <- function(input, output, session) {
                 12,
                 align = "center",
                 offset = 0,
-                style = "background-color:#ECF0F1;",
+                # style = "background-color:#ECF0F1;",
                 if (is.null(sed_stats_df())) {
                     
                 } else{
                     DT::dataTableOutput("Sed_stats_by_category") %>%
-                        withSpinner(type = 6 , color = "#ffffff")
+                        withSpinner(type = 6 )
                 }
             )
         )
@@ -4654,7 +2827,8 @@ server <- function(input, output, session) {
         req(Wshed_data())
         req(input$AreaVsScen)
         if (input$AreaVsScen == 'allscen') {
-            Wshed_data() %>% dplyr::filter(Watershed %in% input$Wshed_wshed)
+            Wshed_data() %>% dplyr::filter(Watershed %in% input$Wshed_wshed,
+                                           Scenario %in% input$Wshed_wshed_S)
         } else
             if (input$AreaVsScen == 'allwat') {
                 Wshed_data() %>% dplyr::filter(Scenario %in% input$Wshed_wshed,
@@ -4709,7 +2883,7 @@ server <- function(input, output, session) {
     #                       AbsChange_DepLos_kg_ = DepLos_kg_- spsub()$DepLos_kg_[spsub()$Scenario==input$S_scen_base],
     #         )
     # })
-
+    
     Spatial_data_rel<- reactive({ spsub() %>%
             dplyr::group_by(TopazID) %>%
             dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha - SoLs_kg_ha[Scenario == input$S_scen_base],
@@ -4720,9 +2894,9 @@ server <- function(input, output, session) {
                           AbsChange_TP_kg_ha_ = TP_kg_ha_ - TP_kg_ha_[Scenario == input$S_scen_base],
                           AbsChange_Runoff_mm_ = Runoff_mm_ - Runoff_mm_[Scenario == input$S_scen_base],
                           AbsChange_DepLos_kg_ = DepLos_kg_ - DepLos_kg_[Scenario == input$S_scen_base]
-                          ) %>% ungroup()
+            ) %>% ungroup()
     })
-
+    
     Spatial_subset_comp <- reactive({
         req(Spatial_data_rel())
         req(input$S_wshed)
@@ -4761,8 +2935,11 @@ server <- function(input, output, session) {
                     ) %>%
                     layout(
                         xaxis = list(
-                            tickfont = list(size = 12),
+                            tickfont = list(size = 16),
                             tickangle = 45
+                        ),
+                        yaxis = list(
+                            tickfont = list(size = 16)
                         ),
                         margin = list(
                             l = 150,
@@ -4810,19 +2987,20 @@ server <- function(input, output, session) {
                             ),
                             stat = "identity",
                             position = "dodge"
-                        ) +
+                        ) + guides(fill = FALSE)+
                         theme_bw(base_rect_size = 0.1) +
                         theme(
                             axis.text.x = element_text(
                                 angle = 45,
+                                size = 13,
                                 vjust = ,
                                 colour = "Black"
                             ),
-                            axis.text.y = element_text(colour = "Black"),
+                            axis.text.y = element_text(colour = "Black", size =12),
                             axis.title.x = element_blank(),
                             axis.title.y = element_blank(),
                             legend.title = element_blank(),
-                            legend.position = "none"
+                            legend.position = "right"
                         ) + coord_flip() + labs(y = "Percent of total across all Scenarios", x = "") +
                         scale_fill_brewer(palette = "RdYlGn") +
                         scale_y_continuous(
@@ -4848,6 +3026,11 @@ server <- function(input, output, session) {
                                 b = 5,
                                 t = 150,
                                 pad = 0
+                            ),
+                            legend = list(
+                                orientation = "v",
+                                title=list(text='<b> Scenario </b>'),
+                                font = list(size = 12)
                             )
                         )
                     
@@ -4856,8 +3039,19 @@ server <- function(input, output, session) {
         } else
             if (input$AreaVsScen == 'allwat') {
                 if (input$ScenVvar == "Heatmap") {
-                    d <-
-                        Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
+                    
+                    if (length(unique(Wshed_subset()$Watershed))<2) {
+                        d <-
+                            Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_at(vars(Watershed), as.factor)
+                    }else
+                        if (length(unique(Wshed_subset()$Watershed))>=2) {
+                            d <-
+                                Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% 
+                                dplyr::mutate_at(vars(Watershed), as.factor)%>% 
+                                dplyr::mutate_if(is.numeric, scale)}
+                    
+                    # d <-
+                    #     Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
                     d.m <- reshape2::melt(d)
                     
                     
@@ -4870,8 +3064,11 @@ server <- function(input, output, session) {
                         ) %>%
                         layout(
                             xaxis = list(
-                                tickfont = list(size = 12),
+                                tickfont = list(size = 16),
                                 tickangle = 45
+                            ),
+                            yaxis = list(
+                                tickfont = list(size = 16)
                             ),
                             margin = list(
                                 l = 150,
@@ -4898,7 +3095,17 @@ server <- function(input, output, session) {
                     
                 } else
                     if (input$ScenVvar == "Bar Chart") {
-                        d <-  Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var)
+                        
+                        if (length(unique(Wshed_subset()$Watershed))<2) {
+                            d <-
+                                Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_at(vars(Watershed), as.factor)
+                        }else
+                            if (length(unique(Wshed_subset()$Watershed))>=2) {
+                                d <-
+                                    Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% 
+                                    dplyr::mutate_at(vars(Watershed), as.factor)%>% 
+                                    dplyr::mutate_if(is.numeric, scale)}
+                        # d <-  Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var)
                         
                         d.m <- reshape2::melt(d)
                         
@@ -4916,26 +3123,32 @@ server <- function(input, output, session) {
                                 aes(
                                     y = share,
                                     x = variable,
-                                    fill = reorder(Watershed,-share)
+                                    fill = reorder(Watershed,share)
                                 ),
                                 stat = "identity",
                                 position = "dodge"
-                            )  +
+                            )  +guides(fill = FALSE)+
                             theme_bw(base_rect_size = 0.1) +
                             theme(
                                 axis.text.x = element_text(
                                     angle = 45,
+                                    size =13,
                                     vjust = ,
                                     colour = "Black"
                                 ),
-                                axis.text.y = element_text(colour = "Black"),
+                                axis.text.y = element_text(colour = "Black", size =12),
                                 axis.title.x = element_blank(),
                                 axis.title.y = element_blank(),
-                                legend.title = element_blank()
+                                legend.title = element_blank(),
+                                legend.position = "right"
                             ) + labs(y = "Percent of total across all Watersheds", x = "") +
                             coord_flip() +
-                            scale_fill_brewer(palette = "RdYlGn") + theme(legend.position =
-                                                                              "none")
+                            scale_fill_brewer(palette = "RdYlGn") +
+                            scale_y_continuous(
+                                labels = function(x)
+                                    paste0(x * 1, "%")
+                            )
+                        
                         ggplotly(b)  %>%
                             layout(
                                 title = list(
@@ -4953,6 +3166,11 @@ server <- function(input, output, session) {
                                     b = 5,
                                     t = 150,
                                     pad = 0
+                                ),
+                                legend = list(
+                                    orientation = "v",
+                                    title=list(text='<b> Watershed </b>'),
+                                    font = list(size = 12)
                                 )
                             )
                         
@@ -5044,7 +3262,7 @@ server <- function(input, output, session) {
                                                                     if (input$Hill_variable == "Sediment_Yield_of_Particles_Under_0.016_mm_kg") {
                                                                         p1 <-
                                                                             p1 + geom_line(
-                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color = Scenario),
+                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg , color = Scenario),
                                                                                 size = 0.5
                                                                             )
                                                                     }
@@ -5228,7 +3446,7 @@ server <- function(input, output, session) {
                                                                     if (input$Hill_variable == "Sediment_Yield_of_Particles_Under_0.016_mm_kg") {
                                                                         p3 <-
                                                                             p3 + geom_line(
-                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color = Scenario),
+                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg , color = Scenario),
                                                                                 size = 0.5
                                                                             )
                                                                     }
@@ -5415,7 +3633,7 @@ server <- function(input, output, session) {
                                                                     if (input$Hill_variable == "Sediment_Yield_of_Particles_Under_0.016_mm_kg") {
                                                                         p2 <-
                                                                             p2 + geom_line(
-                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color = Scenario),
+                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg , color = Scenario),
                                                                                 size = 0.5
                                                                             )
                                                                     }
@@ -5593,7 +3811,7 @@ server <- function(input, output, session) {
                                                                     if (input$Hill_variable == "Sediment_Yield_of_Particles_Under_0.016_mm_kg") {
                                                                         p4 <-
                                                                             p4 + geom_line(
-                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg.ha. , color = Scenario),
+                                                                                aes(y = cumSediment.Yield.of.Particles.Under.0.016.mm..kg , color = Scenario),
                                                                                 size = 0.5
                                                                             )
                                                                     }
@@ -5719,7 +3937,7 @@ server <- function(input, output, session) {
         options = list(
             deferRender = TRUE,
             autoWidth = FALSE,
-            scrollY = 300,
+            scrollY = 350,
             scrollX = 200,
             scroller = TRUE,
             dom = 'BRSfrti',
@@ -5732,8 +3950,8 @@ server <- function(input, output, session) {
             fixedHeader = TRUE,
             fillContainer = F,
             class = "display",
-            columnDefs = list(list(className = 'dt-left')),
-            pageLength = 15
+            columnDefs = list(list(className = 'dt-left'))
+            # pageLength = 15
             
         ),
         rownames = F
@@ -5747,7 +3965,7 @@ server <- function(input, output, session) {
                 12,
                 align = "center",
                 offset = 0,
-                style = "background-color:#ECF0F1;",
+                # style = "background-color:#ECF0F1;",
                 DT::dataTableOutput("spatial_table",height = "600px")
             )
         )
@@ -5778,7 +3996,7 @@ server <- function(input, output, session) {
     #     ),
     #     rownames = F
     # ) 
-     
+    
     
     ## -----------------------------------------------------------------------------------------------------------##
     ## ---------------------------------Plots:Spatial DF-------------------------------------------------------##
@@ -5796,10 +4014,8 @@ server <- function(input, output, session) {
                 paste0("AbsChange_", input$S_variable),
                 id = "watershed",
                 palette = "-inferno",
-                style = "pretty",
-                # style = "fixed",
-                # breaks = c(0, 1, 10, 100, 1000,
-                #            5000, 10000, 15000,20000,Inf),
+                style = "quantile",
+                midpoint = TRUE,
                 title = "Comparison minus Baseline"
             )+
             tm_shape(Spatial_subset_base(), name = "Baseline Scenario") +
@@ -5808,11 +4024,10 @@ server <- function(input, output, session) {
                 input$S_variable,
                 id = "watershed",
                 palette = "-inferno",
-                # style = "log10_pretty"
                 style = "fixed",
-                breaks = c(0, 1, 10, 100, 1000,
-                           5000, 10000, 15000,20000,Inf),
-                title = " "
+                breaks = c(0, 1, 10, 50, 250, 500, 750, 1000,
+                           5000, 10000, 15000,Inf),
+                title = ""
             )+
             tm_shape(Spatial_subset_comp(), name = "Comparison Scenario") +
             tmap::tm_polygons(
@@ -5820,20 +4035,23 @@ server <- function(input, output, session) {
                 id = "watershed",
                 palette = "-inferno",
                 legend.hist = TRUE,
-                # style = "log10_pretty",
                 style = "fixed",
-                breaks = c(0, 1, 10, 100, 1000,
-                           5000, 10000, 15000,20000,Inf),
+                breaks = c(0, 1, 10, 50, 250, 500, 750, 1000,
+                           5000, 10000, 15000,Inf),
                 legend.show = FALSE,
+                # title = "Comparison Scenario"
             ) +
             tmap::tm_layout(scale = 0.1,
                             title = "")
-
+        
         tmap_leaflet(tm2,in.shiny = TRUE)  %>%
             addMiniMap(tiles = providers$Esri.WorldStreetMap,
                        toggleDisplay = TRUE,
                        zoomAnimation = TRUE,position = "bottomleft",height = 100)
     })
+    
+    
+    
     
     ## --------------------------------------------------------------------------------------------------##
     
@@ -5851,7 +4069,7 @@ server <- function(input, output, session) {
             tmap::tm_polygons(
                 paste0("AbsChange_",input$swat_var_sub),
                 id = "watershed",
-                palette = "plasma",
+                palette = "viridis",
                 legend.hist = TRUE,
                 style = "pretty",
                 # style = "fixed",
@@ -5862,39 +4080,39 @@ server <- function(input, output, session) {
             )+
             tm_shape(SWATSub_subset_base(), name = "Baseline Scenario") +
             tmap::tm_polygons(
-                        input$swat_var_sub,
-                        id = "watershed",
-                        palette = "plasma",
-                        legend.hist = TRUE,
-                        style = "pretty",
-                        # style = "fixed",
-                        # breaks = seq(from = 0, 
-                                     # to = 0.4, by = 8), 
-                            # c(0, 1, 10, 100, 1000,
-                            #        5000, 10000, 15000,20000,Inf),
-                        title = "Baseline Scenario "
-                    )+
-                    tm_shape(SWATSub_data_comp(), name = "Comparison Scenario") +
-                    tmap::tm_polygons(
-                        input$swat_var_sub,
-                        id = "watershed",
-                        palette = "plasma",
-                        legend.hist = TRUE,
-                        style = "pretty",
-                        # style = "fixed",
-                        # breaks = c(0, 1, 10, 100, 1000,
-                        #            5000, 10000, 15000,20000,Inf),
-                        # legend.show = FALSE,
-                        title = "Comparison Scenario"
-                )+
-                    tmap::tm_layout(scale = 0.1,
-                                    title = "")
+                input$swat_var_sub,
+                id = "watershed",
+                palette = "viridis",
+                legend.hist = TRUE,
+                style = "pretty",
+                # style = "fixed",
+                # breaks = seq(from = 0, 
+                # to = 0.4, by = 8), 
+                # c(0, 1, 10, 100, 1000,
+                #        5000, 10000, 15000,20000,Inf),
+                title = "Baseline Scenario "
+            )+
+            tm_shape(SWATSub_data_comp(), name = "Comparison Scenario") +
+            tmap::tm_polygons(
+                input$swat_var_sub,
+                id = "watershed",
+                palette = "viridis",
+                legend.hist = TRUE,
+                style = "pretty",
+                # style = "fixed",
+                # breaks = c(0, 1, 10, 100, 1000,
+                #            5000, 10000, 15000,20000,Inf),
+                # legend.show = FALSE,
+                title = "Comparison Scenario"
+            )+
+            tmap::tm_layout(scale = 0.1,
+                            title = "")
         
         
         tmap_leaflet(tmsub,in.shiny = TRUE)  %>%
-                    addMiniMap(tiles = providers$Esri.WorldStreetMap,
-                               toggleDisplay = TRUE,
-                               zoomAnimation = TRUE,position = "bottomleft",height = 100)
+            addMiniMap(tiles = providers$Esri.WorldStreetMap,
+                       toggleDisplay = TRUE,
+                       zoomAnimation = TRUE,position = "bottomleft",height = 100)
     })
     
     ## -----------------------------------------------------------------------------------------------------------##
@@ -5906,7 +4124,7 @@ server <- function(input, output, session) {
             tmap::tm_polygons(
                 paste0("AbsChange_",input$swat_var_hru),
                 id = "watershed",
-                palette = "plasma",
+                palette = "viridis",
                 legend.hist = TRUE,
                 style = "pretty",
                 title = "Comparison minus Baseline"
@@ -5915,7 +4133,7 @@ server <- function(input, output, session) {
             tmap::tm_polygons(
                 input$swat_var_hru,
                 id = "watershed",
-                palette = "plasma",
+                palette = "viridis",
                 legend.hist = TRUE,
                 style = "pretty",
                 title = "Baseline Scenario "
@@ -5924,7 +4142,7 @@ server <- function(input, output, session) {
             tmap::tm_polygons(
                 input$swat_var_hru,
                 id = "watershed",
-                palette = "plasma",
+                palette = "viridis",
                 legend.hist = TRUE,
                 style = "pretty",
                 title = "Comparison Scenario"
@@ -5949,3 +4167,4 @@ server <- function(input, output, session) {
 # Run the application
 shinyApp(ui = ui, server = server)
 # run_with_themer(shinyApp(ui = ui, server = server))
+#bg = "#14213D", fg = "#FFF"
