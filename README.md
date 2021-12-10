@@ -1,4 +1,5 @@
-# Viz-WEPPCloud [![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://cdeval.shinyapps.io/Viz-WEPPCloud/)
+# Viz-WEPPCloud 
+[![](https://img.shields.io/badge/Shiny-shinyapps.io-blue?style=flat&labelColor=white&logo=RStudio&logoColor=blue)](https://cdeval.shinyapps.io/Viz-WEPPCloud/)
 
 <p align="center">
   <img src="https://github.com/devalc/Viz-WEPPCloud/blob/master/www/vizweppcloud_hex_new.png" width=50%/>
