@@ -2,12 +2,11 @@
 ##
 ## Script name: app.R
 ##
-## Purpose of the script: Script to ingest and visualize WEPPcloud simulations so as to 
-##  support targeted management
+## Purpose of the script: 
 ##
 ## @author: Chinmay Deval
 ##
-## Created on Fri Jan 17 19:35:48 2020
+## Created on Fri Sept 04 19:35:48 2020
 ##
 ## Copyright (c) Chinmay Deval, 2020
 ## Email: chinmay.deval91@gmail.com
@@ -20,11 +19,11 @@
 ## ----------------------------------Load packages---------------------------------------##
 
 
+
 library(shiny,quietly = TRUE)
 library(qs,quietly = TRUE,warn.conflicts = FALSE)
 library(tools,quietly = TRUE)
 library(sf,quietly = TRUE)
-# library(echarts4r, quietly = TRUE)
 library(tidyverse,quietly = TRUE,warn.conflicts = FALSE)
 library(shinythemes,quietly = TRUE)
 library(shinycssloaders,quietly = TRUE)
@@ -37,12 +36,12 @@ library(ggthemes,quietly = TRUE)
 library(DT,quietly = TRUE)
 library(shinyhelper,quietly = TRUE)
 library(shinyalert,quietly = TRUE)
-# library(crosstalk,quietly = TRUE)
+library(htmltools,quietly = TRUE)
 library(sever,quietly = TRUE)
-# library(showtext, quietly = TRUE)
+library(showtext, quietly = TRUE)
 library(ragg, quietly = TRUE)
 library(thematic, quietly = TRUE)
-# library(bslib, quietly = TRUE)
+library(bslib, quietly = TRUE)
 
 
 source("global.R")
@@ -83,7 +82,7 @@ ui <- navbarPage(
                         )
                     ),
                     tags$a(
-                        href = "https://github.com/devalc/Viz-WEPPCloud",
+                        href = "https://github.com/devalc/Viz-WEPPcloud",
                         tags$img(
                             src = "GitHub-Mark.png",
                             style = "position:fixed;right: 10px;top: 5px;padding-bottom:10px;",
@@ -97,16 +96,26 @@ ui <- navbarPage(
     # fluid = TRUE,
     collapsible = TRUE,
     id = 'tabs',
-    
+    header = singleton(tags$head(includeHTML('google-analytics.html'))),
     
     
     
     ## ----------------------------------Set Theme------------------------------------------##
     ## set the theme
     
-    
-    theme = shinytheme("flatly"),
-    
+   theme = bslib::bs_theme(bootswatch = "minty",
+     bg = "#383838", 
+     fg = "#E4E4E4", 
+     primary = "#EA80FC", 
+     secondary = "#00DAC6",
+     success = "#86d57b",
+     info = "#28B3ED",
+     warning = "#FD7424",
+     danger = "#F7367E",
+     base_font = font_google("Open Sans"),
+     heading_font = font_google("Proza Libre"),
+     code_font = font_google("Fira Code")
+   ),
    
     
     ## ----------------------------------Start defining Tabs------------------------------------------##
@@ -118,92 +127,102 @@ ui <- navbarPage(
         "Home",
         icon = icon("home"),
         
-        tags$head(includeHTML((
-            "google-analytics.html"
-        ))),
         
+        useSever(),
         
-        use_sever(),
-        #h1("sever" )
-        HTML("<br style = “line-height:10;”><br>"),
-        # mainPanel(style = "background-color:#d5c4c4"
-        fluidPage(HTML("<br style = “line-height:10;”><br>"),
+        fluidPage(HTML("<br style = 'line-height:10;'><br>"),
                   HTML("<br>"),
-                  fluidRow(
-                      column(
-                          10,
-                          offset = 1,
-                          align  = "center",
-                          
-                          HTML(
-                              '<div  class="jumbotron" style = "background-color : #2C3E50 !important;" >
-                                                      <h1  style="color:#fff">Viz-WEPPcloud </h1>
-                                                      <h4  style="color:#fff">A post-processing tool for identifying and examining impacts of management on pollutant 
-                                                      source areas in large spatially explicit watershed output files.</h4>
-                                                      </div>'
-                          ) #  <a href="https://wepp1.nkn.uidaho.edu/weppcloud/" title="Description">WEPPcloud</a> 
-                          
+                  
+                  # fluidRow(
+                  div(class = "banner",
+                      tags$style(HTML("
+                                      .banner{
+                                      position: relative;
+                                      background-image: url('banner-bk_g.png');
+                                      background-repeat: no-repeat;
+                                      background-size: cover;
+                                      height: 300px;
+                                      border-style: none!important;
+                                      }"
                       )
+                      ),
+                      div(class = "bannerright",
+                      # tags$h1("Pi-VAT"),
+                      tags$h2(("An Interactive Watershed Prioritization and Targeting tool for synthesis and decision support using outputs from WEPPcloud.")),
+                      tags$style(HTML("
+                                      .bannerright{position: absolute;top: 5%;right: 40%;;left: 21%;
+                                      background-color:#3F2D53; color:#fff;transition: margin 10s;}"))
+                      ),
+                      div(class = "bannerleft",
+                          tags$img(src= "vizweppcloud_hex_new_cd.svg", height =280)
+                          ),
+                      
+                      ),
+                  HTML("<br/>"),
+                  # column(width = 11,offset = 2,
+                  fluidRow(align  = "center",
+                  column(width=4,
+                         align = "centre",
+                         
+                         thumbnail_label2(
+                                        image = 'background.jpg',
+                                        label = 'Watershed Analysis',
+                                        content = "Inter-watershed comparison of impacts of management on annual water yield and
+                                      water quality at the watershed outlet",
+                                        helpinfo = "W_helpinfo"
+                                    ),
+                         HTML("<br/>"),
+                                    actionBttn("Wbutton", "Navigate to Watershed", icon = icon("chart-line"),style = "pill",
+                                               color = "royal")
+                  ),
+                  column(width=4,
+                         align = "centre",
+                         
+                         thumbnail_label2(
+                             image = 'hillslope_img.jpg',
+                             label = 'Hillslope Analysis',
+                             content = "Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
+                                      and management on the detachment and delivery of pollutants from these hotspots",
+                             helpinfo = "H_helpinfo"
+                         ),
+                         HTML("<br/>"),
+                         actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("chart-line"),style = "pill",
+                                    color = "royal")
+                  ),
+                  column(width=4,
+                         align = "centre",
+                         
+                         thumbnail_label2(
+                             image = 'spatial_imp.PNG',
+                             label = 'Spatial Visualization',
+                             content = "Synthesize and visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments",
+                             helpinfo = "S_helpinfo"
+                         ),
+                         HTML("<br/>"),
+                         actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("chart-line"),style = "pill",
+                                    color = "royal")
+                  # )
                   ),
                   
-                  fluidRow(
-                      column(
-                          11,
-                      offset = 1,
-                          align  = "center",
-                      column(3,
-                             align  = "center",
-                             offset = 1,
-                             thumbnail_label1(
-                                 image = 'background.jpg',
-                                 label = 'Watershed Analysis',
-                                 content = "Inter-watershed comparison of impacts of management on annual water yield and 
-                                      water quality at the watershed outlet"
-                             ),
-                             actionBttn("Wbutton", "Navigate to Watershed", icon = icon("line-chart"),style = "pill",
-                                        color = "success")
-                      ),
-                      column(
-                          3,
-                          align  = "center",
-                          # offset = 1,
-                          thumbnail_label1(
-                              image = 'hillslope_img.jpg',
-                              label = 'Hillslope Analysis',
-                              content = 'Identifying targeted pollutant hotspots within a watershed and quantifying the impacts of disturbance
-                                      and management on the detachment and delivery of pollutants from these hotspots'
-                          ),
-                          actionBttn("Hbutton", "Navigate to Hillslope", icon = icon("line-chart"),style = "pill",
-                                     color = "success")
-                      ),
-                      column(
-                          3,
-                          align  = "center",
-                          # offset = 1,
-                          thumbnail_label1(
-                              image = 'spatial_imp.PNG',
-                              label = 'Spatial Visualization',
-                              content = 'Visualize hillslope scale output and targeted hotspots across multiple watersheds for multiple treatments.'
-                          ),
-                          actionBttn("Sbutton", "Navigate to Spatial-Viz", icon = icon("layer-group"),style = "pill",
-                                     color = "success")
-                      )
-                  )),
+                  ),
+                  HTML("<br/><br/>"),
                   
-
-                  HTML("<br style = “line-height:10;”><br>"),
-                  fluidRow(
-                      column(
-                          10,
-                          offset = 1,
-                          align  = "center",
-
-                          style = "height:140px;padding-left:20px;padding-top:20px;padding-bottom:20px;background-color:#2c3e50;color:#fff", #background-color:#eae2e2;#F8F9FA;
-
-                          tags$div(
+                  div(class = "footer",
+                          tags$style(HTML("
+                                      .footer{
+                                      position: relative;
+                                      background-image: url('footerimg4.jpg');
+                                      background-repeat: no-repeat;
+                                      background-size: cover;
+                                      height: 200px;
+                                      border-style: none!important;
+                                      margin:0%
+                                      }"
+                          )),
+                    div(class = "footerright",
                               tags$p(
-                                  "Viz-WEPPcloud is currently designed to analyze output from WEPPcloud and provides an option for users to upload their own output data files.",
-                                  align = "center"
+                                  "Viz-WEPPcloud is currently designed to analyze outputs from the online interface for WEPP model (WEPPcloud). It provides users an ability to upload their own runs.",
+                                  align = "left"
                               ),
                               tags$p(
                                   a(href = 'https://wepp1.nkn.uidaho.edu/weppcloud/', 'WEPPcloud', .noWS = "outside"),
@@ -213,20 +232,34 @@ ui <- navbarPage(
                                                          hillslope soil erosion, runoff, and sediment yields from anywhere in the continental U.S. It is especially useful for
                                                          post-wildfire assessments, fuel treatment planning, and prescribed fire analysis.',
                                   .noWS = c("after-begin", "before-end"),
-                                  align = "center"
+                                  align = "left"
                               ),
+                              tags$style(HTML("
+                                      .footerright{position: absolute;top: 20%;right: 5%;;left: 40%;color:#fff
+                                      }"))
+                          ),
+                    div(class = "footerleft",
+                        
+                        tags$h3("Powered by",
+                               img(src = "https://www.rstudio.com/wp-content/uploads/2014/04/shiny.png",
+                                   height= 60),
+                               "and",
+                               img(src = "https://www.r-project.org/logo/Rlogo.svg",
+                                   height= 60),
+                               tags$style(HTML("
+                                      .footerleft{position: absolute;top: 20%;right: 60%;;left: 5%;color:#fff
+                                      }"))
+                                   
+                               
+                            )
+                        )
+                        
+                        )
+                          
 
-                          )
-
-                      )
-                  )
+                  
                   
         )
-        
-        
-        # HTML("<br style = “line-height:30;”><br>"),
-        
-        
     ),
     
     
@@ -234,12 +267,6 @@ ui <- navbarPage(
     ## -----------------------------------------Watershed Tab---------------------------------------------##
     tabPanel(
         "Watershed",
-        
-        tags$head(includeHTML((
-            "google-analytics.html"
-        ))),
-        
-        
         
         column(
             width = 12,
@@ -303,15 +330,7 @@ ui <- navbarPage(
                                        lib = "glyphicon")),
                         status = 'success'
                     ),
-                    # awesomeRadio(
-                    #     inputId = "ScenVvar",
-                    #     label = "Visualization type:",
-                    #     choices = c("Heatmap" = "Heatmap", "Bar Chart" =
-                    #                     "Bar Chart"),
-                    #     
-                    #     selected = "Heatmap",
-                    #     status = 'warning'
-                    # ),
+                    
                     
                 ),
                 
@@ -333,13 +352,7 @@ ui <- navbarPage(
     tabPanel(
         "Hillslope",
         
-        tags$head(includeHTML((
-            "google-analytics.html"
-        ))),
-        
-        
-        
-        column(
+       column(
             width = 12,
             style = 'padding-top:70px;',
             
@@ -409,18 +422,6 @@ ui <- navbarPage(
                         status = 'success'
                     ),
                     
-                    # awesomeRadio(
-                    #     inputId = "summary_DT_by_var_H",
-                    #     label = "Summarize by:",
-                    #     choices = c(
-                    #         "Land Use" = "Landuse",
-                    #         "Soil Type" = "Soiltype",
-                    #         "Both" = "Both"
-                    #     ),
-                    #     selected = "Both",
-                    #     status = 'warning'
-                    # ),
-                    
                 ),
                 
                 # Main panel for displaying outputs ----
@@ -428,39 +429,39 @@ ui <- navbarPage(
                     width = 9,
                     tabsetPanel(
                         tabPanel("Plot",icon =icon("chart-line"), style = 'padding:20px;',
-                                 fluidRow(
-                                     column(
-                                         6,
-                                         align = "center",
-                                         plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(type = 8 )
-                                     ),
-                                     column(
-                                         6,
-                                         align = "center",
-                                         plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(type = 8 )
-                                     )
-                                 ),
-                                 # HTML("<br style = “line-height:5;”><br>"),
-                                 # uiOutput("Exp3_Exp4") %>% withSpinner(color =
-                                 #                                           "#0dc5c1"),
-                                 HTML("<br <br>"),
-                                 fluidRow(
-                                     column(
-                                         6,
-                                         align = "center",
-                                         plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(type = 8)
-                                     ),
-                                     column(
-                                         6,
-                                         align = "center",
-                                         plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 8 )
-                                     )
-                                 )),
-                        tabPanel("Table",icon =icon("table"), style = 'padding:20px;',
-                                 # HTML("<br style = “line-height:5;”><br>"),
-                                 
-                                 
-                                 uiOutput("tab_H")%>% withSpinner(type = 8 )))
+                    fluidRow(
+                        column(
+                            6,
+                            align = "center",
+                            plotlyOutput("Plot_vs_cumPercArea") %>% withSpinner(type = 8 )
+                        ),
+                        column(
+                            6,
+                            align = "center",
+                            plotlyOutput("Plot_vs_cumPercArea_abs") %>% withSpinner(type = 8 )
+                        )
+                    ),
+                    # HTML("<br style = “line-height:5;”><br>"),
+                    # uiOutput("Exp3_Exp4") %>% withSpinner(color =
+                    #                                           "#0dc5c1"),
+                    HTML("<br <br>"),
+                    fluidRow(
+                        column(
+                            6,
+                            align = "center",
+                            plotlyOutput("Plot_vs_cumPercLen") %>% withSpinner(type = 8)
+                        ),
+                        column(
+                            6,
+                            align = "center",
+                            plotlyOutput("Plot_vs_cumPercLen_abs") %>% withSpinner(type = 8 )
+                        )
+                    )),
+                    tabPanel("Table",icon =icon("table"), style = 'padding:20px;',
+                    # HTML("<br style = “line-height:5;”><br>"),
+                    
+                    
+                    uiOutput("tab_H")%>% withSpinner(type = 8 )))
                 )
             )
         )
@@ -472,9 +473,9 @@ ui <- navbarPage(
     tabPanel(
         "Spatial-Viz",
         
-        tags$head(includeHTML((
-            "google-analytics.html"
-        ))),
+        # tags$head(includeHTML((
+        #     "google-analytics.html"
+        # ))),
         
         style = 'padding-top:70px;',
         
@@ -565,26 +566,28 @@ ui <- navbarPage(
                 # style = 'padding:80px;',
                 tabsetPanel(
                     tabPanel("Plot",icon =icon("layer-group"), style = 'padding:20px;',
-                             fluidRow(column(
-                                 12,
-                                 # offset = 1,
-                                 leaflet::leafletOutput("Plot12",height = "600px") %>%
-                                     withSpinner(type = 8)
-                             ))),
-                    tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
-                             # HTML("<br style = “line-height:5;”><br>"),
-                             # fluidRow(column(
-                             #     10,
-                             #     offset = 1,
-                             uiOutput("tab_sp") %>%
-                                 withSpinner(type = 8)
-                    )),
+                fluidRow(column(
+                    12,
+                    # offset = 1,
+                    leaflet::leafletOutput("Plot12",height = "600px") %>%
+                        withSpinner(type = 8)
+                ))),
+                tabPanel("Table",icon =icon("table"),style = 'padding:20px;',
+                # HTML("<br style = “line-height:5;”><br>"),
+                # fluidRow(column(
+                #     10,
+                #     offset = 1,
+                    uiOutput("tab_sp") %>%
+                    withSpinner(type = 8)
+                )),
                 # HTML("<br style = “line-height:5;”><br>")
             )
             
             
         )
     )
+    
+    
     
     
 )
@@ -623,31 +626,27 @@ server <- function(input, output, session) {
     })
     
     
-    
+
     observeEvent(input$Wbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
                           selected = "Watershed")
     })
-    
-    
+
+
     observeEvent(input$Hbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
                           selected = "Hillslope")
     })
-    
+
     observeEvent(input$Sbutton, {
         updateTabsetPanel(session = session,
                           inputId = "tabs",
                           selected = "Spatial-Viz")
     })
     
-    observeEvent(input$Swatbutton, {
-        updateTabsetPanel(session = session,
-                          inputId = "tabs",
-                          selected = "SWAT-Viz")
-    })
+    
     
     
     
@@ -664,7 +663,17 @@ server <- function(input, output, session) {
                 multiple = F,
                 placeholder = "No file selected",
                 accept = ".csv"
-            )
+            )%>%
+                helper(
+                    icon = "question-circle",
+                    colour = "#FF0000",
+                    content = "W_upload",
+                    type = "markdown",
+                    size = "l",
+                    buttonLabel = "Okay",
+                    easyClose = TRUE,
+                    fade = TRUE
+                )
         } else
             if (input$DefOrUserUpload_W == 'Default_Data_Portland' |
                 input$DefOrUserUpload_W == 'Default_Data_Seattle' |
@@ -2082,7 +2091,7 @@ server <- function(input, output, session) {
                 input$DefOrUserUpload_S == 'Default_Data_Palouse') {
             }
     }) 
-    
+     
     
     Spatial_data1 <- reactive({
         req(input$DefOrUserUpload_S)
@@ -2492,6 +2501,8 @@ server <- function(input, output, session) {
         
     })
     
+    
+    
     ## -----------------------------------------------------------------------------------------------------------##
     ## ---------------------------------Dataframe Calculations for hillslopes-------------------------------------------------------##
     ## -----------------------------------------------------------------------------------------------------------##
@@ -2775,6 +2786,10 @@ server <- function(input, output, session) {
             scrollX = 200,
             scroller = TRUE,
             dom = 'BRSfrti',
+            initComplete = JS(
+                "function(settings, json) {",
+                "$(this.api().table().container()).css({'background-color': '#fff'});",
+                "}"),
             buttons =
                 list(
                     'copy',
@@ -2870,20 +2885,8 @@ server <- function(input, output, session) {
             dplyr::filter(Watershed %in% input$S_wshed) 
     })
     
-    # Spatial_data_rel<- reactive({ spsub() %>%
-    #         dplyr::filter(Watershed %in% input$S_wshed) %>%
-    #         dplyr::filter(Scenario != input$S_scen_base) %>%
-    #         dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha- spsub()$SoLs_kg_ha[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_SdDp_kg_ha = SdDp_kg_ha- spsub()$SdDp_kg_ha[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_SdYd_kg_ha = SdYd_kg_ha- spsub()$SdYd_kg_ha[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_SRP_kg_ha_ = SRP_kg_ha_- spsub()$SRP_kg_ha_[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_PP_kg_ha_ = PP_kg_ha_- spsub()$PP_kg_ha_[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_TP_kg_ha_ = TP_kg_ha_- spsub()$TP_kg_ha_[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_Runoff_mm_ = Runoff_mm_- spsub()$Runoff_mm_[spsub()$Scenario==input$S_scen_base],
-    #                       AbsChange_DepLos_kg_ = DepLos_kg_- spsub()$DepLos_kg_[spsub()$Scenario==input$S_scen_base],
-    #         )
-    # })
     
+
     Spatial_data_rel<- reactive({ spsub() %>%
             dplyr::group_by(TopazID) %>%
             dplyr::mutate(AbsChange_SoLs_kg_ha = SoLs_kg_ha - SoLs_kg_ha[Scenario == input$S_scen_base],
@@ -2894,9 +2897,9 @@ server <- function(input, output, session) {
                           AbsChange_TP_kg_ha_ = TP_kg_ha_ - TP_kg_ha_[Scenario == input$S_scen_base],
                           AbsChange_Runoff_mm_ = Runoff_mm_ - Runoff_mm_[Scenario == input$S_scen_base],
                           AbsChange_DepLos_kg_ = DepLos_kg_ - DepLos_kg_[Scenario == input$S_scen_base]
-            ) %>% ungroup()
+                          ) %>% ungroup()
     })
-    
+
     Spatial_subset_comp <- reactive({
         req(Spatial_data_rel())
         req(input$S_wshed)
@@ -2922,8 +2925,21 @@ server <- function(input, output, session) {
         Wshed_subset <- Wshed_subset()
         if (input$AreaVsScen == 'allscen') {
             if (input$ScenVvar == "Heatmap") {
-                d <-
-                    Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
+                
+                if (length(unique(Wshed_subset()$Scenario))<2) {
+                    d <-
+                        Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var) %>% 
+                        dplyr::mutate_at(vars(Scenario), as.factor)
+                }else
+                    if (length(unique(Wshed_subset()$Scenario))>=2) {
+                        d <-
+                            Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var) %>% 
+                            dplyr::mutate_at(vars(Scenario), as.factor)%>% 
+                            dplyr::mutate_if(is.numeric, scale)}
+                
+                # d <-
+                #     Wshed_subset() %>% dplyr::select(Scenario, input$wshed_var) %>% dplyr::mutate_if(is.numeric, scale)
+                
                 d.m <- reshape2::melt(d)
                 
                 p <-
@@ -2976,18 +2992,12 @@ server <- function(input, output, session) {
                                share = (value / total) * 100) %>% dplyr::select(-total) %>%
                         ungroup()
                     
-                    b <- ggplot(d.m) +
-                        
-                        geom_bar(
-                            aes(
-                                y = share,
-                                x = variable,
-                                fill = reorder(Scenario, share)
-                                
-                            ),
-                            stat = "identity",
-                            position = "dodge"
-                        ) + guides(fill = FALSE)+
+                    b <- ggplot(d.m, 
+                                aes(fill=reorder(Scenario,share), 
+                                    y=share,
+                                    x=variable)) + 
+                        geom_bar(position="dodge", stat="identity")+
+                        guides(fill = "none")+
                         theme_bw(base_rect_size = 0.1) +
                         theme(
                             axis.text.x = element_text(
@@ -3096,16 +3106,16 @@ server <- function(input, output, session) {
                 } else
                     if (input$ScenVvar == "Bar Chart") {
                         
-                        if (length(unique(Wshed_subset()$Watershed))<2) {
-                            d <-
-                                Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_at(vars(Watershed), as.factor)
-                        }else
-                            if (length(unique(Wshed_subset()$Watershed))>=2) {
-                                d <-
-                                    Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% 
-                                    dplyr::mutate_at(vars(Watershed), as.factor)%>% 
-                                    dplyr::mutate_if(is.numeric, scale)}
-                        # d <-  Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var)
+                        # if (length(unique(Wshed_subset()$Watershed))<2) {
+                        #     d <-
+                        #         Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% dplyr::mutate_at(vars(Watershed), as.factor)
+                        # }else
+                        #     if (length(unique(Wshed_subset()$Watershed))>=2) {
+                        #         d <-
+                        #             Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var) %>% 
+                        #             dplyr::mutate_at(vars(Watershed), as.factor)%>% 
+                        #             dplyr::mutate_if(is.numeric, scale)}
+                        d <-  Wshed_subset() %>% dplyr::select(Watershed, input$wshed_var)
                         
                         d.m <- reshape2::melt(d)
                         
@@ -3117,17 +3127,12 @@ server <- function(input, output, session) {
                                    share = (value / total) * 100) %>%
                             ungroup()
                         
-                        b <- ggplot(d.m) +
-                            
-                            geom_bar(
-                                aes(
-                                    y = share,
-                                    x = variable,
-                                    fill = reorder(Watershed,share)
-                                ),
-                                stat = "identity",
-                                position = "dodge"
-                            )  +guides(fill = FALSE)+
+                        b <- ggplot(d.m, 
+                                    aes(fill=reorder(Watershed,share), 
+                                        y=share,
+                                        x=variable)) + 
+                            geom_bar(position="dodge", stat="identity")+
+                            guides(fill = "none")+
                             theme_bw(base_rect_size = 0.1) +
                             theme(
                                 axis.text.x = element_text(
@@ -3941,6 +3946,10 @@ server <- function(input, output, session) {
             scrollX = 200,
             scroller = TRUE,
             dom = 'BRSfrti',
+            initComplete = JS(
+                "function(settings, json) {",
+                "$(this.api().table().container()).css({'background-color': '#fff'});",
+                "}"),
             buttons =
                 list('copy', 'print', list(
                     extend = 'collection',
@@ -3996,12 +4005,58 @@ server <- function(input, output, session) {
     #     ),
     #     rownames = F
     # ) 
-    
+     
     
     ## -----------------------------------------------------------------------------------------------------------##
     ## ---------------------------------Plots:Spatial DF-------------------------------------------------------##
     ## -----------------------------------------------------------------------------------------------------------##
     
+    # output$Plot12 <- leaflet::renderLeaflet({
+    #     leaflet::leaflet(df) %>%
+    #         leaflet::addProviderTiles(leaflet::providers$Esri.WorldImagery,group = "WorldImagery") %>%
+    #         leaflet::addProviderTiles(leaflet::providers$Esri.WorldTopoMap,group = "WorldTopoMap") %>%
+    #         leaflet::addProviderTiles(leaflet::providers$OpenStreetMap,group = "OpenStreetMap") %>%
+    #         leaflet::addProviderTiles(leaflet::providers$Esri.WorldGrayCanvas,group = "WorldGrayCanvas") 
+    # })
+    
+    # observe({ 
+    #     
+    # input$S_variable
+    # 
+    # leafletProxy("Plot12",  data = df) %>% 
+    #     addTiles() %>%
+    #     clearMarkers() %>%
+    #     clearShapes() %>%
+    #     clearControls()%>%
+    #     
+    #     
+    #     addCircles(lng = ~longitude, lat = ~latitude, weight = 0.5,
+    #                popup=paste("SNOTEL name:", df$sntl_name, "<br>", "SNOTEL ID:", df$sntl_id, "<br>",
+    #                            "Elevation (ft):", df$snotel_elev_ft, "<br>",
+    #                            "Observation Years:", df$period_yrs, "<br>",
+    #                            "NSE:", round(df$nse_daymet,3), "<br>",
+    #                            "Product:", "DAYMET", "<br>",
+    #                            "Sensor Change:", paste0(df$T1, " ", df$T2," ",df$T3," ",
+    #                                                     df$T4," ", df$T5," ", df$T6," ",
+    #                                                     df$T7," ", df$T8," ", df$T9," ",
+    #                                                     df$T10," ", df$T11," ", df$T12," ",
+    #                                                     df$T13," ", df$T14," ", df$T15),"<br>" ),
+    #                radius = 6000,
+    #                color = ~pal_nse(nse_daymet), fillOpacity = 0.6,
+    #                highlightOptions = highlightOptions(weight = 10),
+    #                label = ~sntl_name,
+    #                group = "DAYMET",
+    #                layerId = ~paste0("D_", df$sntl_station))%>%
+    #     
+    #     addLegend(pal = pal_nse, values = ~nse_daymet,title = "",
+    #               group = c("DAYMET", "GRIDMET","PRISM", "RAW"),
+    #               position = "topleft" )%>%
+    #     addLayersControl(overlayGroups = c("DAYMET", "GRIDMET", "PRISM", "RAW"),
+    #                      position = "topleft",
+    #                      options = layersControlOptions(collapsed = FALSE))%>% 
+    #     hideGroup(c("PRISM", "GRIDMET", "RAW"))
+    # 
+    # })
     output$Plot12 <- leaflet::renderLeaflet({
         req(Spatial_data())
         req(Spatial_subset_comp())
@@ -4009,14 +4064,19 @@ server <- function(input, output, session) {
         req(input$S_variable)
         req(Spatial_subset_base())
         req(input$S_scen_base)
-        tm2 <-tm_shape(Spatial_subset_comp(), name = "Difference between comparison & baseline scenario") +
+        tm2 <-tm_basemap(leaflet::providers$Esri.WorldImagery,group = "WorldImagery") +
+            tm_basemap(leaflet::providers$Esri.WorldTopoMap,group = "WorldTopoMap")  +
+            tm_basemap(leaflet::providers$OpenStreetMap, group = "OpenStreetMap")+
+            tm_basemap(leaflet::providers$Esri.WorldGrayCanvas,group = "WorldGrayCanvas") +
+            tm_shape(Spatial_subset_comp(), name = "Difference between comparison & baseline scenario") +
             tmap::tm_polygons(
                 paste0("AbsChange_", input$S_variable),
                 id = "watershed",
                 palette = "-inferno",
                 style = "quantile",
                 midpoint = TRUE,
-                title = "Comparison minus Baseline"
+                title = "Comparison minus Baseline",
+                popup.vars = c()
             )+
             tm_shape(Spatial_subset_base(), name = "Baseline Scenario") +
             # tm_borders(lwd = 0, alpha=0.0) +
@@ -4027,7 +4087,7 @@ server <- function(input, output, session) {
                 style = "fixed",
                 breaks = c(0, 1, 10, 50, 250, 500, 750, 1000,
                            5000, 10000, 15000,Inf),
-                title = ""
+                title = "Baseline Scenario"
             )+
             tm_shape(Spatial_subset_comp(), name = "Comparison Scenario") +
             tmap::tm_polygons(
@@ -4038,16 +4098,17 @@ server <- function(input, output, session) {
                 style = "fixed",
                 breaks = c(0, 1, 10, 50, 250, 500, 750, 1000,
                            5000, 10000, 15000,Inf),
-                legend.show = FALSE,
-                # title = "Comparison Scenario"
+                # legend.show = TRUE,
+                title = "Comparison Scenario"
             ) +
             tmap::tm_layout(scale = 0.1,
                             title = "")
-        
+
         tmap_leaflet(tm2,in.shiny = TRUE)  %>%
             addMiniMap(tiles = providers$Esri.WorldStreetMap,
                        toggleDisplay = TRUE,
-                       zoomAnimation = TRUE,position = "bottomleft",height = 100)
+                       zoomAnimation = TRUE,position = "bottomleft",height = 100)%>%
+            leaflet::hideGroup(c("Comparison Scenario", "Baseline Scenario"))
     })
     
     
@@ -4055,108 +4116,7 @@ server <- function(input, output, session) {
     
     ## --------------------------------------------------------------------------------------------------##
     
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Plots:subbasin DF-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
     
-    output$Plotsub <- leaflet::renderLeaflet({
-        req(SWATSub_subset_base())
-        req(SWATSub_data_comp())
-        req(input$swat_var_sub)
-        
-        
-        tmsub<-tm_shape(SWATSub_data_comp(), name = "Difference between comparison & baseline scenario") +
-            tmap::tm_polygons(
-                paste0("AbsChange_",input$swat_var_sub),
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                # style = "fixed",
-                # breaks = c(0, 1, 10, 100, 1000,
-                #            5000, 10000, 15000,20000,Inf),
-                # legend.show = FALSE,
-                title = "Comparison minus Baseline"
-            )+
-            tm_shape(SWATSub_subset_base(), name = "Baseline Scenario") +
-            tmap::tm_polygons(
-                input$swat_var_sub,
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                # style = "fixed",
-                # breaks = seq(from = 0, 
-                # to = 0.4, by = 8), 
-                # c(0, 1, 10, 100, 1000,
-                #        5000, 10000, 15000,20000,Inf),
-                title = "Baseline Scenario "
-            )+
-            tm_shape(SWATSub_data_comp(), name = "Comparison Scenario") +
-            tmap::tm_polygons(
-                input$swat_var_sub,
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                # style = "fixed",
-                # breaks = c(0, 1, 10, 100, 1000,
-                #            5000, 10000, 15000,20000,Inf),
-                # legend.show = FALSE,
-                title = "Comparison Scenario"
-            )+
-            tmap::tm_layout(scale = 0.1,
-                            title = "")
-        
-        
-        tmap_leaflet(tmsub,in.shiny = TRUE)  %>%
-            addMiniMap(tiles = providers$Esri.WorldStreetMap,
-                       toggleDisplay = TRUE,
-                       zoomAnimation = TRUE,position = "bottomleft",height = 100)
-    })
-    
-    ## -----------------------------------------------------------------------------------------------------------##
-    ## ---------------------------------Plots:HRU DF-------------------------------------------------------##
-    ## -----------------------------------------------------------------------------------------------------------##
-    
-    output$Plothru <- leaflet::renderLeaflet({
-        tmhru<-tm_shape(SWATHru_data_comp(), name = "Difference between comparison & baseline scenario") +
-            tmap::tm_polygons(
-                paste0("AbsChange_",input$swat_var_hru),
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                title = "Comparison minus Baseline"
-            )+
-            tm_shape(SWATHru_subset_base(), name = "Baseline Scenario") +
-            tmap::tm_polygons(
-                input$swat_var_hru,
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                title = "Baseline Scenario "
-            )+
-            tm_shape(SWATHru_data_comp(), name = "Comparison Scenario") +
-            tmap::tm_polygons(
-                input$swat_var_hru,
-                id = "watershed",
-                palette = "viridis",
-                legend.hist = TRUE,
-                style = "pretty",
-                title = "Comparison Scenario"
-            )+
-            tmap::tm_layout(scale = 0.1,
-                            title = "")
-        
-        
-        tmap_leaflet(tmhru,in.shiny = TRUE)  %>%
-            addMiniMap(tiles = providers$Esri.WorldStreetMap,
-                       toggleDisplay = TRUE,
-                       zoomAnimation = TRUE,position = "bottomleft",height = 100)
-        
-    })
     
     
     observe_helpers()

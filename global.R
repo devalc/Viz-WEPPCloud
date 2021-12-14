@@ -9,47 +9,41 @@
 #
 #
 
+
 thumbnail_label1 <- function(image, label, content){
-    div(class = "row", style="height:430px;",
-        div(class = "col-sm-14 col-md-12;background-color:#98ff98;",
-            div(class = "thumbnail",style="height:60px", #background-color:#98ff98;
+    div(class = "row", style="height:400px",
+        div(class = "col-sm-14 col-md-12",
+            div(class = "thumbnail",style="height:430px;", #background-color:#6d6875;
                 img(src = image, alt = "...", width ="100%",
-                    div(class = "caption",style=";max-width: 100%", h3(label), p(content)
+                    div(class = "caption",style="max-width: 100%;text-align:centre",
+                        h4(label)), div(class = "description",style="max-width:90%;text-justify:inter-word", p(content)
                     )))))
 }
 
 
-# thumbnail_label1 <- function(image, label, content){
-#     div(class = "row", style="height:370px",
-#         div(class = "col-sm-14 col-md-12",
-#             div(class = "thumbnail",style="height:50px",
-#                 img(src = image, alt = "...", width ="100%",
-#                     div(class = "caption",style="max-width: 100%;text-align:centre",
-#                         h4(label)), div(class = "description",style="max-width:90%;text-justify:inter-word", p(content)
-#                     )))))
-# }
+thumbnail_label2 <- function(image, label, content, helpinfo){
+    div(class = "row", style="height:400px",
+        div(class = "col-sm-14 col-md-12",
+            div(class = "thumbnail",style="height:430px;", #background-color:#6d6875;
+                img(src = image, alt = "...", width ="100%",
+                    div(class = "caption",style="max-width: 100%;text-align:centre",
+                        h4(label)%>%
+                            helper(
+                                icon = "info-circle",
+                                colour = "#fb8500",
+                                content = helpinfo,
+                                type = "markdown",
+                                size = "l",
+                                buttonLabel = "Okay",
+                                easyClose = TRUE,
+                                fade = TRUE
+                            )), div(class = "description",style="max-width:90%;text-justify:inter-word", p(content)
+                        )))))
+}
 
-### customize the html bakground image function to blur the image
-
-# setBackgroundImage1 <- function(src = NULL, shinydashboard = FALSE) {
-#     if (isTRUE(shinydashboard)) {
-#         el <- ".content-wrapper"
-#     } else {
-#         el <- "body"
-#     }
-#     css <- paste0(
-#         el, " {background: url(", src, ") no-repeat center center fixed;
-#            -webkit-background-size: cover;
-#            -moz-background-size: cover;
-#            -o-background-size: cover;
-#            background-size: cover;
-#         backdrop-filter: blur(50px);}"
-#     )
-#     tags$head(tags$style(HTML(css)))
-# }
 
 disconnected <- tagList(
     h1("Whoah there..."),
     p("Session timed out or something went terribly wrong! Hit Refresh..."),
-    reload_button("REFRESH", class = "warning")
+    reload_button("REFRESH", class = "danger")
 )
