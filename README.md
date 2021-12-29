@@ -7,7 +7,7 @@
 
 This repository contains a Shiny application that is a post-processing, interactive tool based on the simulations from the WEPPcloud interface and can be used to identify erosion hotspots and hillslopes that are suitable for targeted management. 
 
-At present it has the capability to get WEPPCloud generated hillslope, channel and watershed summary output files and post-processes them in the back end and perform visualizations both (spatial and non spatial plots) based on the user selected variables. 
+At present, it can get WEPPCloud generated hillslope, channel, and watershed summary output files and post-processes them in the back end and perform visualizations both (spatial and non-spatial plots) based on the user-selected variables. 
 
 ## Find this application in action here:
 
@@ -36,4 +36,5 @@ Spatial Analysis: https://youtu.be/f7Gd4Ugz6_w
 
 
 ##### Caution: 
-This is under development and constantly being updated. Please raise an issue on this repository if you come acroos any bugs when using this tool.
+This is under development and constantly being updated. Please raise an issue on this repository if you come across any bugs when using this tool.
+
